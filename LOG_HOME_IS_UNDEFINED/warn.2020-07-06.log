@@ -1,0 +1,2 @@
+2020-07-06 14:43:30.925  WARN 21412 --- [main] o.m.s.mapper.ClassPathMapperScanner      : No MyBatis mapper was found in '[com.cibr.animal.demo.dao]' package. Please check your configuration.
+2020-07-06 14:43:31.025  WARN 21412 --- [main] o.m.s.mapper.ClassPathMapperScanner      : No MyBatis mapper was found in '[com.cibr.animal.demo]' package. Please check your configuration.
