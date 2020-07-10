@@ -12,7 +12,7 @@ public class Util {
     }
 
     public static String getVerificationTemplate(String code){
-        return "【北京脑科学与类脑研究中心】验证码是：" + code + "，有效期为1小时，欢迎您使用辅助平台！";
+        return "【北京脑科学与类脑研究中心】验证码是：" + code + "，有效期为1小时，欢迎您使用资源管理平台！";
     }
 
     public static int getVerificationCode(){

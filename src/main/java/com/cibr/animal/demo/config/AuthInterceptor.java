@@ -19,16 +19,13 @@ public class AuthInterceptor implements HandlerInterceptor {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=utf-8");
         String token = request.getHeader("token");
-        token = "333";
         if (StringUtils.isEmpty(token)) {
-            response.setStatus(404);
-            response.getWriter().print("用户未登录，请登录后操作！");
+            response.setStatus(401);
             return false;
         }
         Object loginStatus = redisUtil.get(token);
         if( Objects.isNull(loginStatus)){
-            response.setStatus(404);
-            response.getWriter().print("token错误，请查看！");
+            response.setStatus(401);
             return false;
         }
         request.setAttribute("user",loginStatus);

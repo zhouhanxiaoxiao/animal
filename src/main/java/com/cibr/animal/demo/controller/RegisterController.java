@@ -3,10 +3,12 @@ package com.cibr.animal.demo.controller;
 import com.alibaba.fastjson.JSON;
 import com.cibr.animal.demo.entity.CibrSysEmail;
 import com.cibr.animal.demo.entity.CibrSysUser;
+import com.cibr.animal.demo.entity.CibrSysVerification;
 import com.cibr.animal.demo.service.CibrSysUserService;
 import com.cibr.animal.demo.service.EmailService;
 import com.cibr.animal.demo.service.RegisterService;
 import com.cibr.animal.demo.util.ReturnData;
+import com.cibr.animal.demo.util.TimeUtil;
 import com.cibr.animal.demo.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,42 +40,27 @@ public class RegisterController {
         ReturnData returnData = new ReturnData();
         returnData.setRetMap(new HashMap());
         try {
-            boolean userIsExist = false;
-            String registerName = request.getParameter("registerName");
             String registerEmail = request.getParameter("registerEmail");
-            String registerPwd = request.getParameter("registerPwd");
-
-            CibrSysUser user = new CibrSysUser();
+            /*判断该邮箱是否已注册*/
             List<CibrSysUser> userByEmail = userService.findUserByEmail(registerEmail);
-            user.setId(Util.getUUID());
             if (userByEmail != null && userByEmail.size()>0){
-                if (!"0".equals(userByEmail.get(0).getUserstatu())){
-                    returnData.setCode("500");
-                    returnData.setErrMsg("该邮箱已注册，请更换邮箱或直接登录！");
-                    return JSON.toJSONString(returnData);
+                /*邮箱已注册*/
+                CibrSysUser user = userByEmail.get(0);
+                if ("1".equals(user.getUserstatu() )){
+                    /*邮箱已注册未审核*/
+                    returnData.setCode("E501");
+                    returnData.setErrMsg("该邮箱已注册，请等待管理员审核！");
                 }else {
-                    userIsExist = true;
-                    user = userByEmail.get(0);
+                    returnData.setCode("E502");
+                    returnData.setErrMsg("该邮箱已注册！");
                 }
-            }
-            user.setName(registerName);
-            user.setEmail(registerEmail);
-            user.setPassword(registerPwd);
-            String code = String.valueOf(Util.getVerificationCode());
-            user.setRoleid("0");
-            user.setUserdesc(code);
-            String emailMsg = Util.getVerificationTemplate(code);
-            CibrSysEmail email = emailService.createCibrSysEmail(registerEmail,emailMsg,Util.EMAIL_SUB_VERCODE);
-            emailService.sendMail(email);
-            if (userIsExist){
-                registerService.updateTmpUser(user);
             }else {
-                registerService.createTmpUser(user);
+                /*发送验证码*/
+                registerService.sendCode(registerEmail);
+                returnData.setCode("200");
             }
-            returnData.getRetMap().put("VerificationCode",code);
-            returnData.setCode("200");
-        }catch (Exception e){
-            returnData.setCode("500");
+        } catch (Exception e){
+            returnData.setCode("E500");
             returnData.setErrMsg("获取验证码失败，稍后重试！");
             e.printStackTrace();
         }
@@ -79,13 +68,45 @@ public class RegisterController {
     }
 
     @RequestMapping("/submit")
-    public String initUser(){
+    public String initUser(HttpServletRequest request,
+                           HttpServletResponse response){
         ReturnData returnData = new ReturnData();
         returnData.setRetMap(new HashMap());
         try{
-
+            String registerName = request.getParameter("registerName");
+            String registerEmail = request.getParameter("registerEmail");
+            String registerPwd = request.getParameter("registerPwd");
+            String verificationCode = request.getParameter("verificationCode");
+            /*判断该邮箱是否已注册*/
+            List<CibrSysUser> userByEmail = userService.findUserByEmail(registerEmail);
+            CibrSysVerification verification = registerService.findVerification(registerEmail, verificationCode);
+            if (userByEmail != null && userByEmail.size()>0){
+                /*邮箱已注册*/
+                CibrSysUser user = userByEmail.get(0);
+                if ("1".equals(user.getUserstatu() )){
+                    /*邮箱已注册未审核*/
+                    returnData.setCode("E501");
+                    returnData.setErrMsg("该邮箱已注册，请等待管理员审核！");
+                }else {
+                    returnData.setCode("E502");
+                    returnData.setErrMsg("该邮箱已注册！");
+                }
+            }else if (verification == null){
+                returnData.setCode("E503");
+                returnData.setErrMsg("验证码校验不通过！");
+            }else {
+                Date createtime = verification.getCreatetime();
+                if (createtime.compareTo(TimeUtil.dateAdd(new Date(), Calendar.HOUR,-1))<0){
+                    returnData.setCode("E504");
+                    returnData.setErrMsg("验证码已过期，请重新发送！");
+                }else {
+                    /*用户注册流程*/
+                    registerService.createUser(registerName,registerEmail,registerPwd);
+                    returnData.setCode("200");
+                }
+            }
         }catch (Exception e){
-            returnData.setCode("500");
+            returnData.setCode("E500");
             returnData.setErrMsg("注册失败失败，稍后重试！");
             e.printStackTrace();
         }

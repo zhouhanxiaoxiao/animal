@@ -3,7 +3,19 @@ package com.cibr.animal.demo.util;
 import java.util.Map;
 
 public class ReturnData {
-    //200-处理成功 500-处理失败
+    /**
+     *   200-处理成功
+     *   E500-处理失败
+     *   ---注册页面
+     *   E501-该邮箱已注册，请等待管理员审核！
+     *   E502-该邮箱已注册！
+     *   E503-验证码校验不通过！
+     *   E504-验证码已过期，请重新发送！
+     *   ---登录页面
+     *   E511-密码错误！.
+     *   E510-用户不存在
+     *
+     */
     String code;
     Map retMap;
     String errMsg;
