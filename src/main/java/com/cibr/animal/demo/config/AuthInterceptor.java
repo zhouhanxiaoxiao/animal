@@ -18,17 +18,22 @@ public class AuthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=utf-8");
+        if (request.getMethod().equals("OPTIONS")){
+            response.setStatus(200);
+            return true;
+        }
         String token = request.getHeader("token");
         if (StringUtils.isEmpty(token)) {
             response.setStatus(401);
             return false;
         }
         Object loginStatus = redisUtil.get(token);
-        if( Objects.isNull(loginStatus)){
+        if(Objects.isNull(loginStatus)){
             response.setStatus(401);
             return false;
         }
-        request.setAttribute("user",loginStatus);
+        redisUtil.set(token,loginStatus);
+        request.setAttribute("user", loginStatus);
         return true;
     }
 

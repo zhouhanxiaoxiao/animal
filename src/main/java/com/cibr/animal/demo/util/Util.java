@@ -1,11 +1,16 @@
 package com.cibr.animal.demo.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
 
 public class Util {
 
     public static final String EMAIL_SUB_VERCODE = "验证码";
+
+    public static final String USER_CREATE = "用户账号申请";
 
     public static String getUUID(){
         return UUID.randomUUID().toString().replace("-","");
@@ -22,5 +27,12 @@ public class Util {
 
     public static String getVerificationMsg(){
         return getVerificationTemplate(String.valueOf(getVerificationCode()));
+    }
+
+
+    public static Date str2date(String dateStr,String format) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        Date date = sdf.parse(dateStr);
+        return date;
     }
 }

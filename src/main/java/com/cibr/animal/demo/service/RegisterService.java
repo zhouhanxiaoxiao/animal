@@ -1,17 +1,17 @@
 package com.cibr.animal.demo.service;
 
+import com.cibr.animal.demo.dao.CibrSysTaskMapper;
 import com.cibr.animal.demo.dao.CibrSysUserMapper;
 import com.cibr.animal.demo.dao.CibrSysVerificationMapper;
-import com.cibr.animal.demo.entity.CibrSysEmail;
-import com.cibr.animal.demo.entity.CibrSysUser;
-import com.cibr.animal.demo.entity.CibrSysVerification;
-import com.cibr.animal.demo.entity.CibrSysVerificationExample;
+import com.cibr.animal.demo.entity.*;
 import com.cibr.animal.demo.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RegisterService {
@@ -25,22 +25,31 @@ public class RegisterService {
     @Autowired
     EmailService emailService;
 
-
+    @Autowired
+    CibrSysTaskMapper taskMapper;
     /**
      * 发送验证码邮件
      * @param registerEmail
      */
-    public void sendCode(String registerEmail) {
+    public Map<String,String> sendCode(String registerEmail) {
+        Map<String,String> ret = new HashMap<String,String>();
         String code = String.valueOf(Util.getVerificationCode());
         String emailMsg = Util.getVerificationTemplate(code);
         CibrSysEmail email = emailService.createCibrSysEmail(registerEmail,emailMsg, Util.EMAIL_SUB_VERCODE);
-        emailService.sendMail(email);
+        CibrSysEmail email1 = emailService.sendMail(email);
+        if (email1.getEmailError() != null && email.getEmailError().contains("邮箱地址不存在")){
+            ret.put("succ","f");
+            ret.put("errmsg",email.getEmailError());
+            return ret;
+        }
         CibrSysVerification verification = new CibrSysVerification();
         verification.setId(Util.getUUID());
         verification.setCode(code);
         verification.setEmail(registerEmail);
         verification.setCreatetime(new Date());
         verificationMapper.insert(verification);
+        ret.put("succ","t");
+        return  ret;
     }
 
     public boolean verificationCodeIsSame(String email,String code){
@@ -66,13 +75,37 @@ public class RegisterService {
 
     public void createUser(String registerName, String registerEmail, String registerPwd) {
         CibrSysUser user = new CibrSysUser();
-        user.setId(Util.getUUID());
+        String userId = Util.getUUID();
+        user.setId(userId);
         user.setName(registerName);
         user.setUserstatu("1");
         user.setPassword(registerPwd);
         user.setEmail(registerEmail);
         user.setRoleid("9");
         //TO-DO 权限设置 发送邮件给管理员
+        CibrSysTask task = new CibrSysTask();
+        task.setId(Util.getUUID());
+        task.setCreatetime(new Date());
+        task.setCreateuser(userId);
+
+        CibrSysUserExample example = new CibrSysUserExample();
+        example.createCriteria().andRoleidEqualTo("0");
+        List<CibrSysUser> cibrSysUsers = userMapper.selectByExample(example);
+        CibrSysUser adminer = cibrSysUsers.get(0);
+
+        task.setCurrentuser(adminer.getId());
+        task.setTaskstatu("0");
+        task.setTasktype("01");
+        taskMapper.insert(task);
+        /*给管理员发送邮件提醒*/
+        String emailMsg = "您有一个用户注册审批任务，请及时处理。申请人【" + registerName + "】，邮箱【" + registerEmail + "】";
+        CibrSysEmail adminEmail = emailService.createCibrSysEmail(adminer.getEmail(), emailMsg, Util.USER_CREATE);
+        emailService.sendMail(adminEmail);
+        /*给申请者发送邮件提醒*/
+        emailMsg = "非常感谢，您的注册申请已收到。请耐心等待管理员审核，稍后将给您发送审核结果邮件，请注意查收。";
+        CibrSysEmail userEmail = emailService.createCibrSysEmail(registerEmail, emailMsg, Util.USER_CREATE);
+        emailService.sendMail(userEmail);
+
         userMapper.insert(user);
     }
 }

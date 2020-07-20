@@ -16,10 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/register")
@@ -56,8 +53,14 @@ public class RegisterController {
                 }
             }else {
                 /*发送验证码*/
-                registerService.sendCode(registerEmail);
-                returnData.setCode("200");
+                Map<String, String> stringObjectMap = registerService.sendCode(registerEmail);
+                if ("f".equals(stringObjectMap.get("succ"))
+                        && stringObjectMap.get("errmsg").contains("邮箱地址不存在")){
+                    returnData.setCode("E505");
+                    returnData.setErrMsg("邮箱不存在！");
+                }else {
+                    returnData.setCode("200");
+                }
             }
         } catch (Exception e){
             returnData.setCode("E500");

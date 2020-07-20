@@ -42,15 +42,33 @@ public class LoginController {
                     ret.setCode("E511");
                     ret.setErrMsg("密码错误！");
                 }else {
-                    String uuid = Util.getUUID();
-                    redisUtil.set(uuid,user);
-                    retMap.put("token",uuid);
-                    user.setPassword("");
-                    retMap.put("user",user);
-                    ret.setCode("200");
-                    ret.setRetMap(retMap);
+                    if ("1".equals(user.getUserstatu())){
+                        ret.setCode("E501");
+                    }else {
+                        String uuid = Util.getUUID();
+                        redisUtil.set(uuid,JSON.toJSONString(user));
+                        retMap.put("token",uuid);
+                        retMap.put("user",user);
+                        ret.setCode("200");
+                        ret.setRetMap(retMap);
+                    }
                 }
             }
+        }catch (Exception e){
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret);
+    }
+
+    @RequestMapping("/system/exit")
+    public String exitSystem(HttpServletRequest request){
+        ReturnData ret = new ReturnData();
+        try {
+            String token = request.getHeader("token");
+            redisUtil.delete(token);
+            ret.setCode("200");
         }catch (Exception e){
             ret.setCode("E500");
             ret.setErrMsg("系统异常！");

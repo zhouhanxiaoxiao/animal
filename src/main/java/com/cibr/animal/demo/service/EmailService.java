@@ -4,6 +4,7 @@ import com.cibr.animal.demo.dao.CibrSysEmailMapper;
 import com.cibr.animal.demo.entity.CibrSysEmail;
 import com.cibr.animal.demo.util.Util;
 import com.cibr.animal.demo.util.exception.EmailException;
+import com.sun.mail.smtp.SMTPAddressFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -39,7 +40,9 @@ public class EmailService{
             return saveMail(mailVo);
         } catch (Exception e) {
             mailVo.setEmailStatus("fail");
-            mailVo.setEmailError(e.getMessage());
+            if (e instanceof EmailException){
+                mailVo.setEmailError("邮箱地址不存在！");
+            }
             return saveMail(mailVo);
         }
     }

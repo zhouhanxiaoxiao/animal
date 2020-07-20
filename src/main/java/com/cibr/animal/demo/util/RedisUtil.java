@@ -15,7 +15,7 @@ public class RedisUtil {
     public void set(String key, Object value) {
         //更改在redis里面查看key编码问题
         ValueOperations<String,Object> vo = redisTemplate.opsForValue();
-        vo.set(key, value,1,TimeUnit.HOURS);
+        vo.set(key, value,1, TimeUnit.HOURS);
     }
 
     /**

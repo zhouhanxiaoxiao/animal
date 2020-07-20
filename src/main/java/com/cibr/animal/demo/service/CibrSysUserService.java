@@ -19,4 +19,10 @@ public class CibrSysUserService {
         userExample.createCriteria().andEmailEqualTo(email);
         return userMapper.selectByExample(userExample);
     }
+
+    public List<CibrSysUser> findUserByRole(String roleType){
+        CibrSysUserExample example = new CibrSysUserExample();
+        example.createCriteria().andRoleidEqualTo("1").andUserstatuEqualTo("2");
+        return userMapper.selectByExample(example);
+    }
 }
