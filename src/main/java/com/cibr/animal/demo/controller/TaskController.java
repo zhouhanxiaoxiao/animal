@@ -117,4 +117,22 @@ public class TaskController {
         }
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
     }
+
+    @RequestMapping("/task/askTaskDetail")
+    public String askTaskDetail(HttpServletRequest request,
+                                HttpServletResponse response,
+                                @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String taskId = (String) requestBody.get("taskId");
+            Map<String, Object> taskDetail = taskService.findTaskDetail(taskId);
+            ret.setRetMap(taskDetail);
+            ret.setCode("200");
+        }catch (Exception e){
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+    }
 }

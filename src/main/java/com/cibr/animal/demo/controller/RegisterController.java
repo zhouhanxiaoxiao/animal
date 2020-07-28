@@ -1,7 +1,6 @@
 package com.cibr.animal.demo.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.cibr.animal.demo.entity.CibrSysEmail;
 import com.cibr.animal.demo.entity.CibrSysUser;
 import com.cibr.animal.demo.entity.CibrSysVerification;
 import com.cibr.animal.demo.service.CibrSysUserService;
