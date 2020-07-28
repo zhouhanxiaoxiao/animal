@@ -120,5 +120,8 @@ public class EmailService{
         return mailVo;
     }
 
-
+    public void simpleSendEmail(String context,String addr,String sub){
+        CibrSysEmail cibrSysEmail = createCibrSysEmail(addr, context, sub);
+        sendMail(cibrSysEmail);
+    }
 }

@@ -98,7 +98,9 @@ public class RegisterService {
         task.setTasktype("01");
         taskMapper.insert(task);
         /*给管理员发送邮件提醒*/
-        String emailMsg = "您有一个用户注册审批任务，请及时处理。申请人【" + registerName + "】，邮箱【" + registerEmail + "】";
+        String emailMsg = Util.EMAIL_PREFIX +
+                "您有一个用户注册审批任务，请及时处理。申请人【" + registerName + "】，邮箱【" + registerEmail + "】"
+                + Util.EMAIL_SUFFIX;
         CibrSysEmail adminEmail = emailService.createCibrSysEmail(adminer.getEmail(), emailMsg, Util.USER_CREATE);
         emailService.sendMail(adminEmail);
         /*给申请者发送邮件提醒*/

@@ -3,6 +3,7 @@ package com.cibr.animal.demo.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cibr.animal.demo.entity.CibrAnimalDrosophila;
+import com.cibr.animal.demo.entity.CibrSysTask;
 import com.cibr.animal.demo.entity.CibrSysUser;
 import com.cibr.animal.demo.service.CibrSysUserService;
 import com.cibr.animal.demo.service.PersonalService;
@@ -74,12 +75,12 @@ public class TaskController {
 
             Map<String, Object> result = new HashMap<String, Object>();
             HashMap<String,Object> postData = (HashMap<String, Object>) requestBody.get("postData");
-            List<CibrSysUser> selectedStudyDirector = (List<CibrSysUser>) postData.get("selectedStudyDirector");
+            List<String> selectedStudyDirector = (List<String>) postData.get("selectedStudyId");
             String purpose = (String) postData.get("purpose");
             String expectedTime = (String) postData.get("expectedTime");
             String operationProcess = (String) postData.get("operationProcess");
             String remarks = (String) postData.get("remarks");
-            Boolean urgent = (Boolean) postData.get("urgent");
+            String urgent = (String) postData.get("urgent");
             Map<String,Object> detailData = (Map<String, Object>) postData.get("detailData");
 
             taskService.createAskTask(user,selectedStudyDirector,purpose,expectedTime,operationProcess,remarks,urgent,detailData);
@@ -87,6 +88,29 @@ public class TaskController {
             ret.setCode("200");
             ret.setRetMap(result);
         }catch (Exception e){
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+    }
+
+    @RequestMapping("/task/gatAllTask")
+    public String getAllTask(HttpServletRequest request,
+                             HttpServletResponse response,
+                             @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            Integer currentPage = (Integer)requestBody.get("currentPage");
+            Integer pageSize = (Integer)requestBody.get("pageSize");
+
+            String token = request.getHeader("token");
+            CibrSysUser user =  JSON.parseObject(String.valueOf(redisUtil.get(token)),CibrSysUser.class);
+            Map<String, Object> allTask = taskService.findAllTask(currentPage, pageSize, user);
+            ret.setRetMap(allTask);
+            ret.setCode("200");
+        }
+        catch (Exception e){
             ret.setCode("E500");
             ret.setErrMsg("系统异常！");
             e.printStackTrace();

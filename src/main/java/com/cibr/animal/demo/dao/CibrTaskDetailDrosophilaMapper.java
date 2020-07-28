@@ -94,4 +94,6 @@ public interface CibrTaskDetailDrosophilaMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(CibrTaskDetailDrosophila record);
+
+    int batchInsert(List<CibrTaskDetailDrosophila> list);
 }

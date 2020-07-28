@@ -9,7 +9,6 @@ import com.cibr.animal.demo.service.EmailService;
 import com.cibr.animal.demo.service.RegisterService;
 import com.cibr.animal.demo.util.ReturnData;
 import com.cibr.animal.demo.util.TimeUtil;
-import com.cibr.animal.demo.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

@@ -5,6 +5,7 @@ import com.cibr.animal.demo.entity.CibrSysTaskExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CibrSysTaskMapper {
     /**
@@ -94,4 +95,6 @@ public interface CibrSysTaskMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(CibrSysTask record);
+
+    List<CibrSysTask> selectByLimit(@Param("condition") Map condition);
 }

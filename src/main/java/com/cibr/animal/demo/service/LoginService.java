@@ -13,12 +13,12 @@ import java.util.List;
 public class LoginService {
 
     @Autowired
-    private CibrSysUserMapper sysUserMapper;
+    private CibrSysUserMapper cibrSysUserMapper;
 
     public CibrSysUser findUser(String email){
         CibrSysUserExample example = new CibrSysUserExample();
         example.createCriteria().andEmailEqualTo(email);
-        List<CibrSysUser> cibrSysUsers = sysUserMapper.selectByExample(example);
+        List<CibrSysUser> cibrSysUsers = cibrSysUserMapper.selectByExample(example);
         if (cibrSysUsers == null || cibrSysUsers.size() == 0){
             return null;
         }else {
