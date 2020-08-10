@@ -7,7 +7,9 @@ import com.cibr.animal.demo.entity.*;
 import com.cibr.animal.demo.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.util.*;
 
 @Service
@@ -21,33 +23,6 @@ public class PersonalService {
 
     @Autowired
     CibrSysEnvironmentMapper environmentMapper;
-
-    public void stockAdd(String stockID, String genotype, String resource, String container,
-                         String number, String environmentId, CibrSysUser user) {
-        CibrAnimalDrosophila drosophila = new CibrAnimalDrosophila();
-        String droId = Util.getUUID();
-        drosophila.setId(droId);
-        drosophila.setCreatetime(new Date());
-        drosophila.setGenotype(genotype);
-        drosophila.setCreateuser(user.getId());
-        drosophila.setStockId(stockID);
-        drosophila.setName("果蝇");
-        drosophila.setResource(resource);
-        CibrStockDrosophila stockDrosophila = new CibrStockDrosophila();
-        stockDrosophila.setId(Util.getUUID());
-        stockDrosophila.setBirthday(new Date());
-        stockDrosophila.setContanernmuber(Integer.parseInt(number));
-        stockDrosophila.setContanertype(container);
-        stockDrosophila.setCreatetime(new Date());
-        stockDrosophila.setDrosophilaId(droId);
-        stockDrosophila.setCreateuser(user.getId());
-        stockDrosophila.setEnvironment(environmentId);
-        stockDrosophila.setRawnumber(Integer.parseInt(number));
-        stockDrosophila.setRawtype(container);
-        stockDrosophila.setUsagetype("保种");
-        animalDrosophilaMapper.insert(drosophila);
-        stockDrosophilaMapper.insert(stockDrosophila);
-    }
 
     public Map<String, Object> stockTable(int currentPage,int pageSize){
         Map<String, Object> retMap = new HashMap<String, Object>();
@@ -101,5 +76,34 @@ public class PersonalService {
         example.createCriteria().andGenotypeEqualTo(gentype);
         List<CibrAnimalDrosophila> cibrAnimalDrosophilas = animalDrosophilaMapper.selectByExample(example);
         return cibrAnimalDrosophilas;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void stockAdd(String animalName, String useType, String birthday, String location, String stockID, String genotype, String resource, String container, String number, String environmentId, CibrSysUser user) throws ParseException {
+        CibrAnimalDrosophila drosophila = new CibrAnimalDrosophila();
+        String droId = Util.getUUID();
+        drosophila.setId(droId);
+        drosophila.setCreatetime(new Date());
+        drosophila.setGenotype(genotype);
+        drosophila.setCreateuser(user.getId());
+        drosophila.setStockId(stockID);
+        drosophila.setName(animalName);
+        drosophila.setResource(resource);
+
+        CibrStockDrosophila stockDrosophila = new CibrStockDrosophila();
+        stockDrosophila.setId(Util.getUUID());
+        stockDrosophila.setBirthday(Util.str2date(birthday,"yyyy-MM-dd"));
+        stockDrosophila.setContanernmuber(Integer.parseInt(number));
+        stockDrosophila.setContanertype(container);
+        stockDrosophila.setCreatetime(new Date());
+        stockDrosophila.setDrosophilaId(droId);
+        stockDrosophila.setCreateuser(user.getId());
+        stockDrosophila.setEnvironment(environmentId);
+        stockDrosophila.setRawnumber(Integer.parseInt(number));
+        stockDrosophila.setRawtype(container);
+        stockDrosophila.setUsagetype(useType);
+        stockDrosophila.setLocation(location);
+        animalDrosophilaMapper.insert(drosophila);
+        stockDrosophilaMapper.insert(stockDrosophila);
     }
 }

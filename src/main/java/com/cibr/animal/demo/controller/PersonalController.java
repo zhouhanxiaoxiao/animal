@@ -58,13 +58,23 @@ public class PersonalController {
         try {
             String token = request.getHeader("token");
             CibrSysUser user =  JSON.parseObject(String.valueOf(redisUtil.get(token)),CibrSysUser.class) ;
+            String animalName = (String) requestBody.get("animalName");
+            String useType = (String) requestBody.get("useType");
+            String birthday = (String) requestBody.get("birthday");
+            String location = (String) requestBody.get("location");
             String stockID = (String) requestBody.get("stockID");
             String genotype =(String)  requestBody.get("genotype");
             String resource =(String)  requestBody.get("resource");
             String container =(String)  requestBody.get("container");
-            String number = (String)  requestBody.get("number");
+            String number = "";
+            try {
+                number = (String)  requestBody.get("number");
+            }catch (Exception e){
+                number = String.valueOf((Integer) requestBody.get("number"));
+            }
             String environmentId = (String) requestBody.get("environmentId");
-            personalService.stockAdd(stockID,genotype,resource,container,number,environmentId,user);
+            personalService.stockAdd(animalName,useType,birthday,location,
+                    stockID,genotype,resource,container,number,environmentId,user);
             ret.setCode("200");
         }catch (Exception e){
             ret.setCode("E500");

@@ -1,9 +1,8 @@
 package com.cibr.animal.demo.service;
 
-import com.cibr.animal.demo.dao.CibrSysTaskMapper;
-import com.cibr.animal.demo.dao.CibrSysUserMapper;
-import com.cibr.animal.demo.dao.CibrSysVerificationMapper;
+import com.cibr.animal.demo.dao.*;
 import com.cibr.animal.demo.entity.*;
+import com.cibr.animal.demo.util.TaskUtil;
 import com.cibr.animal.demo.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +26,12 @@ public class RegisterService {
 
     @Autowired
     CibrSysTaskMapper taskMapper;
+
+    @Autowired
+    CibrSysRoleMapper roleMapper;
+
+    @Autowired
+    CibrSysUserRoleMapper userRoleMapper;
     /**
      * 发送验证码邮件
      * @param registerEmail
@@ -82,19 +87,25 @@ public class RegisterService {
         user.setPassword(registerPwd);
         user.setEmail(registerEmail);
         user.setRoleid("9");
+        user.setCreatetime(new Date());
         //TO-DO 权限设置 发送邮件给管理员
         CibrSysTask task = new CibrSysTask();
         task.setId(Util.getUUID());
         task.setCreatetime(new Date());
         task.setCreateuser(userId);
 
-        CibrSysUserExample example = new CibrSysUserExample();
-        example.createCriteria().andRoleidEqualTo("0");
-        List<CibrSysUser> cibrSysUsers = userMapper.selectByExample(example);
-        CibrSysUser adminer = cibrSysUsers.get(0);
+        CibrSysRoleExample roleExample = new CibrSysRoleExample();
+        roleExample.createCriteria().andRoletypeEqualTo("999999");
+        List<CibrSysRole> cibrSysRoles = roleMapper.selectByExample(roleExample);
+
+        CibrSysUserRoleExample userRoleExample = new CibrSysUserRoleExample();
+        userRoleExample.createCriteria().andRoleidEqualTo(cibrSysRoles.get(0).getId());
+        List<CibrSysUserRole> cibrSysUserRoles = userRoleMapper.selectByExample(userRoleExample);
+
+        CibrSysUser adminer = userMapper.selectByPrimaryKey(cibrSysUserRoles.get(0).getUserid());
 
         task.setCurrentuser(adminer.getId());
-        task.setTaskstatu("0");
+        task.setTaskstatu(TaskUtil.ASK_TASK_STATU_TODO);
         task.setTasktype("01");
         taskMapper.insert(task);
         /*给管理员发送邮件提醒*/
@@ -107,7 +118,6 @@ public class RegisterService {
         emailMsg = "非常感谢，您的注册申请已收到。请耐心等待管理员审核，稍后将给您发送审核结果邮件，请注意查收。";
         CibrSysEmail userEmail = emailService.createCibrSysEmail(registerEmail, emailMsg, Util.USER_CREATE);
         emailService.sendMail(userEmail);
-
         userMapper.insert(user);
     }
 }

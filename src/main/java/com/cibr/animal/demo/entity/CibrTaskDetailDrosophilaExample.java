@@ -395,6 +395,136 @@ public class CibrTaskDetailDrosophilaExample {
             return (Criteria) this;
         }
 
+        public Criteria andExpectedtimeIsNull() {
+            addCriterion("expectedTime is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpectedtimeIsNotNull() {
+            addCriterion("expectedTime is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpectedtimeEqualTo(Date value) {
+            addCriterion("expectedTime =", value, "expectedtime");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpectedtimeNotEqualTo(Date value) {
+            addCriterion("expectedTime <>", value, "expectedtime");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpectedtimeGreaterThan(Date value) {
+            addCriterion("expectedTime >", value, "expectedtime");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpectedtimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("expectedTime >=", value, "expectedtime");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpectedtimeLessThan(Date value) {
+            addCriterion("expectedTime <", value, "expectedtime");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpectedtimeLessThanOrEqualTo(Date value) {
+            addCriterion("expectedTime <=", value, "expectedtime");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpectedtimeIn(List<Date> values) {
+            addCriterion("expectedTime in", values, "expectedtime");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpectedtimeNotIn(List<Date> values) {
+            addCriterion("expectedTime not in", values, "expectedtime");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpectedtimeBetween(Date value1, Date value2) {
+            addCriterion("expectedTime between", value1, value2, "expectedtime");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpectedtimeNotBetween(Date value1, Date value2) {
+            addCriterion("expectedTime not between", value1, value2, "expectedtime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationprocessIsNull() {
+            addCriterion("operationProcess is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationprocessIsNotNull() {
+            addCriterion("operationProcess is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationprocessEqualTo(String value) {
+            addCriterion("operationProcess =", value, "operationprocess");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationprocessNotEqualTo(String value) {
+            addCriterion("operationProcess <>", value, "operationprocess");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationprocessGreaterThan(String value) {
+            addCriterion("operationProcess >", value, "operationprocess");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationprocessGreaterThanOrEqualTo(String value) {
+            addCriterion("operationProcess >=", value, "operationprocess");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationprocessLessThan(String value) {
+            addCriterion("operationProcess <", value, "operationprocess");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationprocessLessThanOrEqualTo(String value) {
+            addCriterion("operationProcess <=", value, "operationprocess");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationprocessLike(String value) {
+            addCriterion("operationProcess like", value, "operationprocess");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationprocessNotLike(String value) {
+            addCriterion("operationProcess not like", value, "operationprocess");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationprocessIn(List<String> values) {
+            addCriterion("operationProcess in", values, "operationprocess");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationprocessNotIn(List<String> values) {
+            addCriterion("operationProcess not in", values, "operationprocess");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationprocessBetween(String value1, String value2) {
+            addCriterion("operationProcess between", value1, value2, "operationprocess");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationprocessNotBetween(String value1, String value2) {
+            addCriterion("operationProcess not between", value1, value2, "operationprocess");
+            return (Criteria) this;
+        }
+
         public Criteria andStockidIsNull() {
             addCriterion("stockid is null");
             return (Criteria) this;
@@ -1162,6 +1292,76 @@ public class CibrTaskDetailDrosophilaExample {
 
         public Criteria andOrdernumberNotBetween(String value1, String value2) {
             addCriterion("orderNumber not between", value1, value2, "ordernumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfirmstatuIsNull() {
+            addCriterion("confirmStatu is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfirmstatuIsNotNull() {
+            addCriterion("confirmStatu is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfirmstatuEqualTo(String value) {
+            addCriterion("confirmStatu =", value, "confirmstatu");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfirmstatuNotEqualTo(String value) {
+            addCriterion("confirmStatu <>", value, "confirmstatu");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfirmstatuGreaterThan(String value) {
+            addCriterion("confirmStatu >", value, "confirmstatu");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfirmstatuGreaterThanOrEqualTo(String value) {
+            addCriterion("confirmStatu >=", value, "confirmstatu");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfirmstatuLessThan(String value) {
+            addCriterion("confirmStatu <", value, "confirmstatu");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfirmstatuLessThanOrEqualTo(String value) {
+            addCriterion("confirmStatu <=", value, "confirmstatu");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfirmstatuLike(String value) {
+            addCriterion("confirmStatu like", value, "confirmstatu");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfirmstatuNotLike(String value) {
+            addCriterion("confirmStatu not like", value, "confirmstatu");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfirmstatuIn(List<String> values) {
+            addCriterion("confirmStatu in", values, "confirmstatu");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfirmstatuNotIn(List<String> values) {
+            addCriterion("confirmStatu not in", values, "confirmstatu");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfirmstatuBetween(String value1, String value2) {
+            addCriterion("confirmStatu between", value1, value2, "confirmstatu");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfirmstatuNotBetween(String value1, String value2) {
+            addCriterion("confirmStatu not between", value1, value2, "confirmstatu");
             return (Criteria) this;
         }
     }

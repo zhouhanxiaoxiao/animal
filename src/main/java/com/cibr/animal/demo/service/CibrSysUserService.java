@@ -1,11 +1,13 @@
 package com.cibr.animal.demo.service;
 
+import com.cibr.animal.demo.dao.CibrSysRoleMapper;
 import com.cibr.animal.demo.dao.CibrSysUserMapper;
-import com.cibr.animal.demo.entity.CibrSysUser;
-import com.cibr.animal.demo.entity.CibrSysUserExample;
+import com.cibr.animal.demo.dao.CibrSysUserRoleMapper;
+import com.cibr.animal.demo.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -14,6 +16,12 @@ public class CibrSysUserService {
     @Autowired
     CibrSysUserMapper userMapper;
 
+    @Autowired
+    CibrSysRoleMapper roleMapper;
+
+    @Autowired
+    CibrSysUserRoleMapper userRoleMapper;
+
     public List<CibrSysUser> findUserByEmail(String email){
         CibrSysUserExample userExample = new CibrSysUserExample();
         userExample.createCriteria().andEmailEqualTo(email);
@@ -21,8 +29,21 @@ public class CibrSysUserService {
     }
 
     public List<CibrSysUser> findUserByRole(String roleType){
+        CibrSysRoleExample roleExample = new CibrSysRoleExample();
+        roleExample.createCriteria().andRoletypeEqualTo(roleType);
+        List<CibrSysRole> cibrSysRoles = roleMapper.selectByExample(roleExample);
+
+        CibrSysUserRoleExample userRoleExample = new CibrSysUserRoleExample();
+        userRoleExample.createCriteria().andRoleidEqualTo(cibrSysRoles.get(0).getId());
+        List<CibrSysUserRole> cibrSysUserRoles = userRoleMapper.selectByExample(userRoleExample);
+        List<String> userIds = new ArrayList<String>();
+
+        for (CibrSysUserRole userRole : cibrSysUserRoles){
+            userIds.add(userRole.getUserid());
+        }
+
         CibrSysUserExample example = new CibrSysUserExample();
-        example.createCriteria().andRoleidEqualTo("1").andUserstatuEqualTo("2");
+        example.createCriteria().andIdIn(userIds);
         return userMapper.selectByExample(example);
     }
 }
