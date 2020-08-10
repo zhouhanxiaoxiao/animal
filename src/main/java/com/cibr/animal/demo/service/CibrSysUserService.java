@@ -38,6 +38,10 @@ public class CibrSysUserService {
         List<CibrSysUserRole> cibrSysUserRoles = userRoleMapper.selectByExample(userRoleExample);
         List<String> userIds = new ArrayList<String>();
 
+        if (cibrSysUserRoles == null || cibrSysUserRoles.size() == 0){
+            return new ArrayList<>();
+        }
+
         for (CibrSysUserRole userRole : cibrSysUserRoles){
             userIds.add(userRole.getUserid());
         }

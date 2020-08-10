@@ -265,6 +265,7 @@ public class TaskController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
+        System.out.println(JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect));
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
     }
 
