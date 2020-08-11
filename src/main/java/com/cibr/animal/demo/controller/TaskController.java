@@ -49,9 +49,11 @@ public class TaskController {
             Map<String, Object> retMap = personalService.stockTable(0, 0);
             List<Map<String, Object>> stockTable = taskService.getTaskStock(stockIds, (List<Map<String, Object>>) retMap.get("stockTable"));
             List<CibrSysUser> userByRole = userService.findUserByRole("01");
+            List<CibrSysUser> supporters = userService.findUserByRole("02");
             List<CibrAnimalDrosophila> allDrosophila = taskService.findAllDrosophila();
             result.put("stockTable", stockTable);
             result.put("researchers", userByRole);
+            result.put("supporters", supporters);
             result.put("allDrosophila", allDrosophila);
             ret.setCode("200");
             ret.setRetMap(result);
@@ -78,9 +80,10 @@ public class TaskController {
             List<String> selectedStudyDirector = (List<String>) postData.get("selectedStudyId");
             String remarks = (String) postData.get("remarks");
             String urgent = (String) postData.get("urgent");
+            String supporter = (String) postData.get("supporter");
             Map<String, Object> detailData = (Map<String, Object>) postData.get("detailData");
 
-            taskService.createAskTask(user, selectedStudyDirector, remarks, urgent, detailData);
+            taskService.createAskTask(supporter,user, selectedStudyDirector, remarks, urgent, detailData);
 
             ret.setCode("200");
             ret.setRetMap(result);
@@ -313,4 +316,5 @@ public class TaskController {
         }
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
     }
+
 }

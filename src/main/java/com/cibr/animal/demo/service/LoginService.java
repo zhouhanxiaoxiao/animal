@@ -46,4 +46,10 @@ public class LoginService {
         List<CibrSysRole> cibrSysRoles = roleMapper.selectByExample(roleExample);
         return cibrSysRoles;
     }
+
+    public List<CibrSysUser> findAllUsers(){
+        CibrSysUserExample userExample = new CibrSysUserExample();
+        List<CibrSysUser> cibrSysUsers = cibrSysUserMapper.selectByExample(userExample);
+        return cibrSysUsers;
+    }
 }

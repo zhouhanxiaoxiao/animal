@@ -77,7 +77,7 @@ public class TaskService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void createAskTask(CibrSysUser user, List<String> selectedStudyDirector, String remarks, String urgent,
+    public void createAskTask(String supporter,CibrSysUser user, List<String> selectedStudyDirector, String remarks, String urgent,
                               Map<String, Object> detailData) throws ParseException {
         /*任务表*/
         CibrSysTask task = new CibrSysTask();
@@ -85,8 +85,7 @@ public class TaskService {
         task.setId(taskId);
         task.setTasktype(TaskUtil.ASK_TASK);
         task.setTaskstatu(TaskUtil.TASK_STATU_TODO);
-        CibrSysUser handler = getHandler(TaskUtil.ASK_TASK);
-        task.setCurrentuser(handler.getId());
+        task.setCurrentuser(supporter);
         task.setCreateuser(user.getId());
         task.setCreatetime(new Date());
         task.setHandletime(new Date());
@@ -95,7 +94,7 @@ public class TaskService {
         CibrTaskAskDrosophila askDrosophila = new CibrTaskAskDrosophila();
         String askId = Util.getUUID();
         askDrosophila.setId(askId);
-        askDrosophila.setCurrenthandler(handler.getId());
+        askDrosophila.setCurrenthandler(supporter);
         askDrosophila.setCreater(user.getId());
         askDrosophila.setCreatetime(new Date());
         askDrosophila.setCurrentstatu(TaskUtil.ASK_TASK_STATU_UNDO);
@@ -158,13 +157,20 @@ public class TaskService {
         map.put("creater",user.getName());
         map.put("urgent",urgent);
         String context = Util.getAskTaskTemplate(map);
-        emailService.simpleSendEmail(context,handler.getEmail(),Util.EMAIL_SUB_ASKTASK);
+        CibrSysUser supper = userMapper.selectByPrimaryKey(supporter);
+        emailService.simpleSendEmail(context,supper.getEmail(),Util.EMAIL_SUB_ASKTASK);
     }
 
     public CibrSysUser getHandler(String taskType){
         CibrSysUser handler = null;
         /*果蝇使用申请任务，获取果蝇饲养员userId*/
         if (TaskUtil.ASK_TASK.equals(taskType)){
+            CibrSysRoleExample roleExample = new CibrSysRoleExample();
+            roleExample.createCriteria().andRoletypeEqualTo("02");
+            List<CibrSysRole> roles = roleMapper.selectByExample(roleExample);
+            CibrSysUserRoleExample userRoleExample = new CibrSysUserRoleExample();
+            userRoleExample.createCriteria().andRoleidEqualTo(roles.get(0).getId());
+
             CibrSysUserExample userExample = new CibrSysUserExample();
             userExample.createCriteria().andRoleidEqualTo("2");
             List<CibrSysUser> cibrSysUsers = userMapper.selectByExample(userExample);

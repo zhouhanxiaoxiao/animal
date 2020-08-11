@@ -34,7 +34,7 @@ public class Util {
      */
     public static String getAskTaskTemplate(Map<String,Object> map){
         String msg = EMAIL_PREFIX + "您有一个【申请使用任务】待处理，申请人【" + String.valueOf(map.get("creater"))
-                + "】，预计实验时间【" + String.valueOf(map.get("expectedTime")) + "】";
+                + "】";
         if ("1".equals(String.valueOf(map.get("urgent")))){
             msg += ",任务申请【！！！加急！！！】";
         }
