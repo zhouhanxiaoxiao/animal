@@ -33,6 +33,7 @@ public class ProcessController {
             CibrTaskProcess process = processTaskService.getPorcessById(processId);
             Map<String,Object> retMap = new HashMap<>();
             retMap.put("process",process);
+            ret.setRetMap(retMap);
             ret.setCode("200");
         }catch (Exception e) {
             ret.setCode("E500");
