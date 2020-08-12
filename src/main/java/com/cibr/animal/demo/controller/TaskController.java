@@ -121,6 +121,7 @@ public class TaskController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
     }
 
+
     @RequestMapping("/task/askTaskDetail")
     public String askTaskDetail(HttpServletRequest request,
                                 HttpServletResponse response,
