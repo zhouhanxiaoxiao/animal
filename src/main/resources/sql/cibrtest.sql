@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50729
 File Encoding         : 65001
 
-Date: 2020-08-11 16:45:01
+Date: 2020-08-12 16:52:06
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -185,6 +185,7 @@ INSERT INTO `cibr_sys_email` VALUES ('6d7d995e45fb431f846d410f31ac5e49', 'zhouha
 INSERT INTO `cibr_sys_email` VALUES ('6e3c3638c4a54ec38728c77e735f1111', 'zhouhan@cibr.ac.cn', 'sdf@cibr.ac.cn', '验证码', '【北京脑科学与类脑研究中心】验证码是：242006，有效期为1小时，欢迎您使用资源管理平台！', '2020-07-17 06:07:15', null, null, 'fail', 'Failed messages: javax.mail.SendFailedException: Invalid Addresses;\n  nested exception is:\n	com.sun.mail.smtp.SMTPAddressFailedException: 554 RCPT (sdf@cibr.ac.cn) dosn\'t exist');
 INSERT INTO `cibr_sys_email` VALUES ('6ecd172221ad40668ec2b3b757f33dcb', 'zhouhan@cibr.ac.cn', 'sdf@cibr.ac.cn', '验证码', '【北京脑科学与类脑研究中心】验证码是：950337，有效期为1小时，欢迎您使用资源管理平台！', '2020-07-17 06:09:55', null, null, 'fail', '邮箱地址不存在！');
 INSERT INTO `cibr_sys_email` VALUES ('6fa8b281333c41679753f678d31021b3', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【申请使用任务】待处理，申请人【周晗】，预计实验时间【null】,任务申请【！！！加急！！！】，请及时处理。\n\n\n感谢您使用资源管理平台！', '2020-08-02 09:56:46', null, null, 'ok', null);
+INSERT INTO `cibr_sys_email` VALUES ('70d0ad41bd714cb7baff6bb2ef8f6159', 'zhouhan@cibr.ac.cn', 'zhouhan@cibr.ac.cn', '流程管理任务', '【北京脑科学与类脑研究中心】\n\n	您有一个【流程管理任务】待处理，请及时查看！\n如有疑问，请联系【zhouhan@cibr.ac.cn】\n\n\n感谢您使用资源管理平台！', '2020-08-12 02:57:47', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('71fea3ee192742a080408fc8abeef181', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '用户账号申请', '非常感谢，您的注册申请已收到。请耐心等待管理员审核，稍后将给您发送审核结果邮件，请注意查收。', '2020-07-24 01:29:30', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('7400f39384254510aa20c177fc13df69', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【申请使用任务】待处理，申请人【周晗】，预计实验时间【null】,任务申请【！！！加急！！！】，请及时处理。\n\n\n感谢您使用资源管理平台！', '2020-08-02 10:02:49', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('76a0246e19384f1c993e6894c0b3c7c7', 'zhouhan@cibr.ac.cn', '981436939', '验证码', '【北京脑科学与类脑研究中心】验证码是：944943，有效期为1小时，欢迎您使用辅助平台！', '2020-07-08 08:03:31', null, null, 'fail', '邮件发送失败：Failed messages: javax.mail.SendFailedException: Invalid Addresses;\n  nested exception is:\n	com.sun.mail.smtp.SMTPAddressFailedException: 500 Error: bad syntax');
@@ -235,6 +236,7 @@ INSERT INTO `cibr_sys_email` VALUES ('eb523a6470814bda9b279521e3897a57', 'zhouha
 INSERT INTO `cibr_sys_email` VALUES ('eeaf6a92d5c14099b8674ec685fbb315', 'zhouhan@cibr.ac.cn', 'asdf@cibr.ac.cn', '验证码', '【北京脑科学与类脑研究中心】验证码是：778940，有效期为1小时，欢迎您使用资源管理平台！', '2020-07-17 06:11:46', null, null, 'fail', '邮箱地址不存在！');
 INSERT INTO `cibr_sys_email` VALUES ('f00729ad3a5e4118ac1e3f3ce628f535', 'zhouhan@cibr.ac.cn', 'zhouhan@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【果蝇使用申请任务】已处理，其中：\n成功【0】条，拒绝【3】条。\n请及时查看！如有疑问，请联系【zhouhan@cibr.ac.cn】\n\n\n感谢您使用资源管理平台！', '2020-08-04 09:06:23', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('f0489d246cf74c47a02f76ad15ea592e', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【申请使用任务】待处理，申请人【周晗】，预计实验时间【null】,任务申请【！！！加急！！！】，请及时处理。\n\n\n感谢您使用资源管理平台！', '2020-08-11 03:14:12', null, null, 'ok', null);
+INSERT INTO `cibr_sys_email` VALUES ('f5ecdabae6ec44359fba2f45552ff1f6', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '流程管理任务', '【北京脑科学与类脑研究中心】\n\n	您有一个【流程管理任务】待处理，请及时查看！\n如有疑问，请联系【zhouhan@cibr.ac.cn】\n\n\n感谢您使用资源管理平台！', '2020-08-12 02:57:48', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('fb0f3b88acbd4b1784c04631b670fc9c', 'zhouhan@cibr.ac.cn', 'sdf@cibr.ac.cn', '验证码', '【北京脑科学与类脑研究中心】验证码是：636576，有效期为1小时，欢迎您使用资源管理平台！', '2020-07-17 06:09:04', null, null, 'fail', 'Failed messages: javax.mail.SendFailedException: Invalid Addresses;\n  nested exception is:\n	com.sun.mail.smtp.SMTPAddressFailedException: 554 RCPT (sdf@cibr.ac.cn) dosn\'t exist');
 INSERT INTO `cibr_sys_email` VALUES ('fccb0624c7c24a0d972d053f1f04b5b2', 'zhouhan@cibr.ac.cn', 'zhouhan@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【果蝇使用申请任务】已处理，其中：\n成功【1】条，拒绝【0】条。\n请及时查看！如有疑问，请联系【zhouhan@cibr.ac.cn】\n\n\n感谢您使用资源管理平台！', '2020-08-06 09:52:39', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('fd13e0cee4c64d87b557ac433d3d42e9', 'zhouhan@cibr.ac.cn', '981436939@qq.com', '验证码', '【北京脑科学与类脑研究中心】验证码是：270010，有效期为1小时，欢迎您使用辅助平台！', '2020-07-08 08:00:17', null, null, 'ok', null);
@@ -303,6 +305,7 @@ CREATE TABLE `cibr_sys_task` (
 -- ----------------------------
 INSERT INTO `cibr_sys_task` VALUES ('33ba3ad0e7f942c8aac38ab1dc952bd2', '02', '2020-08-11 03:13:56', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-11 03:13:56', null);
 INSERT INTO `cibr_sys_task` VALUES ('453337438c9341929c4b6a8b73268411', '02', '2020-08-11 03:18:25', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-11 03:18:25', null);
+INSERT INTO `cibr_sys_task` VALUES ('633f5f2e6a87404cbb698b7416199741', '03', '2020-08-12 02:57:47', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', null, null);
 INSERT INTO `cibr_sys_task` VALUES ('ca9487f95e6f4e93ace9c9c33367d0d4', '02', '2020-08-11 03:16:21', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-11 03:16:21', null);
 INSERT INTO `cibr_sys_task` VALUES ('cb27f3ce6bee425cb846168a4ecea58e', '02', '2020-08-11 03:14:12', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-11 03:14:12', null);
 INSERT INTO `cibr_sys_task` VALUES ('f0e1b0bc922f467b8caf4fcc1dce4f64', '01', '2020-08-10 08:22:46', '53dc21f8cc214c11a13ca57fa27f3146', '02', '24f5851abc6444e79be718325025126f', '2020-08-11 03:08:51', null);
@@ -336,6 +339,7 @@ INSERT INTO `cibr_sys_task_business` VALUES ('52234455ecff40bcae531854f81dfa32',
 INSERT INTO `cibr_sys_task_business` VALUES ('6e8facb78182452197e1e4e80387cccc', '33ba3ad0e7f942c8aac38ab1dc952bd2', '24f5851abc6444e79be718325025126f', '00', '01', '2020-08-11 03:13:56', '创建');
 INSERT INTO `cibr_sys_task_business` VALUES ('7a38904a92e946c991d42cb2b6627b61', '3b0a1f1aa7704f3bb667e34c6c4d8eca', '5646848a54754bbe833eba1c681cbe02', '00', '01', '2020-08-02 09:22:04', '创建');
 INSERT INTO `cibr_sys_task_business` VALUES ('7b3bfac6b8be4cc68c653435e2492e16', 'cb27f3ce6bee425cb846168a4ecea58e', '24f5851abc6444e79be718325025126f', '00', '01', '2020-08-11 03:14:12', '创建');
+INSERT INTO `cibr_sys_task_business` VALUES ('9bd5b996c89f4d1987ba34b95425dfa4', '633f5f2e6a87404cbb698b7416199741', '24f5851abc6444e79be718325025126f', '01', '01', '2020-08-12 02:57:47', '创建流程管理任务');
 INSERT INTO `cibr_sys_task_business` VALUES ('b4afabdae49842e297f6b975aabcf458', 'f0e1b0bc922f467b8caf4fcc1dce4f64', '24f5851abc6444e79be718325025126f', '01', '02', '2020-08-11 03:08:51', '同意注册');
 INSERT INTO `cibr_sys_task_business` VALUES ('b682b15300614d3ea157b8ba0aa43049', '05031e48adcb42a19966a59963f6ab81', '5646848a54754bbe833eba1c681cbe02', '00', '01', '2020-08-02 10:02:49', '创建');
 INSERT INTO `cibr_sys_task_business` VALUES ('b7a6d3eeecb34e2dbd6cf5fb86698ba1', '7f07103e0a9f49dfa1e5e8c4b89a7048', '5646848a54754bbe833eba1c681cbe02', '00', '01', '2020-08-06 10:16:48', '创建');
@@ -651,11 +655,15 @@ CREATE TABLE `cibr_task_process` (
   `projectName` varchar(1000) DEFAULT NULL,
   `dataType` varchar(255) DEFAULT NULL,
   `principal` varchar(32) DEFAULT NULL,
-  `sampleType` varchar(2) DEFAULT NULL,
+  `sampleType` varchar(2) DEFAULT NULL COMMENT '01 核酸  02 组织  03 细胞',
   `samplePreparation` varchar(32) DEFAULT NULL,
+  `spupdateTime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `libraryPreparation` varchar(32) DEFAULT NULL,
+  `lpupdateTime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `dismountData` varchar(255) DEFAULT NULL,
+  `ddupdateTime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `bioinformaticsAnalysis` varchar(255) DEFAULT NULL,
+  `baupdateTime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `remarks` varchar(5000) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -663,3 +671,20 @@ CREATE TABLE `cibr_task_process` (
 -- ----------------------------
 -- Records of cibr_task_process
 -- ----------------------------
+INSERT INTO `cibr_task_process` VALUES ('8531d260f45e44ce9fd4b46e3081e1b0', '633f5f2e6a87404cbb698b7416199741', '24f5851abc6444e79be718325025126f', '2020-08-12 11:40:29', '01', '撒旦法师打发', '发', '53dc21f8cc214c11a13ca57fa27f3146', '02', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-12 11:40:29', '24f5851abc6444e79be718325025126f', '2020-08-12 11:40:29', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-12 11:40:29', '24f5851abc6444e79be718325025126f', '2020-08-12 11:40:29', '阿萨德饭');
+
+-- ----------------------------
+-- Table structure for cibr_task_process_email
+-- ----------------------------
+DROP TABLE IF EXISTS `cibr_task_process_email`;
+CREATE TABLE `cibr_task_process_email` (
+  `processId` varchar(32) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  PRIMARY KEY (`processId`,`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of cibr_task_process_email
+-- ----------------------------
+INSERT INTO `cibr_task_process_email` VALUES ('8531d260f45e44ce9fd4b46e3081e1b0', 'fengshuangshuang@cibr.ac.cn');
+INSERT INTO `cibr_task_process_email` VALUES ('8531d260f45e44ce9fd4b46e3081e1b0', 'zhouhan@cibr.ac.cn');
