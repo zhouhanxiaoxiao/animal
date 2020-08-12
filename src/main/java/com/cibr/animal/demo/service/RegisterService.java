@@ -106,7 +106,7 @@ public class RegisterService {
 
         task.setCurrentuser(adminer.getId());
         task.setTaskstatu(TaskUtil.ASK_TASK_STATU_TODO);
-        task.setTasktype("01");
+        task.setTasktype(TaskUtil.REGISTER_TASK);
         taskMapper.insert(task);
         /*给管理员发送邮件提醒*/
         String emailMsg = Util.EMAIL_PREFIX +

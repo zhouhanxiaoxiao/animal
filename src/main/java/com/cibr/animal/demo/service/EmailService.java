@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class EmailService{
@@ -123,5 +124,12 @@ public class EmailService{
     public void simpleSendEmail(String context,String addr,String sub){
         CibrSysEmail cibrSysEmail = createCibrSysEmail(addr, context, sub);
         sendMail(cibrSysEmail);
+    }
+
+    public void simpleSendEmail(String context, List<String> addrs, String sub){
+        for (String addr : addrs){
+            CibrSysEmail cibrSysEmail = createCibrSysEmail(addr, context, sub);
+            sendMail(cibrSysEmail);
+        }
     }
 }

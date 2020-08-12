@@ -3,18 +3,23 @@ package com.cibr.animal.demo.util;
 public class TaskUtil {
 
     /*cibr_sys_task 任务类型*/
+    /**任务类型：注册申请*/
+    public static final String REGISTER_TASK = "01";
     /**任务类型：申请使用任务*/
     public static final String ASK_TASK = "02";
+    /**任务类型：流程管理任务*/
+    public static final String PROCESS_TASK = "03";
+
+
 
     /*任务名称*/
     public static final String ASK_TASK_DROSOPHILA = "果蝇使用申请任务";
     public static final String TASK_CREATE_USER = "用户注册任务";
+    public static final String TASK_PROCESS = "流程管理任务";
 
     /**
      * _task_ 任务状态
      */
-    /**任务状态：执行中*/
-    public static final String TASK_STATU_UNDO = "00";
     /**任务状态：执行中*/
     public static final String TASK_STATU_TODO = "01";
     /**任务状态：成功*/
@@ -42,4 +47,6 @@ public class TaskUtil {
     /**任务状态：饲养员拒绝*/
     public static final String ASK_TASK_STATU_FAIL = "09";
 
+    /**任务状态：样品制备*/
+    public static final String PROCESS_TASK_STATU_SP = "01";
 }

@@ -50,4 +50,13 @@ public class CibrSysUserService {
         example.createCriteria().andIdIn(userIds);
         return userMapper.selectByExample(example);
     }
+
+    public List<CibrSysUser> findUserByIds(List<String> userids){
+        if (userids == null || userids.size() == 0){
+            return new ArrayList<>();
+        }
+        CibrSysUserExample userExample = new CibrSysUserExample();
+        userExample.createCriteria().andIdIn(userids);
+        return userMapper.selectByExample(userExample);
+    }
 }

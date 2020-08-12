@@ -58,6 +58,15 @@ public class TaskService {
     @Autowired
     CibrSysUserRoleMapper userRoleMapper;
 
+    @Autowired
+    CibrTaskProcessMapper processMapper;
+
+    @Autowired
+    CibrTaskProcessEmailMapper processEmailMapper;
+
+    @Autowired
+    ProcessTaskService processTaskService;
+
     public List<Map<String, Object>> getTaskStock(List<String> stockIds, List<Map<String, Object>> stockTable) {
         List<Map<String, Object>> retList = new ArrayList<Map<String, Object>>();
         for(Map<String, Object> tmp : stockTable){
@@ -89,6 +98,7 @@ public class TaskService {
         task.setCreateuser(user.getId());
         task.setCreatetime(new Date());
         task.setHandletime(new Date());
+        task.setTaskdesc(remarks);
         taskMapper.insert(task);
         /*申请任务表*/
         CibrTaskAskDrosophila askDrosophila = new CibrTaskAskDrosophila();
@@ -203,22 +213,35 @@ public class TaskService {
         for (CibrSysTask task: cibrSysTasks) {
             taskids.add(task.getId());
         }
+
         List<CibrTaskAskDrosophila> cibrTaskAskDrosophilas = new ArrayList<>();
         if (cibrSysTasks != null && cibrSysTasks.size()>0){
             CibrTaskAskDrosophilaExample drosophilaExample = new CibrTaskAskDrosophilaExample();
             drosophilaExample.createCriteria().andTaskidIn(taskids);
             cibrTaskAskDrosophilas = askDrosophilaMapper.selectByExample(drosophilaExample);
         }
+
+        Map<String,CibrTaskAskDrosophila> uuid_ask = new HashMap<>();
+        for (CibrTaskAskDrosophila ask : cibrTaskAskDrosophilas){
+            uuid_ask.put(ask.getTaskid(),ask);
+        }
+
+        Map<String,CibrTaskProcess> uuid_process = new HashMap<>();
+        List<CibrTaskProcess> allPorcess = processTaskService.findAllPorcess();
+        for (CibrTaskProcess process : allPorcess){
+            uuid_process.put(process.getTaskid(),process);
+        }
+
         List<Map<String,Object>> retList = new ArrayList<>();
         /*组合数据*/
         for (CibrSysTask task: cibrSysTasks){
             Map<String,Object> ret = new HashMap<>();
             ret.put("task",task);
-            for (CibrTaskAskDrosophila ask : cibrTaskAskDrosophilas){
-                if (task.getId().equals(ask.getTaskid())){
-                    ret.put("ask",ask);
-                    break;
-                }
+            if (uuid_ask.get(task.getId()) != null){
+                ret.put("ask",uuid_ask.get(task.getId()));
+            }
+            if (uuid_process.get(task.getId()) != null){
+                ret.put("process",uuid_process.get(task.getId()));
             }
             ret.put("creater",userid_user.get(task.getCreateuser()));
             retList.add(ret);
@@ -717,6 +740,8 @@ public class TaskService {
         contex.append(Util.EMAIL_SUFFIX);
         emailService.simpleSendEmail(contex.toString(),cibrSysUser.getEmail(),Util.USER_CREATE);
     }
+
+
 }
 
 

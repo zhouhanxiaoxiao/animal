@@ -7,6 +7,7 @@ import com.cibr.animal.demo.entity.CibrSysTask;
 import com.cibr.animal.demo.entity.CibrSysUser;
 import com.cibr.animal.demo.service.CibrSysUserService;
 import com.cibr.animal.demo.service.PersonalService;
+import com.cibr.animal.demo.service.ProcessTaskService;
 import com.cibr.animal.demo.service.TaskService;
 import com.cibr.animal.demo.util.RedisUtil;
 import com.cibr.animal.demo.util.ReturnData;
@@ -36,6 +37,9 @@ public class TaskController {
 
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private ProcessTaskService processTaskService;
 
 
     @RequestMapping("/orderTask/init")
@@ -307,6 +311,38 @@ public class TaskController {
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
 
             taskService.allowCreateUser(roles,taskId,user);
+
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+    }
+
+    @RequestMapping("/task/addProcess")
+    public String addProcess(HttpServletRequest request,
+                              HttpServletResponse response,
+                              @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String projectName = (String) requestBody.get("projectName");
+            String dataType = (String) requestBody.get("dataType");
+            String principal = (String) requestBody.get("principal");
+            List<String> emails = (List<String>) requestBody.get("emails");
+            String sampleMsg = (String) requestBody.get("sampleMsg");
+            String samplePreparation = (String) requestBody.get("samplePreparation");
+            String libraryPreparation = (String) requestBody.get("libraryPreparation");
+            String dismountData = (String) requestBody.get("dismountData");
+            String bioinformaticsAnalysis = (String) requestBody.get("bioinformaticsAnalysis");
+            String remarks = (String) requestBody.get("remarks");
+
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+
+            processTaskService.createProcessTask(user,projectName,dataType,principal,emails,sampleMsg,
+                    samplePreparation,libraryPreparation,dismountData,bioinformaticsAnalysis,remarks);
 
             ret.setCode("200");
         }catch (Exception e) {
