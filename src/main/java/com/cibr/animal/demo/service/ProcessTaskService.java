@@ -116,6 +116,13 @@ public class ProcessTaskService {
         List<CibrTaskProcess> cibrTaskProcesses = processMapper.queryAllProcess(condition);
         return cibrTaskProcesses.get(0);
     }
+
+    public CibrTaskProcess getProcessByTaskId(String taskId){
+        CibrTaskProcessExample processExample = new CibrTaskProcessExample();
+        processExample.createCriteria().andTaskidEqualTo(taskId);
+        List<CibrTaskProcess> cibrTaskProcesses = processMapper.selectByExample(processExample);
+        return getPorcessById(cibrTaskProcesses.get(0).getId());
+    }
 }
 
 

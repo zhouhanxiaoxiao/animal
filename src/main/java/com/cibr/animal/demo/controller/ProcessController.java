@@ -29,8 +29,8 @@ public class ProcessController {
                              @RequestBody Map requestBody){
         ReturnData ret = new ReturnData();
         try {
-            String processId = (String) requestBody.get("processId");
-            CibrTaskProcess process = processTaskService.getPorcessById(processId);
+            String taskId = (String) requestBody.get("taskId");
+            CibrTaskProcess process = processTaskService.getProcessByTaskId(taskId);
             Map<String,Object> retMap = new HashMap<>();
             retMap.put("process",process);
             ret.setRetMap(retMap);

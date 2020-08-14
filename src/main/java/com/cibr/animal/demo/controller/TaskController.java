@@ -3,12 +3,10 @@ package com.cibr.animal.demo.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cibr.animal.demo.entity.CibrAnimalDrosophila;
+import com.cibr.animal.demo.entity.CibrSysMaterial;
 import com.cibr.animal.demo.entity.CibrSysTask;
 import com.cibr.animal.demo.entity.CibrSysUser;
-import com.cibr.animal.demo.service.CibrSysUserService;
-import com.cibr.animal.demo.service.PersonalService;
-import com.cibr.animal.demo.service.ProcessTaskService;
-import com.cibr.animal.demo.service.TaskService;
+import com.cibr.animal.demo.service.*;
 import com.cibr.animal.demo.util.RedisUtil;
 import com.cibr.animal.demo.util.ReturnData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +39,9 @@ public class TaskController {
     @Autowired
     private ProcessTaskService processTaskService;
 
+    @Autowired
+    private MeterialService meterialService;
+
 
     @RequestMapping("/orderTask/init")
     public String initOrderTask(HttpServletRequest request,
@@ -55,10 +56,12 @@ public class TaskController {
             List<CibrSysUser> userByRole = userService.findUserByRole("01");
             List<CibrSysUser> supporters = userService.findUserByRole("02");
             List<CibrAnimalDrosophila> allDrosophila = taskService.findAllDrosophila();
+            List<CibrSysMaterial> allMerial = meterialService.getAllMerial();
             result.put("stockTable", stockTable);
             result.put("researchers", userByRole);
             result.put("supporters", supporters);
             result.put("allDrosophila", allDrosophila);
+            result.put("allMerial",allMerial);
             ret.setCode("200");
             ret.setRetMap(result);
         } catch (Exception e) {
