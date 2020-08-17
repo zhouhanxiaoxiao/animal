@@ -815,6 +815,136 @@ public class CibrTaskProcessExample {
             return (Criteria) this;
         }
 
+        public Criteria andSampleinputIsNull() {
+            addCriterion("sampleInput is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleinputIsNotNull() {
+            addCriterion("sampleInput is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleinputEqualTo(String value) {
+            addCriterion("sampleInput =", value, "sampleinput");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleinputNotEqualTo(String value) {
+            addCriterion("sampleInput <>", value, "sampleinput");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleinputGreaterThan(String value) {
+            addCriterion("sampleInput >", value, "sampleinput");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleinputGreaterThanOrEqualTo(String value) {
+            addCriterion("sampleInput >=", value, "sampleinput");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleinputLessThan(String value) {
+            addCriterion("sampleInput <", value, "sampleinput");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleinputLessThanOrEqualTo(String value) {
+            addCriterion("sampleInput <=", value, "sampleinput");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleinputLike(String value) {
+            addCriterion("sampleInput like", value, "sampleinput");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleinputNotLike(String value) {
+            addCriterion("sampleInput not like", value, "sampleinput");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleinputIn(List<String> values) {
+            addCriterion("sampleInput in", values, "sampleinput");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleinputNotIn(List<String> values) {
+            addCriterion("sampleInput not in", values, "sampleinput");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleinputBetween(String value1, String value2) {
+            addCriterion("sampleInput between", value1, value2, "sampleinput");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleinputNotBetween(String value1, String value2) {
+            addCriterion("sampleInput not between", value1, value2, "sampleinput");
+            return (Criteria) this;
+        }
+
+        public Criteria andInputtimeIsNull() {
+            addCriterion("inputTime is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInputtimeIsNotNull() {
+            addCriterion("inputTime is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInputtimeEqualTo(Date value) {
+            addCriterion("inputTime =", value, "inputtime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInputtimeNotEqualTo(Date value) {
+            addCriterion("inputTime <>", value, "inputtime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInputtimeGreaterThan(Date value) {
+            addCriterion("inputTime >", value, "inputtime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInputtimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("inputTime >=", value, "inputtime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInputtimeLessThan(Date value) {
+            addCriterion("inputTime <", value, "inputtime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInputtimeLessThanOrEqualTo(Date value) {
+            addCriterion("inputTime <=", value, "inputtime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInputtimeIn(List<Date> values) {
+            addCriterion("inputTime in", values, "inputtime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInputtimeNotIn(List<Date> values) {
+            addCriterion("inputTime not in", values, "inputtime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInputtimeBetween(Date value1, Date value2) {
+            addCriterion("inputTime between", value1, value2, "inputtime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInputtimeNotBetween(Date value1, Date value2) {
+            addCriterion("inputTime not between", value1, value2, "inputtime");
+            return (Criteria) this;
+        }
+
         public Criteria andSamplepreparationIsNull() {
             addCriterion("samplePreparation is null");
             return (Criteria) this;

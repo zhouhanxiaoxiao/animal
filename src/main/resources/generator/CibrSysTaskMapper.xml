@@ -322,7 +322,7 @@
     from cibr_sys_task
     where 1=1
     <if test="condition.userId != null">
-     and (createuser = '${condition.userId}' or currentuser = '${condition.userId}')
+--      and (createuser = '${condition.userId}' or currentuser = '${condition.userId}')
     </if>
     order by taskstatu asc ,createtime desc
     <if test="condition.pageSize != null">

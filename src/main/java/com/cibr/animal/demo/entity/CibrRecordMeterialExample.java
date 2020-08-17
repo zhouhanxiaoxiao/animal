@@ -655,73 +655,73 @@ public class CibrRecordMeterialExample {
             return (Criteria) this;
         }
 
-        public Criteria andUsageIsNull() {
-            addCriterion("usage is null");
+        public Criteria andUsagemsgIsNull() {
+            addCriterion("usageMsg is null");
             return (Criteria) this;
         }
 
-        public Criteria andUsageIsNotNull() {
-            addCriterion("usage is not null");
+        public Criteria andUsagemsgIsNotNull() {
+            addCriterion("usageMsg is not null");
             return (Criteria) this;
         }
 
-        public Criteria andUsageEqualTo(String value) {
-            addCriterion("usage =", value, "usage");
+        public Criteria andUsagemsgEqualTo(String value) {
+            addCriterion("usageMsg =", value, "usagemsg");
             return (Criteria) this;
         }
 
-        public Criteria andUsageNotEqualTo(String value) {
-            addCriterion("usage <>", value, "usage");
+        public Criteria andUsagemsgNotEqualTo(String value) {
+            addCriterion("usageMsg <>", value, "usagemsg");
             return (Criteria) this;
         }
 
-        public Criteria andUsageGreaterThan(String value) {
-            addCriterion("usage >", value, "usage");
+        public Criteria andUsagemsgGreaterThan(String value) {
+            addCriterion("usageMsg >", value, "usagemsg");
             return (Criteria) this;
         }
 
-        public Criteria andUsageGreaterThanOrEqualTo(String value) {
-            addCriterion("usage >=", value, "usage");
+        public Criteria andUsagemsgGreaterThanOrEqualTo(String value) {
+            addCriterion("usageMsg >=", value, "usagemsg");
             return (Criteria) this;
         }
 
-        public Criteria andUsageLessThan(String value) {
-            addCriterion("usage <", value, "usage");
+        public Criteria andUsagemsgLessThan(String value) {
+            addCriterion("usageMsg <", value, "usagemsg");
             return (Criteria) this;
         }
 
-        public Criteria andUsageLessThanOrEqualTo(String value) {
-            addCriterion("usage <=", value, "usage");
+        public Criteria andUsagemsgLessThanOrEqualTo(String value) {
+            addCriterion("usageMsg <=", value, "usagemsg");
             return (Criteria) this;
         }
 
-        public Criteria andUsageLike(String value) {
-            addCriterion("usage like", value, "usage");
+        public Criteria andUsagemsgLike(String value) {
+            addCriterion("usageMsg like", value, "usagemsg");
             return (Criteria) this;
         }
 
-        public Criteria andUsageNotLike(String value) {
-            addCriterion("usage not like", value, "usage");
+        public Criteria andUsagemsgNotLike(String value) {
+            addCriterion("usageMsg not like", value, "usagemsg");
             return (Criteria) this;
         }
 
-        public Criteria andUsageIn(List<String> values) {
-            addCriterion("usage in", values, "usage");
+        public Criteria andUsagemsgIn(List<String> values) {
+            addCriterion("usageMsg in", values, "usagemsg");
             return (Criteria) this;
         }
 
-        public Criteria andUsageNotIn(List<String> values) {
-            addCriterion("usage not in", values, "usage");
+        public Criteria andUsagemsgNotIn(List<String> values) {
+            addCriterion("usageMsg not in", values, "usagemsg");
             return (Criteria) this;
         }
 
-        public Criteria andUsageBetween(String value1, String value2) {
-            addCriterion("usage between", value1, value2, "usage");
+        public Criteria andUsagemsgBetween(String value1, String value2) {
+            addCriterion("usageMsg between", value1, value2, "usagemsg");
             return (Criteria) this;
         }
 
-        public Criteria andUsageNotBetween(String value1, String value2) {
-            addCriterion("usage not between", value1, value2, "usage");
+        public Criteria andUsagemsgNotBetween(String value1, String value2) {
+            addCriterion("usageMsg not between", value1, value2, "usagemsg");
             return (Criteria) this;
         }
 

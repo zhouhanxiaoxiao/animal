@@ -96,5 +96,5 @@ public interface CibrTaskProcessMapper {
      */
     int updateByPrimaryKey(CibrTaskProcess record);
 
-    List<CibrTaskProcess> queryAllProcess(@Param("condition")Map condition);
+    List<CibrTaskProcess> queryAllProcess(@Param("condition") Map condition);
 }

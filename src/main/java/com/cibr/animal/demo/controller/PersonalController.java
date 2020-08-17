@@ -73,9 +73,15 @@ public class PersonalController {
                 number = String.valueOf((Integer) requestBody.get("number"));
             }
             String environmentId = (String) requestBody.get("environmentId");
-            personalService.stockAdd(animalName,useType,birthday,location,
-                    stockID,genotype,resource,container,number,environmentId,user);
-            ret.setCode("200");
+            List<CibrAnimalDrosophila> cibrAnimalDrosophilas = personalService.findanimalByGen(String.valueOf(genotype));
+            if (cibrAnimalDrosophilas != null && cibrAnimalDrosophilas.size()>0){
+                ret.setCode("E520");
+            }else {
+                personalService.stockAdd(animalName,useType,birthday,location,
+                        stockID,genotype,resource,container,number,environmentId,user);
+                ret.setCode("200");
+
+            }
         }catch (Exception e){
             ret.setCode("E500");
             ret.setErrMsg("系统异常！");

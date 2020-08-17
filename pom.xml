@@ -51,7 +51,22 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.72</version>
         </dependency>
-
+        <!--解析Excel-->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.14</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.14</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-schemas</artifactId>
+            <version>3.14</version>
+        </dependency>
         <!-- email依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -68,6 +83,7 @@
             <artifactId>logback-core</artifactId>
             <version>1.1.1</version>
         </dependency>
+
         <!-- 实现lsf4j接口并整合 -->
         <dependency>
             <groupId>ch.qos.logback</groupId>

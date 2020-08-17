@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50729
 File Encoding         : 65001
 
-Date: 2020-08-14 18:38:11
+Date: 2020-08-17 18:49:55
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -72,7 +72,7 @@ CREATE TABLE `cibr_record_meterial` (
   `endTime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `createTime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `creater` varchar(32) DEFAULT NULL,
-  `usage` varchar(255) DEFAULT NULL,
+  `usageMsg` varchar(255) DEFAULT NULL,
   `remarks` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -80,6 +80,10 @@ CREATE TABLE `cibr_record_meterial` (
 -- ----------------------------
 -- Records of cibr_record_meterial
 -- ----------------------------
+INSERT INTO `cibr_record_meterial` VALUES ('594ad8c8eeab4f5ea41c402bc0feb758', 'bc21068ffee24109a522f237ace4f8f9', 'asdfasedf', '2020-08-17 15:41:55', '2020-08-17 19:41:46', '2020-08-17 15:41:55', '24f5851abc6444e79be718325025126f', '实验', null);
+INSERT INTO `cibr_record_meterial` VALUES ('96ab780d11784960a76504ab6b101d83', '03b99457017b41dda8569121ef4f4971', 'asdfasedf', '2020-09-15 20:40:00', '2020-09-16 21:40:00', '2020-08-17 03:23:25', '24f5851abc6444e79be718325025126f', '实验', null);
+INSERT INTO `cibr_record_meterial` VALUES ('ac011a11760b45bca5fc9c8f76c66ca2', 'bc21068ffee24109a522f237ace4f8f9', 'asdfased3', '2020-08-17 16:00:00', '2020-08-31 16:00:00', '2020-08-17 03:12:52', '24f5851abc6444e79be718325025126f', '实验', null);
+INSERT INTO `cibr_record_meterial` VALUES ('e4b063c7eadc43708a8fb11333d5d6e3', '03b99457017b41dda8569121ef4f4971', 'asdfased3', '2020-09-13 18:20:00', '2020-09-15 20:10:00', '2020-08-17 03:23:25', '24f5851abc6444e79be718325025126f', '实验', null);
 INSERT INTO `cibr_record_meterial` VALUES ('weeqe', 'asdf ', 'asdfasedf', '2020-08-28 17:27:54', '2020-08-29 17:27:54', '2020-08-14 17:39:16', 'sdf ', null, null);
 
 -- ----------------------------
@@ -168,12 +172,15 @@ INSERT INTO `cibr_sys_email` VALUES ('1031464eec7b4e1faee8b800406bfb14', 'zhouha
 INSERT INTO `cibr_sys_email` VALUES ('1688823d8fcc4645ac5a3d87970fe8d6', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【申请使用任务】待处理，申请人【周晗】，预计实验时间【2020-08-11】,任务申请【！！！加急！！！】，请及时处理。\n\n\n感谢您使用资源管理平台！', '2020-07-27 01:58:06', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('18adea51c2b74250a8d9056ee880d6c4', 'zhouhan@cibr.ac.cn', 'zhouhan@cibr.ac.cn', '用户账号申请', '【北京脑科学与类脑研究中心】\n\n	您有一个用户注册审批任务，请及时处理。申请人【哎哎哎】，邮箱【fengshuangshuang@cibr.ac.cn】\n\n\n感谢您使用资源管理平台！', '2020-08-07 08:44:31', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('1924e8f2a63049b8800238a7fc28744d', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '验证码', '【北京脑科学与类脑研究中心】\n\n	验证码是：727477，有效期为1小时。\n\n\n感谢您使用资源管理平台！', '2020-08-10 08:22:41', null, null, 'ok', null);
+INSERT INTO `cibr_sys_email` VALUES ('1ad4732da175415896866736b639d792', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【申请使用任务】待处理，申请人【周晗】,任务申请【！！！加急！！！】，请及时处理。\n\n\n感谢您使用资源管理平台！', '2020-08-17 03:12:52', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('1cc65e887be945768937608c2dd8741f', 'zhouhan@cibr.ac.cn', 'zhouhan@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个使用申请任务被【拒绝】，原因【asasd1121231231231313qwrfs312】，请及时处理！如有疑问，请联系【zhouhan@cibr.ac.cn】\n\n\n感谢您使用资源管理平台！', '2020-07-29 09:47:25', null, null, 'ok', null);
+INSERT INTO `cibr_sys_email` VALUES ('1cc675b257ba4d8aa82dc35ed5d6bade', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【申请使用任务】待处理，申请人【周晗】,任务申请【！！！加急！！！】，请及时处理。\n\n\n感谢您使用资源管理平台！', '2020-08-17 03:08:31', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('1d009fc5a8b846ce8213fd1c010706e8', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【申请使用任务】待处理，申请人【周晗】，预计实验时间【2020-08-11】,任务申请【！！！加急！！！】，请及时处理。\n\n\n感谢您使用资源管理平台！', '2020-07-27 01:52:07', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('21d595960f7c44358d77d637237f48d3', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【申请使用任务】待处理，申请人【周晗】，预计实验时间【null】,任务申请【！！！加急！！！】，请及时处理。\n\n\n感谢您使用资源管理平台！', '2020-08-02 07:42:04', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('21f5f475903e4472a779b15656b0f08b', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '用户账号申请', '非常感谢，您的注册申请已收到。请耐心等待管理员审核，稍后将给您发送审核结果邮件，请注意查收。', '2020-08-07 08:44:32', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('27493aab10e948a28722992a61a988c4', 'zhouhan@cibr.ac.cn', 'dsdf@cibr.ac.cn', '验证码', '【北京脑科学与类脑研究中心】验证码是：548072，有效期为1小时，欢迎您使用资源管理平台！', '2020-07-17 06:10:22', null, null, 'fail', '邮箱地址不存在！');
 INSERT INTO `cibr_sys_email` VALUES ('298d3bc7e1e4401b9f6051f0e62f985f', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '验证码', '【北京脑科学与类脑研究中心】\n\n	验证码是：810322，有效期为1小时。\n\n\n感谢您使用资源管理平台！', '2020-08-07 08:44:21', null, null, 'ok', null);
+INSERT INTO `cibr_sys_email` VALUES ('2c71842f1025484e86e7e6c5b39b8f50', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【申请使用任务】待处理，申请人【周晗】,任务申请【！！！加急！！！】，请及时处理。\n\n\n感谢您使用资源管理平台！', '2020-08-17 03:07:01', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('2ceee3d0ca2742acbabc6ee287bbee13', 'zhouhan@cibr.ac.cn', 'zhouhan@cibr.ac.cn', '用户账号申请', '非常感谢，您的注册申请已收到。请耐心等待管理员审核，稍后将给您发送审核结果邮件，请注意查收。', '2020-08-10 07:28:53', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('2d817e503d044e5f895955a82ec016ae', 'zhouhan@cibr.ac.cn', 'zhouhan@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【果蝇使用申请任务】已准备完毕，请及时查看。\n如有疑问，请联系【zhouhan@cibr.ac.cn】\n\n\n感谢您使用资源管理平台！', '2020-08-06 10:12:50', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('309fd362c2054df085f62cb52692f568', 'zhouhan@cibr.ac.cn', '981436939@qq.com', '验证码', '【北京脑科学与类脑研究中心】验证码是：946185，有效期为1小时，欢迎您使用辅助平台！', '2020-07-08 08:05:07', null, null, 'ok', null);
@@ -199,6 +206,7 @@ INSERT INTO `cibr_sys_email` VALUES ('55f5247cb40a450494106d998240c5a2', 'zhouha
 INSERT INTO `cibr_sys_email` VALUES ('586ac2874dce4b41b3f4ec61a3f50624', 'zhouhan@cibr.ac.cn', 'adsfa@cibr.ac.cn', '验证码', '【北京脑科学与类脑研究中心】验证码是：640080，有效期为1小时，欢迎您使用资源管理平台！', '2020-07-17 06:13:15', null, null, 'fail', '邮箱地址不存在！');
 INSERT INTO `cibr_sys_email` VALUES ('5a6d02cc51654bffabc8929542efcd75', 'zhouhan@cibr.ac.cn', 'zhouhan@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【果蝇使用申请任务】已准备完毕，请及时查看。\n如有疑问，请联系【zhouhan@cibr.ac.cn】\n\n\n感谢您使用资源管理平台！', '2020-08-07 08:37:40', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('5a90b0e78e604276a3fd09ef318f4001', 'zhouhan@cibr.ac.cn', 'zhouhan@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【果蝇使用申请任务】已准备完毕，请及时查看。\n如有疑问，请联系【zhouhan@cibr.ac.cn】\n\n\n感谢您使用资源管理平台！', '2020-08-06 08:34:07', null, null, 'ok', null);
+INSERT INTO `cibr_sys_email` VALUES ('5ec9520d3be242e5a2784164f92bc4ef', 'zhouhan@cibr.ac.cn', 'zhouhan@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【果蝇使用申请任务】已准备完毕，请及时查看。\n如有疑问，请联系【zhouhan@cibr.ac.cn】\n\n\n感谢您使用资源管理平台！', '2020-08-17 02:24:00', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('5eedba7c251b4f08a4e2823b63c95801', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【申请使用任务】待处理，申请人【周晗】，预计实验时间【null】,任务申请【！！！加急！！！】，请及时处理。\n\n\n感谢您使用资源管理平台！', '2020-08-11 03:16:21', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('60365785dc7247daa67cf29382fe876f', 'zhouhan@cibr.ac.cn', 'zhou@cibr.ac.cn', '验证码', '【北京脑科学与类脑研究中心】验证码是：488425，有效期为1小时，欢迎您使用资源管理平台！', '2020-07-17 06:06:38', null, null, 'fail', '邮件发送失败：Failed messages: javax.mail.SendFailedException: Invalid Addresses;\n  nested exception is:\n	com.sun.mail.smtp.SMTPAddressFailedException: 554 RCPT (zhou@cibr.ac.cn) dosn\'t exist');
 INSERT INTO `cibr_sys_email` VALUES ('61a3c987f36a4ad8831d3fecda61c47e', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '用户账号申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【用户注册任务】已审批通过，欢迎使用。\n如有疑问，请联系【zhouhan@cibr.ac.cn】\n\n\n感谢您使用资源管理平台！', '2020-08-10 02:53:06', null, null, 'ok', null);
@@ -245,6 +253,7 @@ INSERT INTO `cibr_sys_email` VALUES ('b231d434b8b340a6a38978c16846a4be', 'zhouha
 INSERT INTO `cibr_sys_email` VALUES ('b395bc774e5d4ecc9c691baff5c35156', 'zhouhan@cibr.ac.cn', 'zhouhan@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【果蝇使用申请任务】已处理，其中：\n成功【4】条，拒绝【4】条。\n请及时查看！如有疑问，请联系【zhouhan@cibr.ac.cn】\n\n\n感谢您使用资源管理平台！', '2020-08-06 08:37:42', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('b5be9a4065c445e2961fc376f905446e', 'zhouhan@cibr.ac.cn', '981436939@qq.com', '验证码', '【北京脑科学与类脑研究中心】验证码是：191350，有效期为1小时，欢迎您使用辅助平台！', '2020-07-08 07:49:47', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('b66e04f58e2040598191e3a3f1d785bc', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【申请使用任务】待处理，申请人【周晗】，预计实验时间【null】,任务申请【！！！加急！！！】，请及时处理。\n\n\n感谢您使用资源管理平台！', '2020-08-02 07:13:52', null, null, 'ok', null);
+INSERT INTO `cibr_sys_email` VALUES ('b727a99a259449da854f1cde78674ab2', 'zhouhan@cibr.ac.cn', 'zhouhan@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【果蝇使用申请任务】已处理，其中：\n成功【1】条，拒绝【0】条。\n请及时查看！如有疑问，请联系【zhouhan@cibr.ac.cn】\n\n\n感谢您使用资源管理平台！', '2020-08-17 02:03:19', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('b77e2f54326a464f86ff1e5accaf2eb1', 'zhouhan@cibr.ac.cn', '981436939@qq.com', '验证码', '【北京脑科学与类脑研究中心】验证码是：673588，有效期为1小时，欢迎您使用辅助平台！', '2020-07-08 08:17:39', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('bba4b909d85249b6a473699c00507012', 'zhouhan@cibr.ac.cn', 'zhouhan@cibr.ac.cn', '用户账号申请', '【北京脑科学与类脑研究中心】\n\n	您有一个用户注册审批任务，请及时处理。申请人【冯总】，邮箱【fengshuangshuang@cibr.ac.cn】\n\n\n感谢您使用资源管理平台！', '2020-08-10 08:22:46', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('bca2903e29a64b8595f5039e8e739d88', 'zhouhan@cibr.ac.cn', 'fengshuangshaung@cibr.ac.cn', '验证码', '【北京脑科学与类脑研究中心】\n\n	验证码是：926972，有效期为1小时。\n\n\n感谢您使用资源管理平台！', '2020-08-07 08:43:40', null, null, 'fail', '邮箱地址不存在！');
@@ -273,6 +282,7 @@ INSERT INTO `cibr_sys_email` VALUES ('eeaf6a92d5c14099b8674ec685fbb315', 'zhouha
 INSERT INTO `cibr_sys_email` VALUES ('f00729ad3a5e4118ac1e3f3ce628f535', 'zhouhan@cibr.ac.cn', 'zhouhan@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【果蝇使用申请任务】已处理，其中：\n成功【0】条，拒绝【3】条。\n请及时查看！如有疑问，请联系【zhouhan@cibr.ac.cn】\n\n\n感谢您使用资源管理平台！', '2020-08-04 09:06:23', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('f0489d246cf74c47a02f76ad15ea592e', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【申请使用任务】待处理，申请人【周晗】，预计实验时间【null】,任务申请【！！！加急！！！】，请及时处理。\n\n\n感谢您使用资源管理平台！', '2020-08-11 03:14:12', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('f5ecdabae6ec44359fba2f45552ff1f6', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '流程管理任务', '【北京脑科学与类脑研究中心】\n\n	您有一个【流程管理任务】待处理，请及时查看！\n如有疑问，请联系【zhouhan@cibr.ac.cn】\n\n\n感谢您使用资源管理平台！', '2020-08-12 02:57:48', null, null, 'ok', null);
+INSERT INTO `cibr_sys_email` VALUES ('f8809310978a423a96cd26c901f6d22b', 'zhouhan@cibr.ac.cn', 'fengshuangshuang@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【申请使用任务】待处理，申请人【周晗】,任务申请【！！！加急！！！】，请及时处理。\n\n\n感谢您使用资源管理平台！', '2020-08-17 03:23:25', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('fb0f3b88acbd4b1784c04631b670fc9c', 'zhouhan@cibr.ac.cn', 'sdf@cibr.ac.cn', '验证码', '【北京脑科学与类脑研究中心】验证码是：636576，有效期为1小时，欢迎您使用资源管理平台！', '2020-07-17 06:09:04', null, null, 'fail', 'Failed messages: javax.mail.SendFailedException: Invalid Addresses;\n  nested exception is:\n	com.sun.mail.smtp.SMTPAddressFailedException: 554 RCPT (sdf@cibr.ac.cn) dosn\'t exist');
 INSERT INTO `cibr_sys_email` VALUES ('fccb0624c7c24a0d972d053f1f04b5b2', 'zhouhan@cibr.ac.cn', 'zhouhan@cibr.ac.cn', '使用申请', '【北京脑科学与类脑研究中心】\n\n	您有一个【果蝇使用申请任务】已处理，其中：\n成功【1】条，拒绝【0】条。\n请及时查看！如有疑问，请联系【zhouhan@cibr.ac.cn】\n\n\n感谢您使用资源管理平台！', '2020-08-06 09:52:39', null, null, 'ok', null);
 INSERT INTO `cibr_sys_email` VALUES ('fd13e0cee4c64d87b557ac433d3d42e9', 'zhouhan@cibr.ac.cn', '981436939@qq.com', '验证码', '【北京脑科学与类脑研究中心】验证码是：270010，有效期为1小时，欢迎您使用辅助平台！', '2020-07-08 08:00:17', null, null, 'ok', null);
@@ -317,7 +327,8 @@ CREATE TABLE `cibr_sys_material` (
 -- ----------------------------
 -- Records of cibr_sys_material
 -- ----------------------------
-INSERT INTO `cibr_sys_material` VALUES ('asdfasedf', 'dfasdf', '1', '2020-08-14 17:34:13', null);
+INSERT INTO `cibr_sys_material` VALUES ('asdfased3', '拍照片', '1', '2020-08-17 11:01:23', null);
+INSERT INTO `cibr_sys_material` VALUES ('asdfasedf', '魏依协助', '1', '2020-08-17 10:50:11', null);
 
 -- ----------------------------
 -- Table structure for cibr_sys_role
@@ -339,6 +350,38 @@ INSERT INTO `cibr_sys_role` VALUES ('c3a8f79ff69d48169f70f8776f42f29b', '实验�
 INSERT INTO `cibr_sys_role` VALUES ('c6884a69548c4c3588b74ee85486818f', '饲养员', '02');
 
 -- ----------------------------
+-- Table structure for cibr_sys_suggest
+-- ----------------------------
+DROP TABLE IF EXISTS `cibr_sys_suggest`;
+CREATE TABLE `cibr_sys_suggest` (
+  `id` varchar(32) NOT NULL,
+  `creater` varchar(32) DEFAULT NULL,
+  `createTime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `comments` varchar(5000) DEFAULT NULL,
+  `replyto` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of cibr_sys_suggest
+-- ----------------------------
+INSERT INTO `cibr_sys_suggest` VALUES ('0f7b88bdf46c4580aba6400089c3f89a', '24f5851abc6444e79be718325025126f', '2020-08-17 06:46:31', '阿斯顿发', null);
+INSERT INTO `cibr_sys_suggest` VALUES ('247c85840c5047fc8075e7e1e5d61481', '24f5851abc6444e79be718325025126f', '2020-08-17 06:46:33', '阿斯顿发', null);
+INSERT INTO `cibr_sys_suggest` VALUES ('2f8766b5e350448885d63c6347ca4e73', '24f5851abc6444e79be718325025126f', '2020-08-17 06:46:29', '阿斯顿发', null);
+INSERT INTO `cibr_sys_suggest` VALUES ('3747a0df0d7042449acebbee262655a4', '24f5851abc6444e79be718325025126f', '2020-08-17 06:46:32', '阿斯顿发', null);
+INSERT INTO `cibr_sys_suggest` VALUES ('52720e31b4564a7ea2fc3a0ebbcee9a8', '24f5851abc6444e79be718325025126f', '2020-08-17 06:38:08', '打发士大夫', null);
+INSERT INTO `cibr_sys_suggest` VALUES ('5649dff154fa4273ba7b2d3b1d7d4521', '24f5851abc6444e79be718325025126f', '2020-08-17 06:46:31', '阿斯顿发', null);
+INSERT INTO `cibr_sys_suggest` VALUES ('59336da19bb4493ba0b437202e8e0cd7', '24f5851abc6444e79be718325025126f', '2020-08-17 06:46:32', '阿斯顿发', null);
+INSERT INTO `cibr_sys_suggest` VALUES ('593bd3288d824164a630e12f9c2e982f', '24f5851abc6444e79be718325025126f', '2020-08-17 06:46:32', '阿斯顿发', null);
+INSERT INTO `cibr_sys_suggest` VALUES ('5f41d8e0a7ab45d38326c809927b2d2b', '24f5851abc6444e79be718325025126f', '2020-08-17 06:46:32', '阿斯顿发', null);
+INSERT INTO `cibr_sys_suggest` VALUES ('6712a85065cc4e888c4875d670091072', '24f5851abc6444e79be718325025126f', '2020-08-17 06:46:32', '阿斯顿发', null);
+INSERT INTO `cibr_sys_suggest` VALUES ('768086d06d044e709105e9cff54e345c', '24f5851abc6444e79be718325025126f', '2020-08-17 06:49:49', '阿斯顿发', null);
+INSERT INTO `cibr_sys_suggest` VALUES ('8a997336400846558b8a929d1eba7471', '24f5851abc6444e79be718325025126f', '2020-08-17 06:46:33', '阿斯顿发', null);
+INSERT INTO `cibr_sys_suggest` VALUES ('b8641e6c2a824e5895a444efd4c8fb57', '24f5851abc6444e79be718325025126f', '2020-08-17 06:46:32', '阿斯顿发', null);
+INSERT INTO `cibr_sys_suggest` VALUES ('e26b6621d22c47a894150ae79f6012e0', '24f5851abc6444e79be718325025126f', '2020-08-17 06:38:47', '阿斯顿发', null);
+INSERT INTO `cibr_sys_suggest` VALUES ('ea1f8c41e7024c2c8488a7f7e5716524', '24f5851abc6444e79be718325025126f', '2020-08-17 06:58:38', '阿斯顿发', null);
+
+-- ----------------------------
 -- Table structure for cibr_sys_task
 -- ----------------------------
 DROP TABLE IF EXISTS `cibr_sys_task`;
@@ -358,12 +401,16 @@ CREATE TABLE `cibr_sys_task` (
 -- Records of cibr_sys_task
 -- ----------------------------
 INSERT INTO `cibr_sys_task` VALUES ('15890decaca84ffba1f39f6d5caa66fa', '03', '2020-08-13 06:07:06', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', null, '组织');
+INSERT INTO `cibr_sys_task` VALUES ('1f8c28a63676417c9c2d3194a158feb8', '02', '2020-08-17 03:12:27', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-17 03:12:27', '');
 INSERT INTO `cibr_sys_task` VALUES ('33ba3ad0e7f942c8aac38ab1dc952bd2', '02', '2020-08-11 03:13:56', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-11 03:13:56', null);
 INSERT INTO `cibr_sys_task` VALUES ('453337438c9341929c4b6a8b73268411', '02', '2020-08-11 03:18:25', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-13 03:08:35', null);
 INSERT INTO `cibr_sys_task` VALUES ('4ac66818c9b64194ae6e03ba8e177ac9', '03', '2020-08-13 05:27:02', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', null, '');
 INSERT INTO `cibr_sys_task` VALUES ('633f5f2e6a87404cbb698b7416199741', '03', '2020-08-12 02:57:47', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', null, null);
-INSERT INTO `cibr_sys_task` VALUES ('ca9487f95e6f4e93ace9c9c33367d0d4', '02', '2020-08-11 03:16:21', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-11 03:16:21', null);
+INSERT INTO `cibr_sys_task` VALUES ('9af537668d4c4d8c98abe58a9bc3705f', '02', '2020-08-17 03:07:52', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-17 03:07:52', '');
+INSERT INTO `cibr_sys_task` VALUES ('c7a50e1f0b9640ae83d3f54d6fef06e4', '02', '2020-08-17 03:07:01', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-17 03:07:01', '');
+INSERT INTO `cibr_sys_task` VALUES ('ca9487f95e6f4e93ace9c9c33367d0d4', '02', '2020-08-11 03:16:21', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-17 02:24:00', null);
 INSERT INTO `cibr_sys_task` VALUES ('cb27f3ce6bee425cb846168a4ecea58e', '02', '2020-08-11 03:14:12', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-11 03:14:12', null);
+INSERT INTO `cibr_sys_task` VALUES ('d1c5853e992f48d2a28aceb3fede26b4', '02', '2020-08-17 03:23:25', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-17 03:23:25', '');
 INSERT INTO `cibr_sys_task` VALUES ('e9bd57875d7140b7a6757f597a3ebd30', '03', '2020-08-13 06:06:33', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', null, '核酸');
 INSERT INTO `cibr_sys_task` VALUES ('ede893ae25844bc3b5fa999cf133552b', '03', '2020-08-13 05:45:16', '24f5851abc6444e79be718325025126f', '01', '24f5851abc6444e79be718325025126f', null, '细胞哦');
 INSERT INTO `cibr_sys_task` VALUES ('f0e1b0bc922f467b8caf4fcc1dce4f64', '01', '2020-08-10 08:22:46', '53dc21f8cc214c11a13ca57fa27f3146', '02', '24f5851abc6444e79be718325025126f', '2020-08-11 03:08:51', null);
@@ -387,6 +434,7 @@ CREATE TABLE `cibr_sys_task_business` (
 -- ----------------------------
 -- Records of cibr_sys_task_business
 -- ----------------------------
+INSERT INTO `cibr_sys_task_business` VALUES ('0434c684d8014eb39051043a2c6bd474', '1f8c28a63676417c9c2d3194a158feb8', '24f5851abc6444e79be718325025126f', '00', '01', '2020-08-17 03:12:52', '创建');
 INSERT INTO `cibr_sys_task_business` VALUES ('0df25317ab924792801cc878399937eb', 'febfaee1df3f424ca57f8969216a299c', '5646848a54754bbe833eba1c681cbe02', '01', '02', '2020-08-10 02:53:06', '同意注册');
 INSERT INTO `cibr_sys_task_business` VALUES ('16d402d402174caeb7e3bacc4a9fdd6a', 'e9bd57875d7140b7a6757f597a3ebd30', '24f5851abc6444e79be718325025126f', '01', '01', '2020-08-13 06:06:33', '创建流程管理任务');
 INSERT INTO `cibr_sys_task_business` VALUES ('19d2bc45447f4c9cae1b6924c6a865e3', '8ab46708113045a092e332a580c144bb', '5646848a54754bbe833eba1c681cbe02', '00', '01', '2020-08-02 07:42:04', '创建');
@@ -397,9 +445,12 @@ INSERT INTO `cibr_sys_task_business` VALUES ('4378db7794d64d0badfc579520af437d',
 INSERT INTO `cibr_sys_task_business` VALUES ('472acaadeb3d4f3b8235830a1f08817a', '453337438c9341929c4b6a8b73268411', '24f5851abc6444e79be718325025126f', '00', '01', '2020-08-11 03:18:25', '创建');
 INSERT INTO `cibr_sys_task_business` VALUES ('52234455ecff40bcae531854f81dfa32', '0bbfd8d1a5964aff9737a3a0b5f18b8d', '5646848a54754bbe833eba1c681cbe02', '00', '01', '2020-08-02 09:55:46', '创建');
 INSERT INTO `cibr_sys_task_business` VALUES ('576d8bb257374b268867860725fa7d02', '15890decaca84ffba1f39f6d5caa66fa', '24f5851abc6444e79be718325025126f', '01', '01', '2020-08-13 06:07:06', '创建流程管理任务');
+INSERT INTO `cibr_sys_task_business` VALUES ('673848825e6a4fc18e5f8fdc07a4ffa4', 'c7a50e1f0b9640ae83d3f54d6fef06e4', '24f5851abc6444e79be718325025126f', '00', '01', '2020-08-17 03:07:01', '创建');
 INSERT INTO `cibr_sys_task_business` VALUES ('6e8facb78182452197e1e4e80387cccc', '33ba3ad0e7f942c8aac38ab1dc952bd2', '24f5851abc6444e79be718325025126f', '00', '01', '2020-08-11 03:13:56', '创建');
 INSERT INTO `cibr_sys_task_business` VALUES ('7a38904a92e946c991d42cb2b6627b61', '3b0a1f1aa7704f3bb667e34c6c4d8eca', '5646848a54754bbe833eba1c681cbe02', '00', '01', '2020-08-02 09:22:04', '创建');
 INSERT INTO `cibr_sys_task_business` VALUES ('7b3bfac6b8be4cc68c653435e2492e16', 'cb27f3ce6bee425cb846168a4ecea58e', '24f5851abc6444e79be718325025126f', '00', '01', '2020-08-11 03:14:12', '创建');
+INSERT INTO `cibr_sys_task_business` VALUES ('882fc8f3b5464d398e78898c141497ac', '9af537668d4c4d8c98abe58a9bc3705f', '24f5851abc6444e79be718325025126f', '00', '01', '2020-08-17 03:08:30', '创建');
+INSERT INTO `cibr_sys_task_business` VALUES ('8c9b6aa81e14489aad3abe1ae4bed487', 'd1c5853e992f48d2a28aceb3fede26b4', '24f5851abc6444e79be718325025126f', '00', '01', '2020-08-17 03:23:25', '创建');
 INSERT INTO `cibr_sys_task_business` VALUES ('9bd5b996c89f4d1987ba34b95425dfa4', '633f5f2e6a87404cbb698b7416199741', '24f5851abc6444e79be718325025126f', '01', '01', '2020-08-12 02:57:47', '创建流程管理任务');
 INSERT INTO `cibr_sys_task_business` VALUES ('b4afabdae49842e297f6b975aabcf458', 'f0e1b0bc922f467b8caf4fcc1dce4f64', '24f5851abc6444e79be718325025126f', '01', '02', '2020-08-11 03:08:51', '同意注册');
 INSERT INTO `cibr_sys_task_business` VALUES ('b682b15300614d3ea157b8ba0aa43049', '05031e48adcb42a19966a59963f6ab81', '5646848a54754bbe833eba1c681cbe02', '00', '01', '2020-08-02 10:02:49', '创建');
@@ -528,6 +579,7 @@ CREATE TABLE `cibr_task_ask_director` (
 INSERT INTO `cibr_task_ask_director` VALUES ('1142f3b76995457694ac985bf98e35c8', 'e3ec20e7d76848afbf5b33a5d28101ce', 'bf85f70d4a9e4d42beb3eb67450', '2020-08-06 10:16:48', '0');
 INSERT INTO `cibr_task_ask_director` VALUES ('140102c537d5439ab47b000d1b7eb090', 'c46c8414424f4c09bb5dc7a0e3929906', 'bf85f70d4a9e4d42beb3eb67450', '2020-08-02 10:02:49', '0');
 INSERT INTO `cibr_task_ask_director` VALUES ('150b6d2ce1934f44a8999df1f13fe7cb', '97d2daf442de4b05ba60c3aa38b4535f', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-11 03:16:21', '0');
+INSERT INTO `cibr_task_ask_director` VALUES ('2096016942cb4362a2611b323208447c', '9c781839091d4b30953fc6d25a77b5cc', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-17 03:07:01', '0');
 INSERT INTO `cibr_task_ask_director` VALUES ('463f94b319d14843b68bbe87460f9cb4', '05567077ecfd4db2b29c379487bd760a', 'bf85f70d4a9e4d42beb3eb67450', '2020-08-02 09:55:46', '0');
 INSERT INTO `cibr_task_ask_director` VALUES ('551446827ee24bb080a7e2a7611b1962', 'd90a131f0a8f4b5985d0692566b50ae3', 'bf85f70d4a9e4ew32bef5b3eb67450', '2020-08-02 07:34:09', '0');
 INSERT INTO `cibr_task_ask_director` VALUES ('5791f82de7324914bffdeb3bb56839fa', '4ce07456d6104e85ae808fb955b25c13', 'bf85f70d4a9e4ew32bef5b3eb67450', '2020-08-02 09:56:46', '0');
@@ -538,8 +590,11 @@ INSERT INTO `cibr_task_ask_director` VALUES ('6ffea4f86e9c4bf6bccf3f7e5e119d18',
 INSERT INTO `cibr_task_ask_director` VALUES ('828976286d1e460cb4e159197add1755', '5b59b0f8c73a48e3a1a0e5da3bcb9aa2', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-11 03:18:25', '0');
 INSERT INTO `cibr_task_ask_director` VALUES ('8a1428f9e22c4576a9f15d377ced67a6', '6537f9ab4cc24fbda95ce1f4f8c9386b', 'bf85f70d4a9e4ew32bef5b3eb67450', '2020-08-02 07:13:52', '0');
 INSERT INTO `cibr_task_ask_director` VALUES ('9341fdd199f7404a810281ea66f425d2', 'd90a131f0a8f4b5985d0692566b50ae3', 'bf8ad4a9e4d42b32bef5b3eb67450', '2020-08-02 07:34:09', '0');
+INSERT INTO `cibr_task_ask_director` VALUES ('9acf9d2df5d647f69c0212d864fbbfb1', '2e70ad94a5884116b3fd26aa3138a095', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-17 03:07:52', '0');
 INSERT INTO `cibr_task_ask_director` VALUES ('9d9365b5a30a41e3ad5ee6fb8763fbcd', '428580b8b28b414397f044e0d2e19ca4', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-11 03:14:12', '0');
 INSERT INTO `cibr_task_ask_director` VALUES ('b11e8db9002949dcae94374afe5b4350', 'd90a131f0a8f4b5985d0692566b50ae3', 'bf85f70d4a9e4d42beb3eb67450', '2020-08-02 07:34:09', '0');
+INSERT INTO `cibr_task_ask_director` VALUES ('b17f08d251944a93ac406ec3d6a4458b', 'ddd48327bf3942b7989ceae14f447bce', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-17 03:12:27', '0');
+INSERT INTO `cibr_task_ask_director` VALUES ('d9858e19e4ea47a7b7a9471407d9b108', 'a965c30a8db14018922ee7cd04d93713', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-17 03:23:25', '0');
 
 -- ----------------------------
 -- Table structure for cibr_task_ask_drosophila
@@ -562,16 +617,20 @@ CREATE TABLE `cibr_task_ask_drosophila` (
 -- ----------------------------
 INSERT INTO `cibr_task_ask_drosophila` VALUES ('05567077ecfd4db2b29c379487bd760a', '5646848a54754bbe833eba1c681cbe02', '2020-08-02 09:55:46', '', '1', '0bbfd8d1a5964aff9737a3a0b5f18b8d', '04', '29a9c57a44b94b869b58893356a8444b');
 INSERT INTO `cibr_task_ask_drosophila` VALUES ('1bb4b0fea5ab4984a5f86b62926d3902', '5646848a54754bbe833eba1c681cbe02', '2020-08-02 09:22:04', '', '', '3b0a1f1aa7704f3bb667e34c6c4d8eca', '04', '29a9c57a44b94b869b58893356a8444b');
+INSERT INTO `cibr_task_ask_drosophila` VALUES ('2e70ad94a5884116b3fd26aa3138a095', '24f5851abc6444e79be718325025126f', '2020-08-17 03:07:52', '', '1', '9af537668d4c4d8c98abe58a9bc3705f', '00', '53dc21f8cc214c11a13ca57fa27f3146');
 INSERT INTO `cibr_task_ask_drosophila` VALUES ('428580b8b28b414397f044e0d2e19ca4', '24f5851abc6444e79be718325025126f', '2020-08-11 03:14:12', '', '1', 'cb27f3ce6bee425cb846168a4ecea58e', '00', '53dc21f8cc214c11a13ca57fa27f3146');
 INSERT INTO `cibr_task_ask_drosophila` VALUES ('4ce07456d6104e85ae808fb955b25c13', '5646848a54754bbe833eba1c681cbe02', '2020-08-02 09:56:46', 'asdfa', '1', '25356e487001438f9d02d98c8e518397', '04', '29a9c57a44b94b869b58893356a8444b');
 INSERT INTO `cibr_task_ask_drosophila` VALUES ('5b59b0f8c73a48e3a1a0e5da3bcb9aa2', '24f5851abc6444e79be718325025126f', '2020-08-11 03:18:25', '', '1', '453337438c9341929c4b6a8b73268411', '04', '53dc21f8cc214c11a13ca57fa27f3146');
 INSERT INTO `cibr_task_ask_drosophila` VALUES ('6537f9ab4cc24fbda95ce1f4f8c9386b', '5646848a54754bbe833eba1c681cbe02', '2020-08-02 07:13:52', '', '1', 'b60dc07081f340cb9ca5c8508b6139b8', '09', null);
 INSERT INTO `cibr_task_ask_drosophila` VALUES ('7943476691744fed8ba40aa182be75eb', '5646848a54754bbe833eba1c681cbe02', '2020-08-06 10:12:04', '等等撒多所多所', '', 'c98af5dba22542ec80a014f223506878', '05', '29a9c57a44b94b869b58893356a8444b');
-INSERT INTO `cibr_task_ask_drosophila` VALUES ('97d2daf442de4b05ba60c3aa38b4535f', '24f5851abc6444e79be718325025126f', '2020-08-11 03:16:21', '', '1', 'ca9487f95e6f4e93ace9c9c33367d0d4', '00', '53dc21f8cc214c11a13ca57fa27f3146');
+INSERT INTO `cibr_task_ask_drosophila` VALUES ('97d2daf442de4b05ba60c3aa38b4535f', '24f5851abc6444e79be718325025126f', '2020-08-11 03:16:21', '', '1', 'ca9487f95e6f4e93ace9c9c33367d0d4', '04', '53dc21f8cc214c11a13ca57fa27f3146');
 INSERT INTO `cibr_task_ask_drosophila` VALUES ('9aeea58cf85146959dccf540259c72d4', '24f5851abc6444e79be718325025126f', '2020-08-11 03:13:56', '', '1', '33ba3ad0e7f942c8aac38ab1dc952bd2', '00', '53dc21f8cc214c11a13ca57fa27f3146');
+INSERT INTO `cibr_task_ask_drosophila` VALUES ('9c781839091d4b30953fc6d25a77b5cc', '24f5851abc6444e79be718325025126f', '2020-08-17 03:07:01', '', '1', 'c7a50e1f0b9640ae83d3f54d6fef06e4', '00', '53dc21f8cc214c11a13ca57fa27f3146');
 INSERT INTO `cibr_task_ask_drosophila` VALUES ('a4680b1e35b8419db01494dd1318d96e', '5646848a54754bbe833eba1c681cbe02', '2020-08-02 07:42:04', '', '1', '8ab46708113045a092e332a580c144bb', '08', '29a9c57a44b94b869b58893356a8444b');
+INSERT INTO `cibr_task_ask_drosophila` VALUES ('a965c30a8db14018922ee7cd04d93713', '24f5851abc6444e79be718325025126f', '2020-08-17 03:23:25', '', '1', 'd1c5853e992f48d2a28aceb3fede26b4', '00', '53dc21f8cc214c11a13ca57fa27f3146');
 INSERT INTO `cibr_task_ask_drosophila` VALUES ('c46c8414424f4c09bb5dc7a0e3929906', '5646848a54754bbe833eba1c681cbe02', '2020-08-02 10:02:49', 'asdfsa', '1', '05031e48adcb42a19966a59963f6ab81', '04', '29a9c57a44b94b869b58893356a8444b');
 INSERT INTO `cibr_task_ask_drosophila` VALUES ('d90a131f0a8f4b5985d0692566b50ae3', '5646848a54754bbe833eba1c681cbe02', '2020-08-02 07:34:09', 'asdfasdf', '1', '43065aaabaa14bfaab2e027a4caecdfa', '00', '29a9c57a44b94b869b58893356a8444b');
+INSERT INTO `cibr_task_ask_drosophila` VALUES ('ddd48327bf3942b7989ceae14f447bce', '24f5851abc6444e79be718325025126f', '2020-08-17 03:12:27', '', '1', '1f8c28a63676417c9c2d3194a158feb8', '00', '53dc21f8cc214c11a13ca57fa27f3146');
 INSERT INTO `cibr_task_ask_drosophila` VALUES ('e3ec20e7d76848afbf5b33a5d28101ce', '5646848a54754bbe833eba1c681cbe02', '2020-08-06 10:16:48', '从V型从V型从V型从V型', '1', '7f07103e0a9f49dfa1e5e8c4b89a7048', '06', '29a9c57a44b94b869b58893356a8444b');
 
 -- ----------------------------
@@ -611,6 +670,7 @@ INSERT INTO `cibr_task_ask_prepare` VALUES ('86853143e2714d6f9840f30bb2f4e9f8', 
 INSERT INTO `cibr_task_ask_prepare` VALUES ('9aed4413d02c414580cb875226deb2d2', '5646848a54754bbe833eba1c681cbe02', '2020-08-07 08:36:27', 'Y', '2020-08-12 16:00:00', '2020-08-13 16:00:00', '阿斯顿发', '2020-08-13 16:00:00', '1', '0', '2020-08-11 16:00:00', '', '2020-08-07 08:37:36', '5646848a54754bbe833eba1c681cbe02', 'e3ec20e7d76848afbf5b33a5d28101ce', 'c8498c747317477ebac49e3784df9a0c', '04');
 INSERT INTO `cibr_task_ask_prepare` VALUES ('a767c2aa84d0463096f8dfc9d9cf66ab', '5646848a54754bbe833eba1c681cbe02', '2020-08-06 09:59:26', 'Y', '2020-08-06 16:00:00', '2020-08-12 16:00:00', '从V型下次编程序', '2020-08-05 16:00:00', '1', '0', '2020-08-20 16:00:00', '', '2020-08-06 09:59:37', '5646848a54754bbe833eba1c681cbe02', 'a4680b1e35b8419db01494dd1318d96e', 'e3c5cc7ac0194f4980f76badeca3e3a9', '04');
 INSERT INTO `cibr_task_ask_prepare` VALUES ('a8777b96cb6a47b69087292df18dcca6', '5646848a54754bbe833eba1c681cbe02', '2020-08-06 08:37:31', 'Y', '2020-08-06 16:00:00', '2020-08-12 16:00:00', '22', '2020-08-05 16:00:00', '1', '0', '2020-08-26 16:00:00', '222', '2020-08-06 08:39:00', '5646848a54754bbe833eba1c681cbe02', '1bb4b0fea5ab4984a5f86b62926d3902', 'b9690d93ae924c39b5435bcf217ec09a', '02');
+INSERT INTO `cibr_task_ask_prepare` VALUES ('b385cfb9832f4a09a65357076cdb7783', '24f5851abc6444e79be718325025126f', '2020-08-17 02:03:19', 'Y', '2020-08-16 16:00:00', '2020-08-17 16:00:00', '', '2020-08-16 16:00:00', '1', '0', '2020-08-17 16:00:00', '', '2020-08-17 02:24:00', '24f5851abc6444e79be718325025126f', '97d2daf442de4b05ba60c3aa38b4535f', '2ab13b67223144198711c1fb043700fe', '02');
 INSERT INTO `cibr_task_ask_prepare` VALUES ('c15e67c0775b404cae0ffe7644c0bbc5', '5646848a54754bbe833eba1c681cbe02', '2020-08-05 17:31:14', 'Y', '2020-08-05 17:31:14', '2020-08-05 17:31:14', '', '2020-08-19 16:00:00', '1', '0', '2020-08-05 16:00:00', '', '2020-08-06 08:01:16', '5646848a54754bbe833eba1c681cbe02', '4ce07456d6104e85ae808fb955b25c13', '128f2f7a93c24be5a8a25e6098ad8377', '03');
 INSERT INTO `cibr_task_ask_prepare` VALUES ('d29f6b0b58fa45cd80e62288e80213f9', '24f5851abc6444e79be718325025126f', '2020-08-13 03:08:20', 'Y', '2020-08-12 16:00:00', '2020-08-13 16:00:00', '', '2020-08-27 16:00:00', '1', '0', '2020-08-28 16:00:00', '', '2020-08-13 03:08:35', '24f5851abc6444e79be718325025126f', '5b59b0f8c73a48e3a1a0e5da3bcb9aa2', '86d5c6722f8f4abaa1b89ec261075580', '02');
 INSERT INTO `cibr_task_ask_prepare` VALUES ('e3811eb3359b4b23a57d72d2f22476c4', '5646848a54754bbe833eba1c681cbe02', '2020-08-06 09:52:39', 'Y', '2020-08-05 16:00:00', '2020-08-13 16:00:00', '', '2020-08-05 16:00:00', '1', '0', '2020-08-12 16:00:00', '', '2020-08-06 09:52:50', '5646848a54754bbe833eba1c681cbe02', '05567077ecfd4db2b29c379487bd760a', 'bbaea521ab0b4db2a4cc281a19513f42', '04');
@@ -645,14 +705,18 @@ CREATE TABLE `cibr_task_detail_drosophila` (
 -- ----------------------------
 -- Records of cibr_task_detail_drosophila
 -- ----------------------------
+INSERT INTO `cibr_task_detail_drosophila` VALUES ('0', 'a4680b1e35b8419db01494dd1318d96e', '2020-08-17 09:45:19', '2020-08-17 09:45:19', '', 'b9e7d8e5fscc5ea0d3727', null, 'asdf', 'Y', 'male', 'N', '', 'N', '', '0', '1', '01');
+INSERT INTO `cibr_task_detail_drosophila` VALUES ('03b99457017b41dda8569121ef4f4971', 'a965c30a8db14018922ee7cd04d93713', '2020-08-17 03:23:25', '2020-09-02 16:00:00', null, 'b9e7dqefq4672a3737cc5ea0d3727', null, 's', 'Y', 'male', 'N', '', 'N', '', '1', '2', '00');
 INSERT INTO `cibr_task_detail_drosophila` VALUES ('076745b8f26a4ee5aee5d59288966e68', 'd90a131f0a8f4b5985d0692566b50ae3', '2020-08-03 11:12:09', '2020-08-03 11:12:09', null, 'b9e7d8e5weqf5ea0d3727', null, 'asdfasdf', 'Y', 'male', 'N', '', 'N', '', '2', '2', '00');
 INSERT INTO `cibr_task_detail_drosophila` VALUES ('128f2f7a93c24be5a8a25e6098ad8377', '4ce07456d6104e85ae808fb955b25c13', '2020-08-03 11:12:09', '2020-08-03 11:12:09', '', 'b9e7d8eewrea0d3727', null, 'asdf', 'Y', 'male', 'Y', '94faab0f15174c43b815ds1b62fcd', 'N', '', '0', '1', '01');
 INSERT INTO `cibr_task_detail_drosophila` VALUES ('16e6315d3a044e80b72ec5d7e82aa8d9', 'd90a131f0a8f4b5985d0692566b50ae3', '2020-08-03 11:12:09', '2020-08-03 11:12:09', null, 'b9e7d8e5asdf7cc5ea0d3727', null, 'sadfa', 'Y', 'male', 'N', '', 'N', '', '0', '2', '00');
-INSERT INTO `cibr_task_detail_drosophila` VALUES ('2ab13b67223144198711c1fb043700fe', '97d2daf442de4b05ba60c3aa38b4535f', '2020-08-11 03:16:21', null, null, 'b9e7dqefq4672a3737cc5ea0d3727', null, 'asdf', 'Y', 'male', 'N', '', 'N', '', '0', '2', '00');
+INSERT INTO `cibr_task_detail_drosophila` VALUES ('2ab13b67223144198711c1fb043700fe', '97d2daf442de4b05ba60c3aa38b4535f', '2020-08-11 03:16:21', null, null, 'b9e7dqefq4672a3737cc5ea0d3727', null, 'asdf', 'Y', 'male', 'N', '', 'N', '', '0', '2', '01');
 INSERT INTO `cibr_task_detail_drosophila` VALUES ('4d373970d8e54f0eaef8201ad5d87c70', '1bb4b0fea5ab4984a5f86b62926d3902', '2020-08-03 11:12:09', '2020-08-03 11:12:09', '', 'b9e7d8e54cba46asdf737cc5ea0d3727', null, 'sadfa', 'Y', 'male', 'N', '', 'N', '', '0', '1', '02');
 INSERT INTO `cibr_task_detail_drosophila` VALUES ('4e32733c6afd463ea7869a39960c93f4', '4ce07456d6104e85ae808fb955b25c13', '2020-08-03 11:12:09', '2020-08-03 11:12:09', '', 'b9e7d8e5fscc5ea0d3727', null, 'asdfasdf', 'Y', 'male', 'Y', 'c22a901311684a0296f760db82b98', 'N', '', '0', '1', '02');
+INSERT INTO `cibr_task_detail_drosophila` VALUES ('54d7d40ab9c547bcb362d3854a8d88c0', '2e70ad94a5884116b3fd26aa3138a095', '2020-08-17 03:07:52', '2020-09-01 16:00:00', null, 'b9e7asd4cba4672a3737cc5ea0d3727', null, '阿斯顿发', 'Y', 'male', 'N', '', 'N', '', '1', '2', '00');
 INSERT INTO `cibr_task_detail_drosophila` VALUES ('54fb3ff0c3ce409db31a5e321a320384', 'e3ec20e7d76848afbf5b33a5d28101ce', '2020-08-07 16:34:41', '2020-08-22 00:00:00', null, 'b9e7d8e5fscc5ea0d3727', null, 's', 'Y', 'male', 'N', '', 'N', '', '2', '1', '02');
 INSERT INTO `cibr_task_detail_drosophila` VALUES ('5f03c6434e6b4d15b98a019cad8adb95', 'e3ec20e7d76848afbf5b33a5d28101ce', '2020-08-07 16:34:41', '2020-08-22 00:00:00', null, 'b9e7d8eewrea0d3727', null, '阿斯顿发', 'Y', 'male', 'N', '', 'N', '', '0', '1', '01');
+INSERT INTO `cibr_task_detail_drosophila` VALUES ('610977008802465d9cd922fe759be926', '9c781839091d4b30953fc6d25a77b5cc', '2020-08-17 03:07:01', '2020-09-01 16:00:00', null, 'b9e7asd4cba4672a3737cc5ea0d3727', null, '阿斯顿发', 'Y', 'male', 'N', '', 'N', '', '1', '2', '00');
 INSERT INTO `cibr_task_detail_drosophila` VALUES ('6279629a9354445d9fb178446519f53f', '6537f9ab4cc24fbda95ce1f4f8c9386b', '2020-08-03 11:12:09', '2020-08-03 11:12:09', null, 'b9e7d8e5fscc5ea0d3727', null, 'asdf', null, 'male', 'N', '', 'N', '', '0', '1', '02');
 INSERT INTO `cibr_task_detail_drosophila` VALUES ('6ef188e489c04ec4bde94ce830001aad', 'c46c8414424f4c09bb5dc7a0e3929906', '2020-08-03 11:12:09', '2020-08-03 11:12:09', '', 'b9e7d8e54cba46asdf737cc5ea0d3727', null, 'asdfasdf', 'N', 'female', 'Y', '94faab0f15174c43bsdceba1b62fcd', 'Y', 'asdf', '1', '2', '01');
 INSERT INTO `cibr_task_detail_drosophila` VALUES ('73b8a4b252de46479709b9c09021fe45', '1bb4b0fea5ab4984a5f86b62926d3902', '2020-08-03 11:12:09', '2020-08-03 11:12:09', '', 'b9e7d8eewrea0d3727', null, 'asdfaf', 'Y', 'male', 'N', '', 'N', '', '0', '123', '02');
@@ -669,11 +733,11 @@ INSERT INTO `cibr_task_detail_drosophila` VALUES ('a9b0bba5640e4de0aa2f1f67b6770
 INSERT INTO `cibr_task_detail_drosophila` VALUES ('b3e6cbc9850548e2bae593df41e9ec71', 'e3ec20e7d76848afbf5b33a5d28101ce', '2020-08-07 16:34:43', '2020-08-22 00:00:00', null, 'b9e7d8e54cba4672a3737cc5ea0d3727', null, 'sdfasdf', 'Y', 'male', 'N', '', 'N', '', '0', '3', '02');
 INSERT INTO `cibr_task_detail_drosophila` VALUES ('b9690d93ae924c39b5435bcf217ec09a', '1bb4b0fea5ab4984a5f86b62926d3902', '2020-08-03 11:12:09', '2020-08-03 11:12:09', '', 'b9e7dqefq4672a3737cc5ea0d3727', null, 'sdaf', 'Y', 'male', 'N', '', 'N', '', '0', '132', '01');
 INSERT INTO `cibr_task_detail_drosophila` VALUES ('bbaea521ab0b4db2a4cc281a19513f42', '05567077ecfd4db2b29c379487bd760a', '2020-08-03 11:12:09', '2020-08-03 11:12:09', '', 'b9e7d8e54cba46asdf737cc5ea0d3727', null, 'asdf', 'Y', 'female', 'N', '', 'N', '', '0', '2', '01');
+INSERT INTO `cibr_task_detail_drosophila` VALUES ('bc21068ffee24109a522f237ace4f8f9', 'ddd48327bf3942b7989ceae14f447bce', '2020-08-17 03:12:27', '2020-09-01 16:00:00', null, 'b9e7asd4cba4672a3737cc5ea0d3727', null, '阿斯顿发', 'Y', 'male', 'N', '', 'N', '', '1', '2', '00');
 INSERT INTO `cibr_task_detail_drosophila` VALUES ('bd8cbb6fd90d461cb10e75669de38c49', '7943476691744fed8ba40aa182be75eb', '2020-08-07 16:34:46', '2020-08-22 00:00:00', null, 'b9e7dqefq4672a3737cc5ea0d3727', null, 'asdf', 'Y', 'male', 'N', '', 'N', '', '0', '1', '01');
 INSERT INTO `cibr_task_detail_drosophila` VALUES ('c8498c747317477ebac49e3784df9a0c', 'e3ec20e7d76848afbf5b33a5d28101ce', '2020-08-07 16:34:44', '2020-08-22 00:00:00', null, 'b9e7d8e5ds5ea0d3727', null, '阿萨德饭是', 'Y', 'male', 'N', '', 'N', '', '0', '1', '01');
 INSERT INTO `cibr_task_detail_drosophila` VALUES ('dbedd59ab60a4d78b582ec6efe160a05', 'd90a131f0a8f4b5985d0692566b50ae3', '2020-08-03 11:12:09', '2020-08-03 11:12:09', null, 'b9e7adf672a3737cc5ea0d3727', null, 's', 'Y', 'male', 'Y', '94faab0f15174c4adeba1b62fcd', 'Y', 'xcvzxcv', '3', '4', '00');
 INSERT INTO `cibr_task_detail_drosophila` VALUES ('ddf1cec7c4e64f8fab4ae6ae3d9d8c4f', '428580b8b28b414397f044e0d2e19ca4', '2020-08-11 03:14:12', null, null, 'b9e7dqefq4672a3737cc5ea0d3727', null, 'asdf', 'Y', 'male', 'N', '', 'N', '', '0', '2', '00');
-INSERT INTO `cibr_task_detail_drosophila` VALUES ('e3c5cc7ac0194f4980f76badeca3e3a9', 'a4680b1e35b8419db01494dd1318d96e', '2020-08-03 11:12:09', '2020-08-03 11:12:09', '', 'b9e7d8e5fscc5ea0d3727', null, 'asdf', 'Y', 'male', 'N', '', 'N', '', '0', '1', '01');
 INSERT INTO `cibr_task_detail_drosophila` VALUES ('e9505ddcc3884bbe9b85427f4f7244f8', '1bb4b0fea5ab4984a5f86b62926d3902', '2020-08-03 11:12:09', '2020-08-03 11:12:09', '', 'b9e7d8e5fq5ea0d3727', null, 'sdfva', 'Y', 'male', 'N', '', 'N', '', '0', '32', '01');
 INSERT INTO `cibr_task_detail_drosophila` VALUES ('f11b0e199de04f9ab0ff27f534f92c58', '1bb4b0fea5ab4984a5f86b62926d3902', '2020-08-03 11:12:09', '2020-08-03 11:12:09', '', 'b9e7d8e5fscc5ea0d3727', null, 'sadfa', 'Y', 'male', 'N', '', 'N', '', '0', '23', '01');
 
@@ -721,6 +785,8 @@ CREATE TABLE `cibr_task_process` (
   `dataType` varchar(255) DEFAULT NULL,
   `principal` varchar(32) DEFAULT NULL,
   `sampleType` varchar(2) DEFAULT NULL COMMENT '01 核酸  02 组织  03 细胞',
+  `sampleInput` varchar(32) DEFAULT NULL,
+  `inputTime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `samplePreparation` varchar(32) DEFAULT NULL,
   `spupdateTime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `libraryPreparation` varchar(32) DEFAULT NULL,
@@ -736,12 +802,12 @@ CREATE TABLE `cibr_task_process` (
 -- ----------------------------
 -- Records of cibr_task_process
 -- ----------------------------
-INSERT INTO `cibr_task_process` VALUES ('3c7de684cef140a4bae419ba0eb82dc1', 'fb4cecb953a44e9bb04fceebbe45de3e', '24f5851abc6444e79be718325025126f', '2020-08-13 05:31:44', '01', '核酸呀', '34', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', null, '53dc21f8cc214c11a13ca57fa27f3146', null, '24f5851abc6444e79be718325025126f', null, '53dc21f8cc214c11a13ca57fa27f3146', null, '');
-INSERT INTO `cibr_task_process` VALUES ('563b8462219a48279a0c97256ed94a4e', '4ac66818c9b64194ae6e03ba8e177ac9', '24f5851abc6444e79be718325025126f', '2020-08-13 13:31:05', '01', '核酸', '阿斯顿发', '53dc21f8cc214c11a13ca57fa27f3146', '01', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-13 13:31:05', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-13 13:31:05', '24f5851abc6444e79be718325025126f', '2020-08-13 13:31:05', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-13 13:31:05', '');
-INSERT INTO `cibr_task_process` VALUES ('8531d260f45e44ce9fd4b46e3081e1b0', '633f5f2e6a87404cbb698b7416199741', '24f5851abc6444e79be718325025126f', '2020-08-12 11:40:29', '01', '撒旦法师打发', '发', '53dc21f8cc214c11a13ca57fa27f3146', '02', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-12 11:40:29', '24f5851abc6444e79be718325025126f', '2020-08-12 11:40:29', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-12 11:40:29', '24f5851abc6444e79be718325025126f', '2020-08-12 11:40:29', '阿萨德饭');
-INSERT INTO `cibr_task_process` VALUES ('a5c874a970374966a798943cc731ea85', '15890decaca84ffba1f39f6d5caa66fa', '24f5851abc6444e79be718325025126f', '2020-08-13 06:07:06', '01', '阿斯顿发', '阿斯顿发', '53dc21f8cc214c11a13ca57fa27f3146', '02', '53dc21f8cc214c11a13ca57fa27f3146', null, '24f5851abc6444e79be718325025126f', null, '24f5851abc6444e79be718325025126f', null, '53dc21f8cc214c11a13ca57fa27f3146', null, '组织');
-INSERT INTO `cibr_task_process` VALUES ('ce598c12f521413fa5d644cfb2fad17f', 'ede893ae25844bc3b5fa999cf133552b', '24f5851abc6444e79be718325025126f', '2020-08-13 05:45:16', '01', '细胞哦', '撒旦法师打发', '24f5851abc6444e79be718325025126f', '03', '24f5851abc6444e79be718325025126f', null, '53dc21f8cc214c11a13ca57fa27f3146', null, '53dc21f8cc214c11a13ca57fa27f3146', null, '24f5851abc6444e79be718325025126f', null, '细胞哦');
-INSERT INTO `cibr_task_process` VALUES ('dd6411c7ae3c4b738090d439a21bcae5', 'e9bd57875d7140b7a6757f597a3ebd30', '24f5851abc6444e79be718325025126f', '2020-08-13 06:06:33', '01', '撒的发生的', '核酸', '24f5851abc6444e79be718325025126f', '01', '53dc21f8cc214c11a13ca57fa27f3146', null, '53dc21f8cc214c11a13ca57fa27f3146', null, '53dc21f8cc214c11a13ca57fa27f3146', null, '24f5851abc6444e79be718325025126f', null, '核酸');
+INSERT INTO `cibr_task_process` VALUES ('3c7de684cef140a4bae419ba0eb82dc1', 'fb4cecb953a44e9bb04fceebbe45de3e', '24f5851abc6444e79be718325025126f', '2020-08-13 05:31:44', '01', '核酸呀', '34', '24f5851abc6444e79be718325025126f', '01', null, null, '53dc21f8cc214c11a13ca57fa27f3146', null, '53dc21f8cc214c11a13ca57fa27f3146', null, '24f5851abc6444e79be718325025126f', null, '53dc21f8cc214c11a13ca57fa27f3146', null, '');
+INSERT INTO `cibr_task_process` VALUES ('563b8462219a48279a0c97256ed94a4e', '4ac66818c9b64194ae6e03ba8e177ac9', '24f5851abc6444e79be718325025126f', '2020-08-13 13:31:05', '01', '核酸', '阿斯顿发', '53dc21f8cc214c11a13ca57fa27f3146', '01', null, null, '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-13 13:31:05', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-13 13:31:05', '24f5851abc6444e79be718325025126f', '2020-08-13 13:31:05', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-13 13:31:05', '');
+INSERT INTO `cibr_task_process` VALUES ('8531d260f45e44ce9fd4b46e3081e1b0', '633f5f2e6a87404cbb698b7416199741', '24f5851abc6444e79be718325025126f', '2020-08-12 11:40:29', '01', '撒旦法师打发', '发', '53dc21f8cc214c11a13ca57fa27f3146', '02', null, null, '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-12 11:40:29', '24f5851abc6444e79be718325025126f', '2020-08-12 11:40:29', '53dc21f8cc214c11a13ca57fa27f3146', '2020-08-12 11:40:29', '24f5851abc6444e79be718325025126f', '2020-08-12 11:40:29', '阿萨德饭');
+INSERT INTO `cibr_task_process` VALUES ('a5c874a970374966a798943cc731ea85', '15890decaca84ffba1f39f6d5caa66fa', '24f5851abc6444e79be718325025126f', '2020-08-13 06:07:06', '01', '阿斯顿发', '阿斯顿发', '53dc21f8cc214c11a13ca57fa27f3146', '02', null, null, '53dc21f8cc214c11a13ca57fa27f3146', null, '24f5851abc6444e79be718325025126f', null, '24f5851abc6444e79be718325025126f', null, '53dc21f8cc214c11a13ca57fa27f3146', null, '组织');
+INSERT INTO `cibr_task_process` VALUES ('ce598c12f521413fa5d644cfb2fad17f', 'ede893ae25844bc3b5fa999cf133552b', '24f5851abc6444e79be718325025126f', '2020-08-13 05:45:16', '01', '细胞哦', '撒旦法师打发', '24f5851abc6444e79be718325025126f', '03', null, null, '24f5851abc6444e79be718325025126f', null, '53dc21f8cc214c11a13ca57fa27f3146', null, '53dc21f8cc214c11a13ca57fa27f3146', null, '24f5851abc6444e79be718325025126f', null, '细胞哦');
+INSERT INTO `cibr_task_process` VALUES ('dd6411c7ae3c4b738090d439a21bcae5', 'e9bd57875d7140b7a6757f597a3ebd30', '24f5851abc6444e79be718325025126f', '2020-08-13 06:06:33', '01', '撒的发生的', '核酸', '24f5851abc6444e79be718325025126f', '01', null, null, '53dc21f8cc214c11a13ca57fa27f3146', null, '53dc21f8cc214c11a13ca57fa27f3146', null, '53dc21f8cc214c11a13ca57fa27f3146', null, '24f5851abc6444e79be718325025126f', null, '核酸');
 
 -- ----------------------------
 -- Table structure for cibr_task_process_email
@@ -763,3 +829,35 @@ INSERT INTO `cibr_task_process_email` VALUES ('8531d260f45e44ce9fd4b46e3081e1b0'
 INSERT INTO `cibr_task_process_email` VALUES ('a5c874a970374966a798943cc731ea85', 'fengshuangshuang@cibr.ac.cn');
 INSERT INTO `cibr_task_process_email` VALUES ('ce598c12f521413fa5d644cfb2fad17f', 'fengshuangshuang@cibr.ac.cn');
 INSERT INTO `cibr_task_process_email` VALUES ('dd6411c7ae3c4b738090d439a21bcae5', 'fengshuangshuang@cibr.ac.cn');
+
+-- ----------------------------
+-- Table structure for cibr_task_process_sampleinput
+-- ----------------------------
+DROP TABLE IF EXISTS `cibr_task_process_sampleinput`;
+CREATE TABLE `cibr_task_process_sampleinput` (
+  `id` varchar(32) NOT NULL,
+  `processId` varchar(32) DEFAULT NULL,
+  `sampleName` varchar(1000) DEFAULT NULL,
+  `species` varchar(255) DEFAULT NULL,
+  `tissue` varchar(255) DEFAULT NULL,
+  `sampleMsg` varchar(255) DEFAULT NULL,
+  `sampleStatu` varchar(255) DEFAULT NULL,
+  `tissueNumber` varchar(255) DEFAULT NULL,
+  `bloodVolume` varchar(255) DEFAULT NULL,
+  `concentration` varchar(255) DEFAULT NULL,
+  `sampleVolume` varchar(255) DEFAULT NULL,
+  `totalNumber` varchar(255) DEFAULT NULL,
+  `cellLife` varchar(255) DEFAULT NULL,
+  `cellSort` varchar(255) DEFAULT NULL,
+  `databaseType` varchar(255) DEFAULT NULL,
+  `SequencingPlatform` varchar(255) DEFAULT NULL,
+  `remarks` varchar(255) DEFAULT NULL,
+  `creater` varchar(32) DEFAULT NULL,
+  `createTime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `currentStatu` varchar(2) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of cibr_task_process_sampleinput
+-- ----------------------------

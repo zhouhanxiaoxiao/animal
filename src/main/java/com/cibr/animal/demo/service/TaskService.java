@@ -5,6 +5,8 @@ import com.cibr.animal.demo.entity.*;
 import com.cibr.animal.demo.util.TaskUtil;
 import com.cibr.animal.demo.util.Util;
 import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,56 +18,61 @@ import java.util.*;
 @Service
 public class TaskService {
 
-    @Autowired
-    CibrAnimalDrosophilaMapper drosophilaMapper;
+    private Logger logger = LoggerFactory.getLogger(TaskService.class);
 
     @Autowired
-    CibrStockDrosophilaMapper stockDrosophilaMapper;
+    private CibrAnimalDrosophilaMapper drosophilaMapper;
 
     @Autowired
-    CibrSysTaskMapper taskMapper;
+    private CibrStockDrosophilaMapper stockDrosophilaMapper;
 
     @Autowired
-    CibrTaskAskDirectorMapper askDirectorMapper;
+    private CibrSysTaskMapper taskMapper;
 
     @Autowired
-    CibrTaskAskDrosophilaMapper askDrosophilaMapper;
+    private CibrTaskAskDirectorMapper askDirectorMapper;
 
     @Autowired
-    CibrTaskDetailDrosophilaMapper detailDrosophilaMapper;
+    private CibrTaskAskDrosophilaMapper askDrosophilaMapper;
 
     @Autowired
-    CibrSysUserMapper userMapper;
+    private CibrTaskDetailDrosophilaMapper detailDrosophilaMapper;
 
     @Autowired
-    EmailService emailService;
+    private CibrSysUserMapper userMapper;
 
     @Autowired
-    CibrSysTaskBusinessMapper businessMapper;
+    private EmailService emailService;
 
     @Autowired
-    CibrTaskFailMapper failMapper;
+    private CibrSysTaskBusinessMapper businessMapper;
 
     @Autowired
-    CibrTaskAskPrepareMapper prepareMapper;
+    private CibrTaskFailMapper failMapper;
 
     @Autowired
-    CibrTaskAskConfirmMapper confirmMapper;
+    private CibrTaskAskPrepareMapper prepareMapper;
 
     @Autowired
-    CibrSysRoleMapper roleMapper;
+    private CibrTaskAskConfirmMapper confirmMapper;
 
     @Autowired
-    CibrSysUserRoleMapper userRoleMapper;
+    private CibrSysRoleMapper roleMapper;
 
     @Autowired
-    CibrTaskProcessMapper processMapper;
+    private CibrSysUserRoleMapper userRoleMapper;
 
     @Autowired
-    CibrTaskProcessEmailMapper processEmailMapper;
+    private CibrTaskProcessMapper processMapper;
 
     @Autowired
-    ProcessTaskService processTaskService;
+    private CibrTaskProcessEmailMapper processEmailMapper;
+
+    @Autowired
+    private ProcessTaskService processTaskService;
+
+    @Autowired
+    private CibrRecordMeterialMapper recordMeterialMapper;
 
     public List<Map<String, Object>> getTaskStock(List<String> stockIds, List<Map<String, Object>> stockTable) {
         List<Map<String, Object>> retList = new ArrayList<Map<String, Object>>();
@@ -88,6 +95,7 @@ public class TaskService {
     @Transactional(rollbackFor = Exception.class)
     public void createAskTask(String supporter,CibrSysUser user, List<String> selectedStudyDirector, String remarks, String urgent,
                               Map<String, Object> detailData) throws ParseException {
+        logger.info("开始创建任务事务！");
         /*任务表*/
         CibrSysTask task = new CibrSysTask();
         String taskId = Util.getUUID();
@@ -112,8 +120,6 @@ public class TaskService {
         askDrosophila.setRemarks(remarks);
         askDrosophila.setUrgent(urgent);
         askDrosophilaMapper.insert(askDrosophila);
-
-
         List<CibrTaskAskDirector> list = new ArrayList<CibrTaskAskDirector>();
         /*实验负责人*/
         for (String tmp : selectedStudyDirector){
@@ -147,8 +153,40 @@ public class TaskService {
             taskDetailDrosophila.setSpecialfeeding((String) value.get("specialFeeding"));
             taskDetailDrosophila.setSpecificfeeding((String) value.get("specificFeeding"));
             taskDetailDrosophila.setOrdernumber(String.valueOf(value.get("orderNumber")));
-            taskDetailDrosophila.setId(Util.getUUID());
+
+            String detailId = Util.getUUID();
+            taskDetailDrosophila.setId(detailId);
             taskDetailDrosophila.setConfirmstatu("00");
+            String needWy = String.valueOf(value.get("needWy"));
+            if ("Y".equals(needWy)){
+                List<String> times = (List<String>)value.get("wyTime");
+                CibrRecordMeterial recordMeterial = new CibrRecordMeterial();
+                recordMeterial.setId(Util.getUUID());
+                recordMeterial.setCreater(user.getId());
+                //todo 暂时写死，后续有更多的唯一资源再继续补充
+                recordMeterial.setResourceid("asdfasedf");
+                recordMeterial.setCreatetime(new Date());
+                recordMeterial.setDetailid(detailId);
+                recordMeterial.setStarttime(Util.str2date(times.get(0),"yyyy-MM-dd HH:mm"));
+                recordMeterial.setEndtime(Util.str2date(times.get(1),"yyyy-MM-dd HH:mm"));
+                recordMeterial.setUsagemsg("实验");
+                recordMeterialMapper.insert(recordMeterial);
+            }
+            String needPhoto = String.valueOf(value.get("needPhoto"));
+            if ("Y".equals(needPhoto)){
+                List<String> times = (List<String>)value.get("photoTime");
+                CibrRecordMeterial recordMeterial = new CibrRecordMeterial();
+                recordMeterial.setId(Util.getUUID());
+                recordMeterial.setCreater(user.getId());
+                //todo 暂时写死，后续有更多的唯一资源再继续补充
+                recordMeterial.setResourceid("asdfased3");
+                recordMeterial.setCreatetime(new Date());
+                recordMeterial.setDetailid(detailId);
+                recordMeterial.setStarttime(Util.str2date(times.get(0),"yyyy-MM-dd HH:mm"));
+                recordMeterial.setEndtime(Util.str2date(times.get(1),"yyyy-MM-dd HH:mm"));
+                recordMeterial.setUsagemsg("实验");
+                recordMeterialMapper.insert(recordMeterial);
+            }
             detailDrosophilaList.add(taskDetailDrosophila);
         }
         detailDrosophilaMapper.batchInsert(detailDrosophilaList);
@@ -259,6 +297,7 @@ public class TaskService {
     public Map<String,Object> findTaskDetail(String taskId) {
         Map<String,Object> retMap = new HashMap<String,Object>();
         /*获取申请使用任务*/
+        CibrSysTask task = taskMapper.selectByPrimaryKey(taskId);
         CibrTaskAskDrosophilaExample askDrosophilaExample = new CibrTaskAskDrosophilaExample();
         askDrosophilaExample.createCriteria().andTaskidEqualTo(taskId);
         List<CibrTaskAskDrosophila> cibrTaskAskDrosophilas = askDrosophilaMapper.selectByExample(askDrosophilaExample);
@@ -302,8 +341,10 @@ public class TaskService {
             if (!StringUtils.isEmpty(detailDrosophila.getHybridstrain())){
                 detailDrosophila.setHybridstrain(uuid_dros.get(detailDrosophila.getHybridstrain()).getGenotype());
             }
+
             rows.add(row);
         }
+        retMap.put("task",task);
         retMap.put("ask",ask);
         retMap.put("rows", rows);
         return retMap;
@@ -454,8 +495,12 @@ public class TaskService {
         prepare.setNeedmore(isNeedMore);
         prepare.setCreatetime(new Date());
         prepare.setHandler(user.getId());
-        prepare.setStarttime(Util.str2date(startDate,"yyyy-MM-dd"));
-        prepare.setEndtime(Util.str2date(endDate,"yyyy-MM-dd"));
+        if (!StringUtils.isEmpty(startDate)){
+            prepare.setStarttime(Util.str2date(startDate,"yyyy-MM-dd"));
+        }
+        if (!StringUtils.isEmpty(endDate)){
+            prepare.setEndtime(Util.str2date(endDate,"yyyy-MM-dd"));
+        }
         prepare.setRemarks1(remarks);
         prepare.setPrestatu("01");
         prepareMapper.insert(prepare);

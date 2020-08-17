@@ -279,7 +279,7 @@
         record.endTime as record_endTime,
         record.createTime as record_createTime,
         record.creater as record_creater,
-        record.usage as record_usage,
+        record.usagemsg as record_usage,
         record.remarks as record_remarks
     from cibr_sys_material a
     left join cibr_record_meterial record
@@ -303,7 +303,7 @@
       <result column="record_endTime" property="endtime" jdbcType="TIMESTAMP" />
       <result column="record_createTime" property="createtime" jdbcType="TIMESTAMP" />
       <result column="record_creater" property="creater" jdbcType="VARCHAR" />
-      <result column="record_usage" property="usage" jdbcType="VARCHAR" />
+      <result column="record_usage" property="usagemsg" jdbcType="VARCHAR" />
       <result column="record_remarks" property="remarks" jdbcType="VARCHAR" />
     </collection>
   </resultMap>
