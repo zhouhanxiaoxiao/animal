@@ -3,10 +3,13 @@ package com.cibr.animal.demo.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cibr.animal.demo.entity.CibrSysUser;
+import com.cibr.animal.demo.entity.CibrTaskProcessSampleinput;
+import com.cibr.animal.demo.service.FileService;
 import com.cibr.animal.demo.util.FileUtil;
 import com.cibr.animal.demo.util.ReturnData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +28,9 @@ import java.util.Map;
 public class FileController {
 
     private Logger logger = LoggerFactory.getLogger(FileController.class);
+
+    @Autowired
+    private FileService fileService;
 
     @RequestMapping("/file/upload")
     public void uploadFile(HttpServletRequest request){
@@ -45,7 +51,10 @@ public class FileController {
             }else {
                 MultipartFile file = files.get(0);
                 List<List<String>> rows = FileUtil.getRows(file);
-
+                if (file.getOriginalFilename().startsWith("样本录入-")){
+                    List<CibrTaskProcessSampleinput> list = fileService.handleSampleInput(rows, file);
+                    result.put("rows",list);
+                }
                 ret.setCode("200");
                 ret.setRetMap(result);
             }

@@ -23,13 +23,17 @@ public class FileUtil {
 
     private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
+    public static final String NUCLEIC_ACID_FILENAME = "-核酸-";
+    public static final String TISSUE_FILENAME = "-组织-";
+    public static final String CELL_FILENAME = "-细胞-";
+
     public static boolean saveFile(List<MultipartFile> files){
         for (MultipartFile file : files){
             if (file.isEmpty()){
                 throw new RuntimeException("上传的文件为空！");
             }
             String fileName = file.getOriginalFilename();
-            File dist = new File(filePath + File.separator+ fileName);
+            File dist = new File(filePath + File.separator+ Util.getUUID() + fileName);
             logger.debug(dist.getPath());
             try {
                 file.transferTo(dist);
