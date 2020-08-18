@@ -505,4 +505,37 @@
       currentStatu = #{currentstatu,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+
+  <insert id="batchInsert" parameterType="com.cibr.animal.demo.entity.CibrTaskProcessSampleinput">
+    insert into cibr_task_process_sampleinput (
+        id, processId,sampleName,species,tissue,sampleMsg,sampleStatu,tissueNumber,bloodVolume,
+        concentration,sampleVolume,totalNumber,cellLife,cellSort,databaseType,SequencingPlatform,
+        remarks,creater,createTime,currentStatu
+    )
+    values
+    <foreach collection="list" item="record" separator=",">
+    (
+        #{record.id,jdbcType=VARCHAR},
+        #{record.processid,jdbcType=VARCHAR},
+        #{record.samplename,jdbcType=VARCHAR},
+        #{record.species,jdbcType=VARCHAR},
+        #{record.tissue,jdbcType=VARCHAR},
+        #{record.samplemsg,jdbcType=VARCHAR},
+        #{record.samplestatu,jdbcType=VARCHAR},
+        #{record.tissuenumber,jdbcType=VARCHAR},
+        #{record.bloodvolume,jdbcType=VARCHAR},
+        #{record.concentration,jdbcType=VARCHAR},
+        #{record.samplevolume,jdbcType=VARCHAR},
+        #{record.totalnumber,jdbcType=VARCHAR},
+        #{record.celllife,jdbcType=VARCHAR},
+        #{record.cellsort,jdbcType=VARCHAR},
+        #{record.databasetype,jdbcType=VARCHAR},
+        #{record.sequencingplatform,jdbcType=VARCHAR},
+        #{record.remarks,jdbcType=VARCHAR},
+        #{record.creater,jdbcType=VARCHAR},
+        #{record.createtime,jdbcType=TIMESTAMP},
+        #{record.currentstatu,jdbcType=VARCHAR}
+    )
+    </foreach>
+  </insert>
 </mapper>

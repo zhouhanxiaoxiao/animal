@@ -1,9 +1,6 @@
 package com.cibr.animal.demo.service;
 
-import com.cibr.animal.demo.dao.CibrSysTaskBusinessMapper;
-import com.cibr.animal.demo.dao.CibrSysTaskMapper;
-import com.cibr.animal.demo.dao.CibrTaskProcessEmailMapper;
-import com.cibr.animal.demo.dao.CibrTaskProcessMapper;
+import com.cibr.animal.demo.dao.*;
 import com.cibr.animal.demo.entity.*;
 import com.cibr.animal.demo.util.EmailUtil;
 import com.cibr.animal.demo.util.TaskUtil;
@@ -34,6 +31,9 @@ public class ProcessTaskService {
 
     @Autowired
     private CibrSysUserService userService;
+
+    @Autowired
+    private CibrTaskProcessSampleinputMapper sampleinputMapper;
 
     @Transactional(rollbackFor = Exception.class)
     public void createProcessTask(CibrSysUser user, String projectName, String dataType, String principal, List<String> emails, String sampleMsg, String samplePreparation, String libraryPreparation, String dismountData, String bioinformaticsAnalysis, String remarks) {
@@ -122,6 +122,10 @@ public class ProcessTaskService {
         processExample.createCriteria().andTaskidEqualTo(taskId);
         List<CibrTaskProcess> cibrTaskProcesses = processMapper.selectByExample(processExample);
         return getPorcessById(cibrTaskProcesses.get(0).getId());
+    }
+
+    public void batchInsert(List<CibrTaskProcessSampleinput> list){
+        sampleinputMapper.batchInsert(list);
     }
 }
 
