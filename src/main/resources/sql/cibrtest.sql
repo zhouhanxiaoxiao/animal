@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50729
 File Encoding         : 65001
 
-Date: 2020-08-17 18:49:55
+Date: 2020-08-19 18:02:59
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -312,6 +312,29 @@ CREATE TABLE `cibr_sys_environment` (
 INSERT INTO `cibr_sys_environment` VALUES ('sdafsdfasdfasdf', '12h', '25°C', '50%', '70%', null, null, null, '2020-07-13 17:32:57', '12h-25°C-50%-70%');
 
 -- ----------------------------
+-- Table structure for cibr_sys_file
+-- ----------------------------
+DROP TABLE IF EXISTS `cibr_sys_file`;
+CREATE TABLE `cibr_sys_file` (
+  `id` varchar(32) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `path` varchar(255) DEFAULT NULL,
+  `detailId` varchar(32) DEFAULT NULL,
+  `fileStatu` varchar(2) DEFAULT NULL,
+  `creater` varchar(32) DEFAULT NULL,
+  `createTime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `md5` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of cibr_sys_file
+-- ----------------------------
+INSERT INTO `cibr_sys_file` VALUES ('8121d9a926694538b1c6205c579cc90b', '0ed43a03ab2749ab84b8e213d76fda26样本录入-核酸-xxx.xlsx', 'D:\\code\\fileUpload\\0ed43a03ab2749ab84b8e213d76fda26样本录入-核酸-xxx.xlsx', 'ce598c12f521413fa5d644cfb2fad17f', '00', '24f5851abc6444e79be718325025126f', '2020-08-19 06:56:32', '5866bded0e874c46f50a58729eedac4a');
+INSERT INTO `cibr_sys_file` VALUES ('8939615c5d6f4a73ad1860e67dc0a7e7', '83d6c3f2b11546ca97cae724f6cf8100样本录入-核酸-xxx.xlsx', 'D:\\code\\fileUpload\\83d6c3f2b11546ca97cae724f6cf8100样本录入-核酸-xxx.xlsx', 'dd6411c7ae3c4b738090d439a21bcae5', '00', '24f5851abc6444e79be718325025126f', '2020-08-19 06:26:07', '5866bded0e874c46f50a58729eedac4a');
+INSERT INTO `cibr_sys_file` VALUES ('a1d10695c30744eabc54a8699dc3e3a4', '9897dd0ed22c443da567bb60d5509ae8样本录入-核酸-xxx.xlsx', 'D:\\code\\fileUpload\\9897dd0ed22c443da567bb60d5509ae8样本录入-核酸-xxx.xlsx', 'dd6411c7ae3c4b738090d439a21bcae5', '00', '24f5851abc6444e79be718325025126f', '2020-08-19 06:24:54', '5866bded0e874c46f50a58729eedac4a');
+
+-- ----------------------------
 -- Table structure for cibr_sys_material
 -- ----------------------------
 DROP TABLE IF EXISTS `cibr_sys_material`;
@@ -378,6 +401,7 @@ INSERT INTO `cibr_sys_suggest` VALUES ('6712a85065cc4e888c4875d670091072', '24f5
 INSERT INTO `cibr_sys_suggest` VALUES ('768086d06d044e709105e9cff54e345c', '24f5851abc6444e79be718325025126f', '2020-08-17 06:49:49', '阿斯顿发', null);
 INSERT INTO `cibr_sys_suggest` VALUES ('8a997336400846558b8a929d1eba7471', '24f5851abc6444e79be718325025126f', '2020-08-17 06:46:33', '阿斯顿发', null);
 INSERT INTO `cibr_sys_suggest` VALUES ('b8641e6c2a824e5895a444efd4c8fb57', '24f5851abc6444e79be718325025126f', '2020-08-17 06:46:32', '阿斯顿发', null);
+INSERT INTO `cibr_sys_suggest` VALUES ('c0c6d5ca35de43c5ab5ce08607af2f32', '24f5851abc6444e79be718325025126f', '2020-08-19 06:37:10', '撒旦法', null);
 INSERT INTO `cibr_sys_suggest` VALUES ('e26b6621d22c47a894150ae79f6012e0', '24f5851abc6444e79be718325025126f', '2020-08-17 06:38:47', '阿斯顿发', null);
 INSERT INTO `cibr_sys_suggest` VALUES ('ea1f8c41e7024c2c8488a7f7e5716524', '24f5851abc6444e79be718325025126f', '2020-08-17 06:58:38', '阿斯顿发', null);
 
@@ -855,9 +879,19 @@ CREATE TABLE `cibr_task_process_sampleinput` (
   `creater` varchar(32) DEFAULT NULL,
   `createTime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `currentStatu` varchar(2) DEFAULT NULL,
+  `rowIndex` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of cibr_task_process_sampleinput
 -- ----------------------------
+INSERT INTO `cibr_task_process_sampleinput` VALUES ('2c767d8ce12a491bb9b49e9295a7be41', 'dd6411c7ae3c4b738090d439a21bcae5', '9.0', '撒旦法', '31大大', '00', '00', null, null, '11.0', '12.0', '13.0', null, null, '07', '00', '', '24f5851abc6444e79be718325025126f', '2020-08-19 06:26:07', '00', '8');
+INSERT INTO `cibr_task_process_sampleinput` VALUES ('31b613ced74a47aeb8f6ef830d900d08', 'dd6411c7ae3c4b738090d439a21bcae5', '1.0', '撒旦法', '23大大', '01', '01', null, null, '3.0', '4.0', '5.0', null, null, '01', '01', '', '24f5851abc6444e79be718325025126f', '2020-08-19 06:26:07', '00', '0');
+INSERT INTO `cibr_task_process_sampleinput` VALUES ('41f94cd576004c9c809e9d49e06949be', 'dd6411c7ae3c4b738090d439a21bcae5', '7.0', '撒旦法', '29大大', '00', '00', null, null, '9.0', '10.0', '11.0', null, null, '07', '00', '', '24f5851abc6444e79be718325025126f', '2020-08-19 06:26:07', '00', '6');
+INSERT INTO `cibr_task_process_sampleinput` VALUES ('53927e0bf14d45d2a275817ebd25bb09', 'dd6411c7ae3c4b738090d439a21bcae5', '5.0', '撒旦法', '27大大', '05', '05', null, null, '7.0', '8.0', '9.0', null, null, '05', '00', '', '24f5851abc6444e79be718325025126f', '2020-08-19 06:26:07', '00', '4');
+INSERT INTO `cibr_task_process_sampleinput` VALUES ('7939e933015f4612bd64964c42cc6dad', 'dd6411c7ae3c4b738090d439a21bcae5', '2.0', '撒旦法', '24大大', '02', '02', null, null, '4.0', '5.0', '6.0', null, null, '02', '02', '', '24f5851abc6444e79be718325025126f', '2020-08-19 06:26:07', '00', '1');
+INSERT INTO `cibr_task_process_sampleinput` VALUES ('8463e73b1f214bd6bf9977c58eee6a1c', 'dd6411c7ae3c4b738090d439a21bcae5', '8.0', '撒旦法', '30大大', '00', '00', null, null, '10.0', '11.0', '12.0', null, null, '07', '00', '', '24f5851abc6444e79be718325025126f', '2020-08-19 06:26:07', '00', '7');
+INSERT INTO `cibr_task_process_sampleinput` VALUES ('896d3f63823b465c81a2e7fbafb09461', 'dd6411c7ae3c4b738090d439a21bcae5', '3.0', '撒旦法', '25大大', '03', '03', null, null, '5.0', '6.0', '7.0', null, null, '03', '03', '', '24f5851abc6444e79be718325025126f', '2020-08-19 06:26:07', '00', '2');
+INSERT INTO `cibr_task_process_sampleinput` VALUES ('e6675b7161e743be929d1927f9f820fb', 'dd6411c7ae3c4b738090d439a21bcae5', '4.0', '撒旦法', '26大大', '04', '04', null, null, '6.0', '7.0', '8.0', null, null, '04', '00', '', '24f5851abc6444e79be718325025126f', '2020-08-19 06:26:07', '00', '3');
+INSERT INTO `cibr_task_process_sampleinput` VALUES ('ebc6caaa29014ba9a1cb8ec1e48c57d1', 'dd6411c7ae3c4b738090d439a21bcae5', '6.0', '撒旦法', '28大大', '06', '00', null, null, '8.0', '9.0', '10.0', null, null, '06', '00', '', '24f5851abc6444e79be718325025126f', '2020-08-19 06:26:07', '00', '5');

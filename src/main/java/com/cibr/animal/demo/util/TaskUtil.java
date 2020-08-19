@@ -47,6 +47,8 @@ public class TaskUtil {
     /**任务状态：饲养员拒绝*/
     public static final String ASK_TASK_STATU_FAIL = "09";
 
+    /**任务状态：样品录入*/
+    public static final String PROCESS_TASK_STATU_SP = "10";
     /**任务状态：样品制备*/
-    public static final String PROCESS_TASK_STATU_SP = "01";
+    public static final String PROCESS_TASK_STATU_SPWAIT = "20";
 }

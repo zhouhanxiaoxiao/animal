@@ -40,13 +40,6 @@ public class FileController {
     @Autowired
     private RedisUtil redisUtil;
 
-    @RequestMapping("/file/upload")
-    public void uploadFile(HttpServletRequest request){
-        logger.debug("进入文件上传");
-        List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
-        fileService.saveFile(files);
-    }
-
     @RequestMapping("/file/import/sampleInput")
     public String uploadProcessFile(HttpServletRequest request,
                                 HttpServletResponse response) {
@@ -57,7 +50,7 @@ public class FileController {
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
             Map<String, Object> result = new HashMap<String, Object>();
             List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
-            File dist = fileService.saveFile(files);
+            File dist = fileService.saveFile(files,processId,user);
             if (dist == null){
                 response.setStatus(500);
                 ret.setCode("E500");
@@ -67,8 +60,10 @@ public class FileController {
                 if (file.getOriginalFilename().startsWith("样本录入-")){
                     List<CibrTaskProcessSampleinput> list = fileService.handleSampleInput(rows, file, processId, user);
                     processTaskService.batchInsert(list);
+                }else {
+                    response.setStatus(500);
+                    ret.setCode("500");
                 }
-                ret.setCode("200");
                 ret.setRetMap(result);
             }
         } catch (Exception e) {

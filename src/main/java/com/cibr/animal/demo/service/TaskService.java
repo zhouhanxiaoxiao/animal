@@ -298,6 +298,10 @@ public class TaskService {
         Map<String,Object> retMap = new HashMap<String,Object>();
         /*获取申请使用任务*/
         CibrSysTask task = taskMapper.selectByPrimaryKey(taskId);
+        if (!"02".equals(task.getTasktype())){
+            return null;
+        }
+
         CibrTaskAskDrosophilaExample askDrosophilaExample = new CibrTaskAskDrosophilaExample();
         askDrosophilaExample.createCriteria().andTaskidEqualTo(taskId);
         List<CibrTaskAskDrosophila> cibrTaskAskDrosophilas = askDrosophilaMapper.selectByExample(askDrosophilaExample);

@@ -1584,6 +1584,66 @@ public class CibrTaskProcessSampleinputExample {
             addCriterion("currentStatu not between", value1, value2, "currentstatu");
             return (Criteria) this;
         }
+
+        public Criteria andRowindexIsNull() {
+            addCriterion("rowIndex is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowindexIsNotNull() {
+            addCriterion("rowIndex is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowindexEqualTo(Integer value) {
+            addCriterion("rowIndex =", value, "rowindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowindexNotEqualTo(Integer value) {
+            addCriterion("rowIndex <>", value, "rowindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowindexGreaterThan(Integer value) {
+            addCriterion("rowIndex >", value, "rowindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowindexGreaterThanOrEqualTo(Integer value) {
+            addCriterion("rowIndex >=", value, "rowindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowindexLessThan(Integer value) {
+            addCriterion("rowIndex <", value, "rowindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowindexLessThanOrEqualTo(Integer value) {
+            addCriterion("rowIndex <=", value, "rowindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowindexIn(List<Integer> values) {
+            addCriterion("rowIndex in", values, "rowindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowindexNotIn(List<Integer> values) {
+            addCriterion("rowIndex not in", values, "rowindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowindexBetween(Integer value1, Integer value2) {
+            addCriterion("rowIndex between", value1, value2, "rowindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowindexNotBetween(Integer value1, Integer value2) {
+            addCriterion("rowIndex not between", value1, value2, "rowindex");
+            return (Criteria) this;
+        }
     }
 
     /**

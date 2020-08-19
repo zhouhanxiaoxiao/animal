@@ -118,6 +118,10 @@ public class ProcessTaskService {
     }
 
     public CibrTaskProcess getProcessByTaskId(String taskId){
+        CibrSysTask task = taskMapper.selectByPrimaryKey(taskId);
+        if (!"03".equals(task.getTasktype())){
+            return null;
+        }
         CibrTaskProcessExample processExample = new CibrTaskProcessExample();
         processExample.createCriteria().andTaskidEqualTo(taskId);
         List<CibrTaskProcess> cibrTaskProcesses = processMapper.selectByExample(processExample);
@@ -126,6 +130,26 @@ public class ProcessTaskService {
 
     public void batchInsert(List<CibrTaskProcessSampleinput> list){
         sampleinputMapper.batchInsert(list);
+    }
+
+    public List<CibrTaskProcessSampleinput> getSampleInputs(String processId) {
+        CibrTaskProcessSampleinputExample sampleinputExample = new CibrTaskProcessSampleinputExample();
+        sampleinputExample.createCriteria().andProcessidEqualTo(processId);
+        sampleinputExample.setOrderByClause("rowIndex");
+        return sampleinputMapper.selectByExample(sampleinputExample);
+    }
+
+    /**
+     * 样品录入已完成，保存最终样品录入结果
+     * @param processId
+     * @param user
+     * @param list
+     */
+    public void saveSampleInput(String processId, CibrSysUser user, List<CibrTaskProcessSampleinput> list) {
+        CibrTaskProcess process = processMapper.selectByPrimaryKey(processId);
+        process.setTaskstatu(TaskUtil.PROCESS_TASK_STATU_SPWAIT);
+        process.setInputtime(new Date());
+
     }
 }
 
