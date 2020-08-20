@@ -8,6 +8,7 @@ import com.cibr.animal.demo.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -134,7 +135,7 @@ public class ProcessTaskService {
 
     public List<CibrTaskProcessSampleinput> getSampleInputs(String processId) {
         CibrTaskProcessSampleinputExample sampleinputExample = new CibrTaskProcessSampleinputExample();
-        sampleinputExample.createCriteria().andProcessidEqualTo(processId);
+        sampleinputExample.createCriteria().andProcessidEqualTo(processId).andCurrentstatuNotEqualTo("09");
         sampleinputExample.setOrderByClause("rowIndex");
         return sampleinputMapper.selectByExample(sampleinputExample);
     }
@@ -145,11 +146,82 @@ public class ProcessTaskService {
      * @param user
      * @param list
      */
+    @Transactional(rollbackFor = Exception.class)
     public void saveSampleInput(String processId, CibrSysUser user, List<CibrTaskProcessSampleinput> list) {
         CibrTaskProcess process = processMapper.selectByPrimaryKey(processId);
         process.setTaskstatu(TaskUtil.PROCESS_TASK_STATU_SPWAIT);
         process.setInputtime(new Date());
+        processMapper.updateByPrimaryKey(process);
 
+        CibrTaskProcessSampleinputExample example = new CibrTaskProcessSampleinputExample();
+        example.createCriteria().andProcessidEqualTo(processId);
+        final List<CibrTaskProcessSampleinput> list_database = sampleinputMapper.selectByExample(example);
+
+        List<CibrTaskProcessSampleinput> updateList = new ArrayList<CibrTaskProcessSampleinput>();
+        List<CibrTaskProcessSampleinput> delList = new ArrayList<CibrTaskProcessSampleinput>();
+        List<CibrTaskProcessSampleinput> insertList = new ArrayList<CibrTaskProcessSampleinput>();
+        Map<String,CibrTaskProcessSampleinput> update_map = new HashMap<>();
+        for (CibrTaskProcessSampleinput input : list){
+            input.setCurrentstatu("02");
+            if (StringUtils.isEmpty(input.getId())){
+                input.setId(Util.getUUID());
+                input.setCreater(user.getId());
+                input.setProcessid(processId);
+                input.setCreatetime(new Date());
+                insertList.add(input);
+            }else {
+                updateList.add(input);
+                update_map.put(input.getId(),input);
+            }
+        }
+
+        int maxRowIndex = -1;
+        for (CibrTaskProcessSampleinput input : list_database){
+            if (maxRowIndex < input.getRowindex()){
+                maxRowIndex = input.getRowindex();
+            }
+            if (update_map.get(input.getId()) == null){
+                input.setCurrentstatu("09");
+                delList.add(input);
+            }
+        }
+
+        for (CibrTaskProcessSampleinput input : insertList){
+            maxRowIndex ++;
+            input.setRowindex(maxRowIndex);
+        }
+
+        if (insertList.size()>0){
+            sampleinputMapper.batchInsert(insertList);
+        }
+        if (updateList.size()>0){
+            sampleinputMapper.batchUpdate(updateList);
+        }
+        if (delList.size()>0){
+            sampleinputMapper.batchUpdate(delList);
+        }
+    }
+
+    public List<CibrTaskProcessSamplemake> getAllTodoMakes(String processId) {
+        List<CibrTaskProcessSampleinput> sampleInputs = this.getSampleInputs(processId);
+        List<CibrTaskProcessSamplemake> samplemakes = new ArrayList<CibrTaskProcessSamplemake>();
+        for(CibrTaskProcessSampleinput sampleinput : sampleInputs){
+            CibrTaskProcessSamplemake make = new CibrTaskProcessSamplemake();
+            make.setProcessid(processId);
+            make.setInputid(sampleinput.getId());
+            make.setSamplename(sampleinput.getSamplename());
+            make.setSpecies(sampleinput.getSpecies());
+            make.setTissue(sampleinput.getTissue());
+            make.setConcentration(sampleinput.getConcentration());
+            make.setSamplevolume(sampleinput.getSamplevolume());
+            make.setTotalnumber(sampleinput.getTotalnumber());
+            make.setCelllife(sampleinput.getCelllife());
+            make.setCellsort(sampleinput.getCellsort());
+            make.setDatabasetype(sampleinput.getDatabasetype());
+            make.setSequencingplatform(sampleinput.getSequencingplatform());
+            samplemakes.add(make);
+        }
+        return samplemakes;
     }
 }
 

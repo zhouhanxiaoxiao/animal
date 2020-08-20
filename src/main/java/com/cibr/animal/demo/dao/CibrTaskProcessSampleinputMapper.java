@@ -95,5 +95,9 @@ public interface CibrTaskProcessSampleinputMapper {
      */
     int updateByPrimaryKey(CibrTaskProcessSampleinput record);
 
+    int batchUpdate(List<CibrTaskProcessSampleinput> list);
+
     int batchInsert(List<CibrTaskProcessSampleinput> list);
+
+
 }

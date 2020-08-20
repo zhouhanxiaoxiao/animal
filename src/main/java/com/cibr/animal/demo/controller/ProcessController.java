@@ -5,6 +5,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cibr.animal.demo.entity.CibrSysUser;
 import com.cibr.animal.demo.entity.CibrTaskProcess;
 import com.cibr.animal.demo.entity.CibrTaskProcessSampleinput;
+import com.cibr.animal.demo.entity.CibrTaskProcessSamplemake;
 import com.cibr.animal.demo.service.ProcessTaskService;
 import com.cibr.animal.demo.util.RedisUtil;
 import com.cibr.animal.demo.util.ReturnData;
@@ -80,6 +81,26 @@ public class ProcessController {
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
             List<CibrTaskProcessSampleinput> list = JSON.parseArray(datas, CibrTaskProcessSampleinput.class);
             processTaskService.saveSampleInput(processId,user,list);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+    }
+
+    @RequestMapping("/task/process/makeInit")
+    public String makeInit(HttpServletRequest request,
+                                  HttpServletResponse response,
+                                  @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String processId = (String) requestBody.get("processId");
+            List<CibrTaskProcessSamplemake> allTodoMakes = processTaskService.getAllTodoMakes(processId);
+            Map<String,Object> retMap = new HashMap<>();
+            retMap.put("makes",allTodoMakes);
+            ret.setRetMap(retMap);
             ret.setCode("200");
         }catch (Exception e) {
             ret.setCode("E500");
