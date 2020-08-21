@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import javax.rmi.PortableRemoteObject;
 import java.util.*;
 
 @Service
@@ -35,6 +36,12 @@ public class ProcessTaskService {
 
     @Autowired
     private CibrTaskProcessSampleinputMapper sampleinputMapper;
+
+    @Autowired
+    private CibrTaskProcessSamplemakeMapper makeMapper;
+
+    @Autowired
+    private CibrTaskProcessLibraryMapper libraryMapper;
 
     @Transactional(rollbackFor = Exception.class)
     public void createProcessTask(CibrSysUser user, String projectName, String dataType, String principal, List<String> emails, String sampleMsg, String samplePreparation, String libraryPreparation, String dismountData, String bioinformaticsAnalysis, String remarks) {
@@ -191,6 +198,10 @@ public class ProcessTaskService {
             input.setRowindex(maxRowIndex);
         }
 
+        /*创建样本制备信息*/
+        List<CibrTaskProcessSamplemake> makes = createMakes(list);
+        makeMapper.batchInsert(makes);
+
         if (insertList.size()>0){
             sampleinputMapper.batchInsert(insertList);
         }
@@ -202,12 +213,12 @@ public class ProcessTaskService {
         }
     }
 
-    public List<CibrTaskProcessSamplemake> getAllTodoMakes(String processId) {
-        List<CibrTaskProcessSampleinput> sampleInputs = this.getSampleInputs(processId);
+    public List<CibrTaskProcessSamplemake> createMakes(List<CibrTaskProcessSampleinput> sampleInputs){
         List<CibrTaskProcessSamplemake> samplemakes = new ArrayList<CibrTaskProcessSamplemake>();
         for(CibrTaskProcessSampleinput sampleinput : sampleInputs){
             CibrTaskProcessSamplemake make = new CibrTaskProcessSamplemake();
-            make.setProcessid(processId);
+            make.setId(Util.getUUID());
+            make.setProcessid(sampleinput.getProcessid());
             make.setInputid(sampleinput.getId());
             make.setSamplename(sampleinput.getSamplename());
             make.setSpecies(sampleinput.getSpecies());
@@ -219,9 +230,82 @@ public class ProcessTaskService {
             make.setCellsort(sampleinput.getCellsort());
             make.setDatabasetype(sampleinput.getDatabasetype());
             make.setSequencingplatform(sampleinput.getSequencingplatform());
+            make.setSelfnumber("");
+            make.setTestdate(new Date());
+            make.setCheckresult("");
+            make.setCheckremarks("");
+            make.setCheckuser("");
+            make.setReviewer("");
+            make.setRemaining("");
+            make.setRemarks("");
+            make.setCurrentstatu("00");
+            make.setRowindex(sampleinput.getRowindex());
             samplemakes.add(make);
         }
         return samplemakes;
+    }
+
+    public List<CibrTaskProcessSamplemake> getAllTodoMakes(String processId) {
+        CibrTaskProcessSamplemakeExample samplemakeExample = new CibrTaskProcessSamplemakeExample();
+        samplemakeExample.createCriteria().andProcessidEqualTo(processId);
+        samplemakeExample.setOrderByClause("rowIndex desc");
+        return makeMapper.selectByExample(samplemakeExample);
+    }
+
+    /**
+     * 暂存或保存样本制备信息
+     * @param processId
+     * @param flag
+     * @param list
+     * @param user
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void saveSampleMakes(String processId, String flag, List<CibrTaskProcessSamplemake> list, CibrSysUser user) {
+        List<CibrTaskProcessLibrary> libs = new ArrayList<CibrTaskProcessLibrary>();
+        for (CibrTaskProcessSamplemake make : list){
+            make.setProcessid(processId);
+            if("tmp".equals(flag)){
+                make.setCreater(user.getId());
+                make.setCreatetime(new Date());
+                make.setCurrentstatu("01");
+            }else {
+                make.setConfirmer(user.getId());
+                make.setConfirmtime(new Date());
+                make.setCurrentstatu("02");
+                CibrTaskProcessLibrary lib = createLib(make);
+                libs.add(lib);
+            }
+        }
+        makeMapper.batchUpdate(list);
+        if ("real".equals(flag)){
+            CibrTaskProcess process = processMapper.selectByPrimaryKey(processId);
+            process.setSpupdatetime(new Date());
+            process.setTaskstatu(TaskUtil.PROCESS_TASK_STATU_LIB);
+            processMapper.updateByPrimaryKey(process);
+            /*创建文库信息*/
+            libraryMapper.batchInsert(libs);
+        }
+    }
+
+    public CibrTaskProcessLibrary createLib(CibrTaskProcessSamplemake make){
+        CibrTaskProcessLibrary lib = new CibrTaskProcessLibrary();
+        lib.setId(Util.getUUID());
+        lib.setSelfnumber(make.getSelfnumber());
+        lib.setProcessid(make.getProcessid());
+        lib.setRowindex(make.getRowindex());
+        lib.setCelllife(make.getCelllife());
+        lib.setSpecies(make.getSpecies());
+        lib.setSamplename(make.getSamplename());
+        lib.setConcentration(make.getConcentration());
+        lib.setTotalnumber(make.getTotalnumber());
+        return lib;
+    }
+
+    public List<CibrTaskProcessLibrary> selectAllLibs(String processId) {
+        CibrTaskProcessLibraryExample example = new CibrTaskProcessLibraryExample();
+        example.createCriteria().andProcessidEqualTo(processId);
+        example.setOrderByClause("rowIndex desc");
+        return libraryMapper.selectByExample(example);
     }
 }
 

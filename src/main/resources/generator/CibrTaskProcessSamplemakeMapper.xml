@@ -31,7 +31,7 @@
     <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
     <result column="creater" property="creater" jdbcType="VARCHAR" />
     <result column="currentStatu" property="currentstatu" jdbcType="VARCHAR" />
-    <result column="rowIndex" property="rowindex" jdbcType="VARCHAR" />
+    <result column="rowIndex" property="rowindex" jdbcType="INTEGER" />
     <result column="confirmTime" property="confirmtime" jdbcType="TIMESTAMP" />
     <result column="confirmer" property="confirmer" jdbcType="VARCHAR" />
   </resultMap>
@@ -180,7 +180,7 @@
       #{checkremarks,jdbcType=VARCHAR}, #{checkuser,jdbcType=VARCHAR}, #{reviewer,jdbcType=VARCHAR}, 
       #{databasetype,jdbcType=VARCHAR}, #{sequencingplatform,jdbcType=VARCHAR}, #{remaining,jdbcType=VARCHAR}, 
       #{remarks,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{creater,jdbcType=VARCHAR}, 
-      #{currentstatu,jdbcType=VARCHAR}, #{rowindex,jdbcType=VARCHAR}, #{confirmtime,jdbcType=TIMESTAMP}, 
+      #{currentstatu,jdbcType=VARCHAR}, #{rowindex,jdbcType=INTEGER}, #{confirmtime,jdbcType=TIMESTAMP}, 
       #{confirmer,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.cibr.animal.demo.entity.CibrTaskProcessSamplemake" >
@@ -352,7 +352,7 @@
         #{currentstatu,jdbcType=VARCHAR},
       </if>
       <if test="rowindex != null" >
-        #{rowindex,jdbcType=VARCHAR},
+        #{rowindex,jdbcType=INTEGER},
       </if>
       <if test="confirmtime != null" >
         #{confirmtime,jdbcType=TIMESTAMP},
@@ -455,7 +455,7 @@
         currentStatu = #{record.currentstatu,jdbcType=VARCHAR},
       </if>
       <if test="record.rowindex != null" >
-        rowIndex = #{record.rowindex,jdbcType=VARCHAR},
+        rowIndex = #{record.rowindex,jdbcType=INTEGER},
       </if>
       <if test="record.confirmtime != null" >
         confirmTime = #{record.confirmtime,jdbcType=TIMESTAMP},
@@ -499,7 +499,7 @@
       createTime = #{record.createtime,jdbcType=TIMESTAMP},
       creater = #{record.creater,jdbcType=VARCHAR},
       currentStatu = #{record.currentstatu,jdbcType=VARCHAR},
-      rowIndex = #{record.rowindex,jdbcType=VARCHAR},
+      rowIndex = #{record.rowindex,jdbcType=INTEGER},
       confirmTime = #{record.confirmtime,jdbcType=TIMESTAMP},
       confirmer = #{record.confirmer,jdbcType=VARCHAR}
     <if test="_parameter != null" >
@@ -586,7 +586,7 @@
         currentStatu = #{currentstatu,jdbcType=VARCHAR},
       </if>
       <if test="rowindex != null" >
-        rowIndex = #{rowindex,jdbcType=VARCHAR},
+        rowIndex = #{rowindex,jdbcType=INTEGER},
       </if>
       <if test="confirmtime != null" >
         confirmTime = #{confirmtime,jdbcType=TIMESTAMP},
@@ -627,9 +627,79 @@
       createTime = #{createtime,jdbcType=TIMESTAMP},
       creater = #{creater,jdbcType=VARCHAR},
       currentStatu = #{currentstatu,jdbcType=VARCHAR},
-      rowIndex = #{rowindex,jdbcType=VARCHAR},
+      rowIndex = #{rowindex,jdbcType=INTEGER},
       confirmTime = #{confirmtime,jdbcType=TIMESTAMP},
       confirmer = #{confirmer,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <insert id="batchInsert" parameterType="com.cibr.animal.demo.entity.CibrTaskProcessSamplemake">
+    insert into cibr_task_process_samplemake (
+        <include refid="Base_Column_List" />
+    )
+    values
+        <foreach collection="list" item="record" separator=",">
+          (
+          #{record.id,jdbcType=VARCHAR},
+          #{record.processid,jdbcType=VARCHAR},
+          #{record.inputid,jdbcType=VARCHAR},
+          #{record.samplename,jdbcType=VARCHAR},
+          #{record.selfnumber,jdbcType=VARCHAR},
+          #{record.species,jdbcType=VARCHAR},
+          #{record.tissue,jdbcType=VARCHAR},
+          #{record.testdate,jdbcType=TIMESTAMP},
+          #{record.concentration,jdbcType=VARCHAR},
+          #{record.samplevolume,jdbcType=VARCHAR},
+          #{record.totalnumber,jdbcType=VARCHAR},
+          #{record.celllife,jdbcType=VARCHAR},
+          #{record.cellsort,jdbcType=VARCHAR},
+          #{record.extractmethod,jdbcType=VARCHAR},
+          #{record.checkresult,jdbcType=VARCHAR},
+          #{record.checkremarks,jdbcType=VARCHAR},
+          #{record.checkuser,jdbcType=VARCHAR},
+          #{record.reviewer,jdbcType=VARCHAR},
+          #{record.databasetype,jdbcType=VARCHAR},
+          #{record.sequencingplatform,jdbcType=VARCHAR},
+          #{record.remaining,jdbcType=VARCHAR},
+          #{record.remarks,jdbcType=VARCHAR},
+          #{record.createtime,jdbcType=TIMESTAMP},
+          #{record.creater,jdbcType=VARCHAR},
+          #{record.currentstatu,jdbcType=VARCHAR},
+          #{record.rowindex,jdbcType=INTEGER},
+          #{record.confirmtime,jdbcType=TIMESTAMP},
+          #{record.confirmer,jdbcType=VARCHAR})
+        </foreach>
+  </insert>
+  <update id="batchUpdate" parameterType="java.util.List">
+    <foreach collection="list" item="record" index="index" open="" close="" separator=";">
+      update cibr_task_process_samplemake
+      set processId = #{record.processid,jdbcType=VARCHAR},
+      inputId = #{record.inputid,jdbcType=VARCHAR},
+      sampleName = #{record.samplename,jdbcType=VARCHAR},
+      selfNumber = #{record.selfnumber,jdbcType=VARCHAR},
+      species = #{record.species,jdbcType=VARCHAR},
+      tissue = #{record.tissue,jdbcType=VARCHAR},
+      testDate = #{record.testdate,jdbcType=TIMESTAMP},
+      concentration = #{record.concentration,jdbcType=VARCHAR},
+      sampleVolume = #{record.samplevolume,jdbcType=VARCHAR},
+      totalNumber = #{record.totalnumber,jdbcType=VARCHAR},
+      cellLife = #{record.celllife,jdbcType=VARCHAR},
+      cellSort = #{record.cellsort,jdbcType=VARCHAR},
+      extractMethod = #{record.extractmethod,jdbcType=VARCHAR},
+      checkResult = #{record.checkresult,jdbcType=VARCHAR},
+      checkRemarks = #{record.checkremarks,jdbcType=VARCHAR},
+      checkUser = #{record.checkuser,jdbcType=VARCHAR},
+      reviewer = #{record.reviewer,jdbcType=VARCHAR},
+      databaseType = #{record.databasetype,jdbcType=VARCHAR},
+      sequencingPlatform = #{record.sequencingplatform,jdbcType=VARCHAR},
+      remaining = #{record.remaining,jdbcType=VARCHAR},
+      remarks = #{record.remarks,jdbcType=VARCHAR},
+      createTime = #{record.createtime,jdbcType=TIMESTAMP},
+      creater = #{record.creater,jdbcType=VARCHAR},
+      currentStatu = #{record.currentstatu,jdbcType=VARCHAR},
+      rowIndex = #{record.rowindex,jdbcType=INTEGER},
+      confirmTime = #{record.confirmtime,jdbcType=TIMESTAMP},
+      confirmer = #{record.confirmer,jdbcType=VARCHAR}
+      where id = #{record.id,jdbcType=VARCHAR}
+    </foreach>
   </update>
 </mapper>

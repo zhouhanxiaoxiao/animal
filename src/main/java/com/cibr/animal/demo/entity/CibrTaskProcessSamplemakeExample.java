@@ -1935,62 +1935,52 @@ public class CibrTaskProcessSamplemakeExample {
             return (Criteria) this;
         }
 
-        public Criteria andRowindexEqualTo(String value) {
+        public Criteria andRowindexEqualTo(Integer value) {
             addCriterion("rowIndex =", value, "rowindex");
             return (Criteria) this;
         }
 
-        public Criteria andRowindexNotEqualTo(String value) {
+        public Criteria andRowindexNotEqualTo(Integer value) {
             addCriterion("rowIndex <>", value, "rowindex");
             return (Criteria) this;
         }
 
-        public Criteria andRowindexGreaterThan(String value) {
+        public Criteria andRowindexGreaterThan(Integer value) {
             addCriterion("rowIndex >", value, "rowindex");
             return (Criteria) this;
         }
 
-        public Criteria andRowindexGreaterThanOrEqualTo(String value) {
+        public Criteria andRowindexGreaterThanOrEqualTo(Integer value) {
             addCriterion("rowIndex >=", value, "rowindex");
             return (Criteria) this;
         }
 
-        public Criteria andRowindexLessThan(String value) {
+        public Criteria andRowindexLessThan(Integer value) {
             addCriterion("rowIndex <", value, "rowindex");
             return (Criteria) this;
         }
 
-        public Criteria andRowindexLessThanOrEqualTo(String value) {
+        public Criteria andRowindexLessThanOrEqualTo(Integer value) {
             addCriterion("rowIndex <=", value, "rowindex");
             return (Criteria) this;
         }
 
-        public Criteria andRowindexLike(String value) {
-            addCriterion("rowIndex like", value, "rowindex");
-            return (Criteria) this;
-        }
-
-        public Criteria andRowindexNotLike(String value) {
-            addCriterion("rowIndex not like", value, "rowindex");
-            return (Criteria) this;
-        }
-
-        public Criteria andRowindexIn(List<String> values) {
+        public Criteria andRowindexIn(List<Integer> values) {
             addCriterion("rowIndex in", values, "rowindex");
             return (Criteria) this;
         }
 
-        public Criteria andRowindexNotIn(List<String> values) {
+        public Criteria andRowindexNotIn(List<Integer> values) {
             addCriterion("rowIndex not in", values, "rowindex");
             return (Criteria) this;
         }
 
-        public Criteria andRowindexBetween(String value1, String value2) {
+        public Criteria andRowindexBetween(Integer value1, Integer value2) {
             addCriterion("rowIndex between", value1, value2, "rowindex");
             return (Criteria) this;
         }
 
-        public Criteria andRowindexNotBetween(String value1, String value2) {
+        public Criteria andRowindexNotBetween(Integer value1, Integer value2) {
             addCriterion("rowIndex not between", value1, value2, "rowindex");
             return (Criteria) this;
         }

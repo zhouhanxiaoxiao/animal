@@ -94,4 +94,10 @@ public interface CibrTaskProcessSamplemakeMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(CibrTaskProcessSamplemake record);
+
+    int batchInsert(List<CibrTaskProcessSamplemake> list);
+
+    int batchUpdate(List<CibrTaskProcessSamplemake> list);
+
+
 }

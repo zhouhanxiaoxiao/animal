@@ -51,4 +51,6 @@ public class TaskUtil {
     public static final String PROCESS_TASK_STATU_SP = "10";
     /**任务状态：样品制备*/
     public static final String PROCESS_TASK_STATU_SPWAIT = "20";
+    /**任务状态：样品制备*/
+    public static final String PROCESS_TASK_STATU_LIB = "30";
 }

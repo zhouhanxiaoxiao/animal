@@ -4,6 +4,8 @@ import com.cibr.animal.demo.dao.CibrSysRoleMapper;
 import com.cibr.animal.demo.dao.CibrSysUserMapper;
 import com.cibr.animal.demo.dao.CibrSysUserRoleMapper;
 import com.cibr.animal.demo.entity.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,13 +16,18 @@ import java.util.List;
 public class CibrSysUserService {
 
     @Autowired
-    CibrSysUserMapper userMapper;
+    private CibrSysUserMapper userMapper;
 
     @Autowired
-    CibrSysRoleMapper roleMapper;
+    private CibrSysRoleMapper roleMapper;
 
     @Autowired
-    CibrSysUserRoleMapper userRoleMapper;
+    private CibrSysUserRoleMapper userRoleMapper;
+
+    @Autowired
+    private LoginService loginService;
+
+    private Logger logger = LoggerFactory.getLogger(CibrSysUserService.class);
 
     public List<CibrSysUser> findUserByEmail(String email){
         CibrSysUserExample userExample = new CibrSysUserExample();
@@ -59,4 +66,6 @@ public class CibrSysUserService {
         userExample.createCriteria().andIdIn(userids);
         return userMapper.selectByExample(userExample);
     }
+
+
 }
