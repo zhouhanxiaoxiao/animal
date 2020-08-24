@@ -2,10 +2,7 @@ package com.cibr.animal.demo.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cibr.animal.demo.dao.CibrSysFileMapper;
-import com.cibr.animal.demo.entity.CibrSysFile;
-import com.cibr.animal.demo.entity.CibrSysUser;
-import com.cibr.animal.demo.entity.CibrTaskProcess;
-import com.cibr.animal.demo.entity.CibrTaskProcessSampleinput;
+import com.cibr.animal.demo.entity.*;
 import com.cibr.animal.demo.util.FileUtil;
 import com.cibr.animal.demo.util.Util;
 import org.slf4j.Logger;
@@ -19,9 +16,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.util.*;
 
 @Service
 public class FileService {
@@ -36,6 +33,12 @@ public class FileService {
 
     @Autowired
     private CibrSysFileMapper fileMapper;
+
+    @Autowired
+    private AnimalService animalService;
+
+    @Autowired
+    private StockService stockService;
 
     @Transactional(rollbackFor = Exception.class)
     public File saveFile(List<MultipartFile> files,String detailId,CibrSysUser user){
@@ -54,7 +57,6 @@ public class FileService {
             String md5 = null;
             try {
                 md5 = DigestUtils.md5DigestAsHex(file.getInputStream());
-
                 file.transferTo(dist);
             }catch (Exception e){
                 e.printStackTrace();
@@ -157,5 +159,90 @@ public class FileService {
             rowIndex ++;
         }
         return list;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void handleDrosoInput(Map<String, List<List<String>>> allWorkSheet, MultipartFile file, CibrSysUser user) throws ParseException, CloneNotSupportedException {
+        List<CibrAnimalDrosophila> allDrosos = animalService.getAllDrosos();
+        Map<String,CibrAnimalDrosophila> geno_droso = new HashMap<>();
+        for (CibrAnimalDrosophila drosophila : allDrosos){
+            geno_droso.put(drosophila.getGenotype(),drosophila);
+        }
+        List<CibrAnimalDrosophila> newDrosos = new ArrayList<CibrAnimalDrosophila>();
+        List<CibrStockDrosophila> newStock = new ArrayList<CibrStockDrosophila>();
+        for (String key : allWorkSheet.keySet()){
+            if ("已有果蝇品系".equals(key)){
+                List<List<String>> lists = allWorkSheet.get(key);
+                boolean syFlag = false;
+                boolean bzFlag = false;
+                boolean hasData = false;
+                for (List<String> list : lists){
+                    if ("实验".equals(list.get(0))){
+                        syFlag = true;
+                        continue;
+                    }
+                    if ("保种".equals(list.get(0))){
+                        syFlag = false;
+                        bzFlag = true;
+                        continue;
+                    }
+                    if ("stock ID".equals(list.get(0))){
+                        hasData = true;
+                        continue;
+                    }
+                    if (StringUtils.isEmpty(list.get(0))){
+                        hasData = false;
+                    }
+                    if ("Phic-31".equals(list.get(0))){
+                        System.out.println();
+                    }
+                    logger.info("======" + Arrays.toString(list.toArray()));
+                    if (hasData){
+                        CibrAnimalDrosophila drosophila = null;
+                        if (geno_droso.get(list.get(1)) == null){
+                            drosophila = new CibrAnimalDrosophila();
+                            String animalId = Util.getUUID();
+                            drosophila.setId(animalId);
+                            drosophila.setCreatetime(new Date());
+                            drosophila.setCreateuser(user.getId());
+                            drosophila.setResource(list.get(2));
+                            drosophila.setStockId(list.get(0));
+                            drosophila.setName("果蝇");
+                            drosophila.setGenotype(list.get(1));
+                            newDrosos.add(drosophila);
+                            geno_droso.put(drosophila.getGenotype(),drosophila);
+                        }else {
+                            drosophila = geno_droso.get(list.get(1));
+                        }
+                        CibrStockDrosophila stockDrosophila = new CibrStockDrosophila();
+                        stockDrosophila.setId(Util.getUUID());
+                        stockDrosophila.setCreatetime(new Date());
+                        stockDrosophila.setContanertype(list.get(3));
+                        stockDrosophila.setContanernmuber(new BigDecimal(list.get(4)).setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
+                        stockDrosophila.setCreateuser(user.getId());
+                        stockDrosophila.setRawnumber(new BigDecimal(list.get(4)).setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
+                        stockDrosophila.setRawtype(list.get(3));
+                        stockDrosophila.setDrosophilaId(drosophila.getId());
+                        if (syFlag){
+                            stockDrosophila.setUsagetype("stock");
+                            stockDrosophila.setBirthday(Util.str2date(list.get(6),"yyyy.MM.dd"));
+                            stockDrosophila.setEnvironment("sdafsdfasdfasdf");
+                        }else {
+                            stockDrosophila.setUsagetype("keep");
+                            stockDrosophila.setBirthday(new Date());
+                            CibrStockDrosophila clone = (CibrStockDrosophila)stockDrosophila.clone();
+                            stockDrosophila.setEnvironment("sdafsdfasdfasdf");
+                            clone.setEnvironment("sdafsdfasdfasde");
+                            clone.setId(Util.getUUID());
+                            clone.setContanernmuber(new BigDecimal(list.get(5)).setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
+                            newStock.add(clone);
+                        }
+                        newStock.add(stockDrosophila);
+                    }
+                }
+                stockService.batchInsert(newStock);
+                animalService.batchInsert(newDrosos);
+            }
+        }
     }
 }

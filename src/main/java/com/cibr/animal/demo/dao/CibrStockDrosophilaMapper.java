@@ -96,4 +96,6 @@ public interface CibrStockDrosophilaMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(CibrStockDrosophila record);
+
+    int batchInsert(List<CibrStockDrosophila> list);
 }

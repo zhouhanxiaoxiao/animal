@@ -1,7 +1,9 @@
 package com.cibr.animal.demo.service;
 
 import com.cibr.animal.demo.dao.CibrAnimalDrosophilaMapper;
+import com.cibr.animal.demo.dao.CibrStockDrosophilaMapper;
 import com.cibr.animal.demo.entity.CibrAnimalDrosophila;
+import com.cibr.animal.demo.entity.CibrStockDrosophila;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,8 @@ public class StockService {
     @Autowired
     private CibrAnimalDrosophilaMapper animalDrosophilaMapper;
 
+    @Autowired
+    private CibrStockDrosophilaMapper stockDrosophilaMapper;
 
     public Map<String,Object> findAllStrains(int pageSize, int currentPage) {
         Map<String,Object> map = new HashMap<String,Object>();
@@ -25,4 +29,9 @@ public class StockService {
         map.put("totalnumber",total);
         return map;
     }
+
+    public void batchInsert(List<CibrStockDrosophila> list){
+        stockDrosophilaMapper.batchInsert(list);
+    }
+
 }

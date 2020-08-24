@@ -79,7 +79,7 @@ public class PersonalService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void stockAdd(String animalName, String useType, String birthday, String location, String stockID, String genotype, String resource, String container, String number, String environmentId, CibrSysUser user) throws ParseException {
+    public void stockAdd(String animalName,String stockID, String genotype, String resource,List<Map> rows, CibrSysUser user) throws ParseException {
         CibrAnimalDrosophila drosophila = new CibrAnimalDrosophila();
         String droId = Util.getUUID();
         drosophila.setId(droId);
@@ -91,19 +91,33 @@ public class PersonalService {
         drosophila.setResource(resource);
 
         CibrStockDrosophila stockDrosophila = new CibrStockDrosophila();
-        stockDrosophila.setId(Util.getUUID());
-        stockDrosophila.setBirthday(Util.str2date(birthday,"yyyy-MM-dd"));
-        stockDrosophila.setContanernmuber(Integer.parseInt(number));
-        stockDrosophila.setContanertype(container);
-        stockDrosophila.setCreatetime(new Date());
-        stockDrosophila.setDrosophilaId(droId);
-        stockDrosophila.setCreateuser(user.getId());
-        stockDrosophila.setEnvironment(environmentId);
-        stockDrosophila.setRawnumber(Integer.parseInt(number));
-        stockDrosophila.setRawtype(container);
-        stockDrosophila.setUsagetype(useType);
-        stockDrosophila.setLocation(location);
+        for (Map row : rows){
+            String birthday = (String) row.get("birthday");
+            String number = "";
+            try {
+                number = (String) row.get("number");
+            }catch (Exception e){
+                number = String.valueOf((Integer) row.get("number"));
+            }
+            String container = (String) row.get("container");
+            String useType = (String) row.get("useType");
+            String location = (String) row.get("location");
+            String environmentId = (String) row.get("environmentId");
+            stockDrosophila.setId(Util.getUUID());
+            stockDrosophila.setBirthday(Util.str2date(birthday,"yyyy-MM-dd"));
+            stockDrosophila.setContanernmuber(Integer.parseInt(number));
+            stockDrosophila.setContanertype(container);
+            stockDrosophila.setCreatetime(new Date());
+            stockDrosophila.setDrosophilaId(droId);
+            stockDrosophila.setCreateuser(user.getId());
+            stockDrosophila.setEnvironment(environmentId);
+            stockDrosophila.setRawnumber(Integer.parseInt(number));
+            stockDrosophila.setRawtype(container);
+            stockDrosophila.setUsagetype(useType);
+            stockDrosophila.setLocation(location);
+            stockDrosophilaMapper.insert(stockDrosophila);
+        }
         animalDrosophilaMapper.insert(drosophila);
-        stockDrosophilaMapper.insert(stockDrosophila);
+
     }
 }

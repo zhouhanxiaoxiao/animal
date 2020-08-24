@@ -316,6 +316,27 @@
     where id = #{id,jdbcType=VARCHAR}
   </update>
 
+  <insert id="batchInsert" parameterType="com.cibr.animal.demo.entity.CibrAnimalDrosophila">
+    insert into cibr_animal_drosophila(
+    id, name, stock_id,
+    genotype, resource, parent_id,
+    createTime, createUser
+    )
+    values
+    <foreach collection="list" item="item" separator=",">
+        (
+      #{item.id,jdbcType=VARCHAR},
+      #{item.name,jdbcType=VARCHAR},
+      #{item.stockId,jdbcType=VARCHAR},
+      #{item.genotype,jdbcType=VARCHAR},
+      #{item.resource,jdbcType=VARCHAR},
+      #{item.parentId,jdbcType=VARCHAR},
+      #{item.createtime,jdbcType=TIMESTAMP},
+      #{item.createuser,jdbcType=VARCHAR}
+      )
+    </foreach>
+  </insert>
+
   <select id="selectTotalNumber" resultType="int">
     select count(*) from cibr_animal_drosophila
   </select>
@@ -324,7 +345,7 @@
         select
     <include refid="Base_Column_List" />
     from cibr_animal_drosophila
-    order by createTime
+    order by createTime,genotype
     limit #{0} , #{1}
   </select>
 

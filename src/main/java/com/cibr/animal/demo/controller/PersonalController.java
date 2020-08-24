@@ -59,26 +59,16 @@ public class PersonalController {
             String token = request.getHeader("token");
             CibrSysUser user =  JSON.parseObject(String.valueOf(redisUtil.get(token)),CibrSysUser.class) ;
             String animalName = (String) requestBody.get("animalName");
-            String useType = (String) requestBody.get("useType");
-            String birthday = (String) requestBody.get("birthday");
-            String location = (String) requestBody.get("location");
             String stockID = (String) requestBody.get("stockID");
             String genotype =(String)  requestBody.get("genotype");
             String resource =(String)  requestBody.get("resource");
-            String container =(String)  requestBody.get("container");
-            String number = "";
-            try {
-                number = (String)  requestBody.get("number");
-            }catch (Exception e){
-                number = String.valueOf((Integer) requestBody.get("number"));
-            }
-            String environmentId = (String) requestBody.get("environmentId");
+            List<Map> rows =(List<Map>)  requestBody.get("rows");
+
             List<CibrAnimalDrosophila> cibrAnimalDrosophilas = personalService.findanimalByGen(String.valueOf(genotype));
             if (cibrAnimalDrosophilas != null && cibrAnimalDrosophilas.size()>0){
                 ret.setCode("E520");
             }else {
-                personalService.stockAdd(animalName,useType,birthday,location,
-                        stockID,genotype,resource,container,number,environmentId,user);
+                personalService.stockAdd(animalName,stockID,genotype,resource,rows,user);
                 ret.setCode("200");
 
             }

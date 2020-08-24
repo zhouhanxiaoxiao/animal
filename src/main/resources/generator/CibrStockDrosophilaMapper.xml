@@ -410,6 +410,31 @@
       environment = #{environment,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
-
+  <insert id="batchInsert" parameterType="com.cibr.animal.demo.entity.CibrStockDrosophila">
+    insert into cibr_stock_drosophila(
+      id, drosophila_id, contanerType,
+      contanerNmuber, usageType, birthday,
+      createUser, createTime, location,
+      rawNumber, rawType, updateTime,
+      updateUser, environment
+    )
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.id,jdbcType=VARCHAR},
+      #{item.drosophilaId,jdbcType=VARCHAR},
+      #{item.contanertype,jdbcType=VARCHAR},
+      #{item.contanernmuber,jdbcType=INTEGER},
+      #{item.usagetype,jdbcType=VARCHAR},
+      #{item.birthday,jdbcType=TIMESTAMP},
+      #{item.createuser,jdbcType=VARCHAR},
+      #{item.createtime,jdbcType=TIMESTAMP},
+      #{item.location,jdbcType=VARCHAR},
+      #{item.rawnumber,jdbcType=INTEGER},
+      #{item.rawtype,jdbcType=VARCHAR},
+      #{item.updatetime,jdbcType=TIMESTAMP},
+      #{item.updateuser,jdbcType=VARCHAR},
+      #{item.environment,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
 
 </mapper>

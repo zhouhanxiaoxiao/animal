@@ -105,4 +105,6 @@ public interface CibrAnimalDrosophilaMapper {
     List<CibrAnimalDrosophila> selectAllStockLimit(int currIndex,int pageSize);
 
     int selectTotalNumber();
+
+    int batchInsert(List<CibrAnimalDrosophila> list);
 }

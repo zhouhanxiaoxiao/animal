@@ -74,4 +74,31 @@ public class FileController {
         }
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
     }
+
+    @RequestMapping("/file/import/initDrop")
+    public  String uploadDrop(HttpServletRequest request,
+                              HttpServletResponse response){
+        ReturnData ret = new ReturnData();
+        try {
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
+            File dist = fileService.saveFile(files,null,user);
+            if (dist == null){
+                response.setStatus(500);
+                ret.setCode("E500");
+            }else {
+                MultipartFile file = files.get(0);
+                Map<String, List<List<String>>> allWorkSheet = FileUtil.getAllWorkSheet(dist);
+                fileService.handleDrosoInput(allWorkSheet,file,user);
+            }
+
+        } catch (Exception e) {
+            response.setStatus(500);
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+    }
 }
