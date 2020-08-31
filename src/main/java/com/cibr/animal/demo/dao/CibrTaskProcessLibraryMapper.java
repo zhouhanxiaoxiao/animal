@@ -96,4 +96,6 @@ public interface CibrTaskProcessLibraryMapper {
     int updateByPrimaryKey(CibrTaskProcessLibrary record);
 
     int batchInsert(List<CibrTaskProcessLibrary> list);
+
+    int batchUpdate(List<CibrTaskProcessLibrary> list);
 }

@@ -38,6 +38,6 @@ public class UserController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 }

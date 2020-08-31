@@ -72,7 +72,7 @@ public class FileController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
     @RequestMapping("/file/import/initDrop")
@@ -99,6 +99,6 @@ public class FileController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 }

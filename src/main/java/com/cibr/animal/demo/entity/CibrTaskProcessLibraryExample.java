@@ -535,6 +535,76 @@ public class CibrTaskProcessLibraryExample {
             return (Criteria) this;
         }
 
+        public Criteria andMiddleindexIsNull() {
+            addCriterion("middleIndex is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMiddleindexIsNotNull() {
+            addCriterion("middleIndex is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMiddleindexEqualTo(String value) {
+            addCriterion("middleIndex =", value, "middleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andMiddleindexNotEqualTo(String value) {
+            addCriterion("middleIndex <>", value, "middleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andMiddleindexGreaterThan(String value) {
+            addCriterion("middleIndex >", value, "middleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andMiddleindexGreaterThanOrEqualTo(String value) {
+            addCriterion("middleIndex >=", value, "middleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andMiddleindexLessThan(String value) {
+            addCriterion("middleIndex <", value, "middleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andMiddleindexLessThanOrEqualTo(String value) {
+            addCriterion("middleIndex <=", value, "middleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andMiddleindexLike(String value) {
+            addCriterion("middleIndex like", value, "middleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andMiddleindexNotLike(String value) {
+            addCriterion("middleIndex not like", value, "middleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andMiddleindexIn(List<String> values) {
+            addCriterion("middleIndex in", values, "middleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andMiddleindexNotIn(List<String> values) {
+            addCriterion("middleIndex not in", values, "middleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andMiddleindexBetween(String value1, String value2) {
+            addCriterion("middleIndex between", value1, value2, "middleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andMiddleindexNotBetween(String value1, String value2) {
+            addCriterion("middleIndex not between", value1, value2, "middleindex");
+            return (Criteria) this;
+        }
+
         public Criteria andSamplenameIsNull() {
             addCriterion("samplename is null");
             return (Criteria) this;
@@ -2002,6 +2072,146 @@ public class CibrTaskProcessLibraryExample {
 
         public Criteria andUploadremarkNotBetween(String value1, String value2) {
             addCriterion("uploadRemark not between", value1, value2, "uploadremark");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckresultIsNull() {
+            addCriterion("checkResult is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckresultIsNotNull() {
+            addCriterion("checkResult is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckresultEqualTo(String value) {
+            addCriterion("checkResult =", value, "checkresult");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckresultNotEqualTo(String value) {
+            addCriterion("checkResult <>", value, "checkresult");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckresultGreaterThan(String value) {
+            addCriterion("checkResult >", value, "checkresult");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckresultGreaterThanOrEqualTo(String value) {
+            addCriterion("checkResult >=", value, "checkresult");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckresultLessThan(String value) {
+            addCriterion("checkResult <", value, "checkresult");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckresultLessThanOrEqualTo(String value) {
+            addCriterion("checkResult <=", value, "checkresult");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckresultLike(String value) {
+            addCriterion("checkResult like", value, "checkresult");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckresultNotLike(String value) {
+            addCriterion("checkResult not like", value, "checkresult");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckresultIn(List<String> values) {
+            addCriterion("checkResult in", values, "checkresult");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckresultNotIn(List<String> values) {
+            addCriterion("checkResult not in", values, "checkresult");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckresultBetween(String value1, String value2) {
+            addCriterion("checkResult between", value1, value2, "checkresult");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckresultNotBetween(String value1, String value2) {
+            addCriterion("checkResult not between", value1, value2, "checkresult");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckremarksIsNull() {
+            addCriterion("checkRemarks is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckremarksIsNotNull() {
+            addCriterion("checkRemarks is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckremarksEqualTo(String value) {
+            addCriterion("checkRemarks =", value, "checkremarks");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckremarksNotEqualTo(String value) {
+            addCriterion("checkRemarks <>", value, "checkremarks");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckremarksGreaterThan(String value) {
+            addCriterion("checkRemarks >", value, "checkremarks");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckremarksGreaterThanOrEqualTo(String value) {
+            addCriterion("checkRemarks >=", value, "checkremarks");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckremarksLessThan(String value) {
+            addCriterion("checkRemarks <", value, "checkremarks");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckremarksLessThanOrEqualTo(String value) {
+            addCriterion("checkRemarks <=", value, "checkremarks");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckremarksLike(String value) {
+            addCriterion("checkRemarks like", value, "checkremarks");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckremarksNotLike(String value) {
+            addCriterion("checkRemarks not like", value, "checkremarks");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckremarksIn(List<String> values) {
+            addCriterion("checkRemarks in", values, "checkremarks");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckremarksNotIn(List<String> values) {
+            addCriterion("checkRemarks not in", values, "checkremarks");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckremarksBetween(String value1, String value2) {
+            addCriterion("checkRemarks between", value1, value2, "checkremarks");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckremarksNotBetween(String value1, String value2) {
+            addCriterion("checkRemarks not between", value1, value2, "checkremarks");
             return (Criteria) this;
         }
 

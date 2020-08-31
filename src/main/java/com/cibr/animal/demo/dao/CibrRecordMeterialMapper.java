@@ -94,4 +94,6 @@ public interface CibrRecordMeterialMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(CibrRecordMeterial record);
+
+    void batchInsert(List<CibrRecordMeterial> recordMeterials);
 }

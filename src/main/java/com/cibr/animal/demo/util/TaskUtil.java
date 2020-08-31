@@ -51,6 +51,12 @@ public class TaskUtil {
     public static final String PROCESS_TASK_STATU_SP = "10";
     /**任务状态：样品制备*/
     public static final String PROCESS_TASK_STATU_SPWAIT = "20";
-    /**任务状态：样品制备*/
+    /**任务状态：文库制备*/
     public static final String PROCESS_TASK_STATU_LIB = "30";
+    /**任务状态：测序分析*/
+    public static final String PROCESS_TASK_STATU_DIS = "40";
+    /**任务状态：生信分析*/
+    public static final String PROCESS_TASK_STATU_BA = "50";
+    /**任务状态：待创建者确认*/
+    public static final String PROCESS_TASK_STATU_READY = "60";
 }

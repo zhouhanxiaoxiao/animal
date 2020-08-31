@@ -1,6 +1,7 @@
 package com.cibr.animal.demo.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cibr.animal.demo.service.PersonalService;
 import com.cibr.animal.demo.service.StockService;
 import com.cibr.animal.demo.util.ReturnData;
@@ -40,6 +41,6 @@ public class StockController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 }

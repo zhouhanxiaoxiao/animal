@@ -405,6 +405,76 @@ public class CibrTaskProcessSampleinputExample {
             return (Criteria) this;
         }
 
+        public Criteria andSampleindexIsNull() {
+            addCriterion("sampleIndex is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleindexIsNotNull() {
+            addCriterion("sampleIndex is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleindexEqualTo(String value) {
+            addCriterion("sampleIndex =", value, "sampleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleindexNotEqualTo(String value) {
+            addCriterion("sampleIndex <>", value, "sampleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleindexGreaterThan(String value) {
+            addCriterion("sampleIndex >", value, "sampleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleindexGreaterThanOrEqualTo(String value) {
+            addCriterion("sampleIndex >=", value, "sampleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleindexLessThan(String value) {
+            addCriterion("sampleIndex <", value, "sampleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleindexLessThanOrEqualTo(String value) {
+            addCriterion("sampleIndex <=", value, "sampleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleindexLike(String value) {
+            addCriterion("sampleIndex like", value, "sampleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleindexNotLike(String value) {
+            addCriterion("sampleIndex not like", value, "sampleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleindexIn(List<String> values) {
+            addCriterion("sampleIndex in", values, "sampleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleindexNotIn(List<String> values) {
+            addCriterion("sampleIndex not in", values, "sampleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleindexBetween(String value1, String value2) {
+            addCriterion("sampleIndex between", value1, value2, "sampleindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSampleindexNotBetween(String value1, String value2) {
+            addCriterion("sampleIndex not between", value1, value2, "sampleindex");
+            return (Criteria) this;
+        }
+
         public Criteria andSpeciesIsNull() {
             addCriterion("species is null");
             return (Criteria) this;

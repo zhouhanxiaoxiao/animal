@@ -1,6 +1,7 @@
 package com.cibr.animal.demo.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cibr.animal.demo.entity.CibrSysRole;
 import com.cibr.animal.demo.entity.CibrSysUser;
 import com.cibr.animal.demo.service.EmailService;
@@ -67,7 +68,7 @@ public class LoginController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
     @RequestMapping("/system/exit")
@@ -82,7 +83,7 @@ public class LoginController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 }
 

@@ -17,7 +17,7 @@ import java.util.*;
 public class ProcessTaskService {
 
     @Autowired
-    private CibrSysTaskMapper taskMapper;
+    private CibrSysTaskMapper cibrSysTaskMapper;
 
     @Autowired
     private CibrTaskProcessMapper processMapper;
@@ -43,6 +43,12 @@ public class ProcessTaskService {
     @Autowired
     private CibrTaskProcessLibraryMapper libraryMapper;
 
+    @Autowired
+    private CibrTaskProcessDismountdataMapper dismountdataMapper;
+
+    @Autowired
+    private CibrTaskProcessAnalysisMapper analysisMapper;
+
     @Transactional(rollbackFor = Exception.class)
     public void createProcessTask(CibrSysUser user, String projectName, String dataType, String principal, List<String> emails, String sampleMsg, String samplePreparation, String libraryPreparation, String dismountData, String bioinformaticsAnalysis, String remarks) {
         /*任务主表*/
@@ -55,7 +61,7 @@ public class ProcessTaskService {
         task.setCreateuser(user.getId());
         task.setTasktype(TaskUtil.PROCESS_TASK);
         task.setTaskdesc(remarks);
-        taskMapper.insert(task);
+        cibrSysTaskMapper.insert(task);
         /*流程任务表*/
         CibrTaskProcess process = new CibrTaskProcess();
         String processId = Util.getUUID();
@@ -126,7 +132,7 @@ public class ProcessTaskService {
     }
 
     public CibrTaskProcess getProcessByTaskId(String taskId){
-        CibrSysTask task = taskMapper.selectByPrimaryKey(taskId);
+        CibrSysTask task = cibrSysTaskMapper.selectByPrimaryKey(taskId);
         if (!"03".equals(task.getTasktype())){
             return null;
         }
@@ -154,11 +160,10 @@ public class ProcessTaskService {
      * @param list
      */
     @Transactional(rollbackFor = Exception.class)
-    public void saveSampleInput(String processId, CibrSysUser user, List<CibrTaskProcessSampleinput> list) {
+    public void saveSampleInput(String processId, CibrSysUser user, List<CibrTaskProcessSampleinput> list,String type) {
+
         CibrTaskProcess process = processMapper.selectByPrimaryKey(processId);
-        process.setTaskstatu(TaskUtil.PROCESS_TASK_STATU_SPWAIT);
-        process.setInputtime(new Date());
-        processMapper.updateByPrimaryKey(process);
+
 
         CibrTaskProcessSampleinputExample example = new CibrTaskProcessSampleinputExample();
         example.createCriteria().andProcessidEqualTo(processId);
@@ -169,7 +174,11 @@ public class ProcessTaskService {
         List<CibrTaskProcessSampleinput> insertList = new ArrayList<CibrTaskProcessSampleinput>();
         Map<String,CibrTaskProcessSampleinput> update_map = new HashMap<>();
         for (CibrTaskProcessSampleinput input : list){
-            input.setCurrentstatu("02");
+            if ("real".equals(type)){
+                input.setCurrentstatu("02");
+            }else {
+                input.setCurrentstatu("01");
+            }
             if (StringUtils.isEmpty(input.getId())){
                 input.setId(Util.getUUID());
                 input.setCreater(user.getId());
@@ -192,16 +201,19 @@ public class ProcessTaskService {
                 delList.add(input);
             }
         }
-
         for (CibrTaskProcessSampleinput input : insertList){
             maxRowIndex ++;
             input.setRowindex(maxRowIndex);
         }
 
-        /*创建样本制备信息*/
-        List<CibrTaskProcessSamplemake> makes = createMakes(list);
-        makeMapper.batchInsert(makes);
-
+        if ("real".equals(type)){
+            process.setTaskstatu(TaskUtil.PROCESS_TASK_STATU_SPWAIT);
+            process.setInputtime(new Date());
+            processMapper.updateByPrimaryKey(process);
+            /*创建样本制备信息*/
+            List<CibrTaskProcessSamplemake> makes = createMakes(list);
+            makeMapper.batchInsert(makes);
+        }
         if (insertList.size()>0){
             sampleinputMapper.batchInsert(insertList);
         }
@@ -298,6 +310,7 @@ public class ProcessTaskService {
         lib.setSamplename(make.getSamplename());
         lib.setConcentration(make.getConcentration());
         lib.setTotalnumber(make.getTotalnumber());
+        lib.setCurrentstatu("00");
         return lib;
     }
 
@@ -306,6 +319,114 @@ public class ProcessTaskService {
         example.createCriteria().andProcessidEqualTo(processId);
         example.setOrderByClause("rowIndex desc");
         return libraryMapper.selectByExample(example);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void tempSaveLibs(String processId, List<CibrTaskProcessLibrary> libs,String type, CibrSysUser user) {
+        List<CibrTaskProcessDismountdata> list = new ArrayList<>();
+        for (CibrTaskProcessLibrary lib : libs){
+            if ("tmp".equals(type)){
+                lib.setCreateuser(user.getId());
+                lib.setCreatetime(new Date());
+                lib.setCurrentstatu("01");
+            }else {
+                lib.setCreateuser(user.getId());
+                lib.setCreatetime(new Date());
+                lib.setCurrentstatu("02");
+                list.add(createDismountData(user,lib,processId));
+            }
+        }
+        libraryMapper.batchUpdate(libs);
+        if ("real".equals(type)){
+            CibrTaskProcess process = processMapper.selectByPrimaryKey(processId);
+            process.setTaskstatu(TaskUtil.PROCESS_TASK_STATU_DIS);
+            process.setLpupdatetime(new Date());
+            processMapper.updateByPrimaryKey(process);
+            dismountdataMapper.batchInsert(list);
+        }
+    }
+
+    private CibrTaskProcessDismountdata createDismountData(CibrSysUser user, CibrTaskProcessLibrary lib, String processId) {
+        CibrTaskProcessDismountdata dismountdata = new CibrTaskProcessDismountdata();
+        dismountdata.setId(Util.getUUID());
+        dismountdata.setProcessid(processId);
+        dismountdata.setMakeid(lib.getId());
+        dismountdata.setCreater(user.getId());
+        dismountdata.setCreatetime(new Date());
+        dismountdata.setCurrentstatu("00");
+        dismountdata.setRowindex(lib.getRowindex());
+        dismountdata.setSampleindex(lib.getSelfnumber());
+        dismountdata.setSamplename(lib.getSamplename());
+        return dismountdata;
+    }
+
+    public List<CibrTaskProcessDismountdata> selectAllDismountDatas(String processId) {
+        CibrTaskProcessDismountdataExample example = new CibrTaskProcessDismountdataExample();
+        example.createCriteria().andProcessidEqualTo(processId);
+        example.setOrderByClause("rowIndex desc");
+        return dismountdataMapper.selectByExample(example);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void saveDismountData(String processId, List<CibrTaskProcessDismountdata> dismountdatas, String type, CibrSysUser user) {
+        List<CibrTaskProcessAnalysis> analyses = new ArrayList<>();
+        for (CibrTaskProcessDismountdata dismountdata : dismountdatas){
+            if ("tmp".equals(type)){
+                dismountdata.setCurrentstatu("01");
+            }else {
+                dismountdata.setCurrentstatu("02");
+                dismountdata.setCreatetime(new Date());
+                dismountdata.setCreater(user.getId());
+                analyses.add(createAnalyse(dismountdata,processId,user));
+            }
+        }
+        dismountdataMapper.batchUpdate(dismountdatas);
+        if ("real".equals(type)){
+            CibrTaskProcess process = processMapper.selectByPrimaryKey(processId);
+            process.setDdupdatetime(new Date());
+            process.setTaskstatu(TaskUtil.PROCESS_TASK_STATU_BA);
+            analysisMapper.batchInsert(analyses);
+            processMapper.updateByPrimaryKey(process);
+        }
+    }
+
+    private CibrTaskProcessAnalysis createAnalyse(CibrTaskProcessDismountdata dismountdata, String processId, CibrSysUser user) {
+        CibrTaskProcessAnalysis analysis = new CibrTaskProcessAnalysis();
+        analysis.setId(Util.getUUID());
+        analysis.setCreater(user.getId());
+        analysis.setCreatetime(new Date());
+        analysis.setProcessid(processId);
+        analysis.setDismountid(dismountdata.getId());
+        analysis.setSamplename(dismountdata.getSamplename());
+        analysis.setSampleindex(dismountdata.getSampleindex());
+        analysis.setCurrentstatu("00");
+        return analysis;
+    }
+
+    public List<CibrTaskProcessAnalysis> selectAllAnalyses(String processId) {
+        CibrTaskProcessAnalysisExample analysisExample = new CibrTaskProcessAnalysisExample();
+        analysisExample.createCriteria().andProcessidEqualTo(processId);
+        analysisExample.setOrderByClause("rowIndex desc");
+        return analysisMapper.selectByExample(analysisExample);
+    }
+
+    public void saveAnalyses(String processId, List<CibrTaskProcessAnalysis> analyses, String type, CibrSysUser user) {
+        for (CibrTaskProcessAnalysis analysis : analyses){
+            if ("tmp".equals(type)){
+                analysis.setCurrentstatu("01");
+            }else {
+                analysis.setCurrentstatu("02");
+            }
+            analysis.setCreater(user.getId());
+            analysis.setCreatetime(new Date());
+        }
+        analysisMapper.batchUpdate(analyses);
+        if ("real".equals(type)){
+            CibrTaskProcess process = processMapper.selectByPrimaryKey(processId);
+            process.setBaupdatetime(new Date());
+            process.setTaskstatu(TaskUtil.PROCESS_TASK_STATU_READY);
+            processMapper.updateByPrimaryKey(process);
+        }
     }
 }
 

@@ -332,4 +332,18 @@
       remarks = #{remarks,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+
+  <insert id="batchInsert" parameterType="com.cibr.animal.demo.entity.CibrRecordMeterial">
+    insert into cibr_record_meterial
+    (id, detailid, resourceid,
+     startTime, endTime, createTime,
+     creater, usageMsg, remarks)
+     values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.id,jdbcType=VARCHAR}, #{item.detailid,jdbcType=VARCHAR}, #{item.resourceid,jdbcType=VARCHAR},
+      #{item.starttime,jdbcType=TIMESTAMP}, #{item.endtime,jdbcType=TIMESTAMP}, #{item.createtime,jdbcType=TIMESTAMP},
+      #{item.creater,jdbcType=VARCHAR}, #{item.usagemsg,jdbcType=VARCHAR}, #{item.remarks,jdbcType=VARCHAR}
+      )
+    </foreach>
+  </insert>
 </mapper>

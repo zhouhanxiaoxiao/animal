@@ -43,7 +43,7 @@ public class SuggestController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
     @RequestMapping("/about/suggest/commit")
@@ -64,6 +64,6 @@ public class SuggestController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 }

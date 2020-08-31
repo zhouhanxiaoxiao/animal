@@ -475,6 +475,76 @@ public class CibrTaskProcessSamplemakeExample {
             return (Criteria) this;
         }
 
+        public Criteria andDerivativeindexIsNull() {
+            addCriterion("derivativeIndex is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDerivativeindexIsNotNull() {
+            addCriterion("derivativeIndex is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDerivativeindexEqualTo(String value) {
+            addCriterion("derivativeIndex =", value, "derivativeindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andDerivativeindexNotEqualTo(String value) {
+            addCriterion("derivativeIndex <>", value, "derivativeindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andDerivativeindexGreaterThan(String value) {
+            addCriterion("derivativeIndex >", value, "derivativeindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andDerivativeindexGreaterThanOrEqualTo(String value) {
+            addCriterion("derivativeIndex >=", value, "derivativeindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andDerivativeindexLessThan(String value) {
+            addCriterion("derivativeIndex <", value, "derivativeindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andDerivativeindexLessThanOrEqualTo(String value) {
+            addCriterion("derivativeIndex <=", value, "derivativeindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andDerivativeindexLike(String value) {
+            addCriterion("derivativeIndex like", value, "derivativeindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andDerivativeindexNotLike(String value) {
+            addCriterion("derivativeIndex not like", value, "derivativeindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andDerivativeindexIn(List<String> values) {
+            addCriterion("derivativeIndex in", values, "derivativeindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andDerivativeindexNotIn(List<String> values) {
+            addCriterion("derivativeIndex not in", values, "derivativeindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andDerivativeindexBetween(String value1, String value2) {
+            addCriterion("derivativeIndex between", value1, value2, "derivativeindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andDerivativeindexNotBetween(String value1, String value2) {
+            addCriterion("derivativeIndex not between", value1, value2, "derivativeindex");
+            return (Criteria) this;
+        }
+
         public Criteria andSelfnumberIsNull() {
             addCriterion("selfNumber is null");
             return (Criteria) this;

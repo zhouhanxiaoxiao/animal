@@ -465,73 +465,73 @@ public class CibrSysMaterialExample {
             return (Criteria) this;
         }
 
-        public Criteria andDescIsNull() {
-            addCriterion("desc is null");
+        public Criteria andMetdescIsNull() {
+            addCriterion("metdesc is null");
             return (Criteria) this;
         }
 
-        public Criteria andDescIsNotNull() {
-            addCriterion("desc is not null");
+        public Criteria andMetdescIsNotNull() {
+            addCriterion("metdesc is not null");
             return (Criteria) this;
         }
 
-        public Criteria andDescEqualTo(String value) {
-            addCriterion("desc =", value, "desc");
+        public Criteria andMetdescEqualTo(String value) {
+            addCriterion("metdesc =", value, "metdesc");
             return (Criteria) this;
         }
 
-        public Criteria andDescNotEqualTo(String value) {
-            addCriterion("desc <>", value, "desc");
+        public Criteria andMetdescNotEqualTo(String value) {
+            addCriterion("metdesc <>", value, "metdesc");
             return (Criteria) this;
         }
 
-        public Criteria andDescGreaterThan(String value) {
-            addCriterion("desc >", value, "desc");
+        public Criteria andMetdescGreaterThan(String value) {
+            addCriterion("metdesc >", value, "metdesc");
             return (Criteria) this;
         }
 
-        public Criteria andDescGreaterThanOrEqualTo(String value) {
-            addCriterion("desc >=", value, "desc");
+        public Criteria andMetdescGreaterThanOrEqualTo(String value) {
+            addCriterion("metdesc >=", value, "metdesc");
             return (Criteria) this;
         }
 
-        public Criteria andDescLessThan(String value) {
-            addCriterion("desc <", value, "desc");
+        public Criteria andMetdescLessThan(String value) {
+            addCriterion("metdesc <", value, "metdesc");
             return (Criteria) this;
         }
 
-        public Criteria andDescLessThanOrEqualTo(String value) {
-            addCriterion("desc <=", value, "desc");
+        public Criteria andMetdescLessThanOrEqualTo(String value) {
+            addCriterion("metdesc <=", value, "metdesc");
             return (Criteria) this;
         }
 
-        public Criteria andDescLike(String value) {
-            addCriterion("desc like", value, "desc");
+        public Criteria andMetdescLike(String value) {
+            addCriterion("metdesc like", value, "metdesc");
             return (Criteria) this;
         }
 
-        public Criteria andDescNotLike(String value) {
-            addCriterion("desc not like", value, "desc");
+        public Criteria andMetdescNotLike(String value) {
+            addCriterion("metdesc not like", value, "metdesc");
             return (Criteria) this;
         }
 
-        public Criteria andDescIn(List<String> values) {
-            addCriterion("desc in", values, "desc");
+        public Criteria andMetdescIn(List<String> values) {
+            addCriterion("metdesc in", values, "metdesc");
             return (Criteria) this;
         }
 
-        public Criteria andDescNotIn(List<String> values) {
-            addCriterion("desc not in", values, "desc");
+        public Criteria andMetdescNotIn(List<String> values) {
+            addCriterion("metdesc not in", values, "metdesc");
             return (Criteria) this;
         }
 
-        public Criteria andDescBetween(String value1, String value2) {
-            addCriterion("desc between", value1, value2, "desc");
+        public Criteria andMetdescBetween(String value1, String value2) {
+            addCriterion("metdesc between", value1, value2, "metdesc");
             return (Criteria) this;
         }
 
-        public Criteria andDescNotBetween(String value1, String value2) {
-            addCriterion("desc not between", value1, value2, "desc");
+        public Criteria andMetdescNotBetween(String value1, String value2) {
+            addCriterion("metdesc not between", value1, value2, "metdesc");
             return (Criteria) this;
         }
     }

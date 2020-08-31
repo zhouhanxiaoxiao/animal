@@ -315,4 +315,11 @@
       createtime = #{createtime,jdbcType=TIMESTAMP}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
+
+  <select id="selectUserByRoleType" resultMap="BaseResultMap">
+    select user.* from cibr_sys_role role
+        left join cibr_sys_user_role gl on role.id = gl.roleid
+        left join cibr_sys_user user on user.ID = gl.userid
+    where role.roleType = #{roleType,jdbcType=VARCHAR};
+  </select>
 </mapper>

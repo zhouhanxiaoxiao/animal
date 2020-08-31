@@ -247,6 +247,7 @@ public class TaskService {
         for (CibrSysUser userTmp : cibrSysUsers) {
             userid_user.put(userTmp.getId(),userTmp);
         }
+
         List<String> taskids = new ArrayList<String>();
         for (CibrSysTask task: cibrSysTasks) {
             taskids.add(task.getId());

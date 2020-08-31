@@ -69,7 +69,7 @@ public class TaskController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
     @RequestMapping("/task/askTask")
@@ -99,7 +99,7 @@ public class TaskController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
     @RequestMapping("/task/gatAllTask")
@@ -121,7 +121,7 @@ public class TaskController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
     @RequestMapping("/task/askTaskDetail")
@@ -139,7 +139,7 @@ public class TaskController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
     @RequestMapping("/task/ask/refuse")
@@ -160,7 +160,7 @@ public class TaskController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
     @RequestMapping("/task/ask/confirm")
     public String confirmAsk(HttpServletRequest request,
@@ -183,7 +183,7 @@ public class TaskController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
     @RequestMapping("/task/ask/getPrepare")
@@ -201,7 +201,7 @@ public class TaskController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
     @RequestMapping("/task/ask/confirmPrepare")
@@ -235,7 +235,7 @@ public class TaskController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
     @RequestMapping("/task/ask/confirmTask")
@@ -257,7 +257,7 @@ public class TaskController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
     @RequestMapping("/task/user/allowTask")
@@ -276,7 +276,7 @@ public class TaskController {
             e.printStackTrace();
         }
         System.out.println(JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect));
-        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
     @RequestMapping("/task/user/refuseAllow")
@@ -299,7 +299,7 @@ public class TaskController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
     @RequestMapping("/task/user/allowCreate")
@@ -321,7 +321,7 @@ public class TaskController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
     @RequestMapping("/task/addProcess")
@@ -353,7 +353,7 @@ public class TaskController {
             ret.setErrMsg("系统异常！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
 }

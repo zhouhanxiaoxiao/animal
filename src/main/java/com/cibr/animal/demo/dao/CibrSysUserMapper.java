@@ -94,4 +94,11 @@ public interface CibrSysUserMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(CibrSysUser record);
+
+    /**
+     * 根据角色查询所有用户
+     * @param roleType
+     * @return
+     */
+    List<CibrSysUser> selectUserByRoleType(@Param("roleType")String roleType);
 }

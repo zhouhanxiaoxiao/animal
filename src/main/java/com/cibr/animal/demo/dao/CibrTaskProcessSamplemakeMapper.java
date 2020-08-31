@@ -98,6 +98,4 @@ public interface CibrTaskProcessSamplemakeMapper {
     int batchInsert(List<CibrTaskProcessSamplemake> list);
 
     int batchUpdate(List<CibrTaskProcessSamplemake> list);
-
-
 }

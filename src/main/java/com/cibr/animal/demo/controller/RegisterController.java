@@ -1,6 +1,7 @@
 package com.cibr.animal.demo.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cibr.animal.demo.entity.CibrSysUser;
 import com.cibr.animal.demo.entity.CibrSysVerification;
 import com.cibr.animal.demo.service.CibrSysUserService;
@@ -65,7 +66,7 @@ public class RegisterController {
             returnData.setErrMsg("获取验证码失败，稍后重试！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(returnData);
+        return JSON.toJSONString(returnData, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
     @RequestMapping("/submit")
@@ -111,6 +112,6 @@ public class RegisterController {
             returnData.setErrMsg("注册失败失败，稍后重试！");
             e.printStackTrace();
         }
-        return JSON.toJSONString(returnData);
+        return JSON.toJSONString(returnData, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 }
