@@ -161,10 +161,7 @@ public class ProcessTaskService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void saveSampleInput(String processId, CibrSysUser user, List<CibrTaskProcessSampleinput> list,String type) {
-
         CibrTaskProcess process = processMapper.selectByPrimaryKey(processId);
-
-
         CibrTaskProcessSampleinputExample example = new CibrTaskProcessSampleinputExample();
         example.createCriteria().andProcessidEqualTo(processId);
         final List<CibrTaskProcessSampleinput> list_database = sampleinputMapper.selectByExample(example);

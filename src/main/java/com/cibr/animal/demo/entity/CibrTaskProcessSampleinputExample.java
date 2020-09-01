@@ -335,6 +335,146 @@ public class CibrTaskProcessSampleinputExample {
             return (Criteria) this;
         }
 
+        public Criteria andSubidIsNull() {
+            addCriterion("subId is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidIsNotNull() {
+            addCriterion("subId is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidEqualTo(String value) {
+            addCriterion("subId =", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidNotEqualTo(String value) {
+            addCriterion("subId <>", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidGreaterThan(String value) {
+            addCriterion("subId >", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidGreaterThanOrEqualTo(String value) {
+            addCriterion("subId >=", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidLessThan(String value) {
+            addCriterion("subId <", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidLessThanOrEqualTo(String value) {
+            addCriterion("subId <=", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidLike(String value) {
+            addCriterion("subId like", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidNotLike(String value) {
+            addCriterion("subId not like", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidIn(List<String> values) {
+            addCriterion("subId in", values, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidNotIn(List<String> values) {
+            addCriterion("subId not in", values, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidBetween(String value1, String value2) {
+            addCriterion("subId between", value1, value2, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidNotBetween(String value1, String value2) {
+            addCriterion("subId not between", value1, value2, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andArrindexIsNull() {
+            addCriterion("arrIndex is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andArrindexIsNotNull() {
+            addCriterion("arrIndex is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andArrindexEqualTo(String value) {
+            addCriterion("arrIndex =", value, "arrindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andArrindexNotEqualTo(String value) {
+            addCriterion("arrIndex <>", value, "arrindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andArrindexGreaterThan(String value) {
+            addCriterion("arrIndex >", value, "arrindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andArrindexGreaterThanOrEqualTo(String value) {
+            addCriterion("arrIndex >=", value, "arrindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andArrindexLessThan(String value) {
+            addCriterion("arrIndex <", value, "arrindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andArrindexLessThanOrEqualTo(String value) {
+            addCriterion("arrIndex <=", value, "arrindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andArrindexLike(String value) {
+            addCriterion("arrIndex like", value, "arrindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andArrindexNotLike(String value) {
+            addCriterion("arrIndex not like", value, "arrindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andArrindexIn(List<String> values) {
+            addCriterion("arrIndex in", values, "arrindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andArrindexNotIn(List<String> values) {
+            addCriterion("arrIndex not in", values, "arrindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andArrindexBetween(String value1, String value2) {
+            addCriterion("arrIndex between", value1, value2, "arrindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andArrindexNotBetween(String value1, String value2) {
+            addCriterion("arrIndex not between", value1, value2, "arrindex");
+            return (Criteria) this;
+        }
+
         public Criteria andSamplenameIsNull() {
             addCriterion("sampleName is null");
             return (Criteria) this;
@@ -402,6 +542,76 @@ public class CibrTaskProcessSampleinputExample {
 
         public Criteria andSamplenameNotBetween(String value1, String value2) {
             addCriterion("sampleName not between", value1, value2, "samplename");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleIsNull() {
+            addCriterion("initSample is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleIsNotNull() {
+            addCriterion("initSample is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleEqualTo(String value) {
+            addCriterion("initSample =", value, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleNotEqualTo(String value) {
+            addCriterion("initSample <>", value, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleGreaterThan(String value) {
+            addCriterion("initSample >", value, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleGreaterThanOrEqualTo(String value) {
+            addCriterion("initSample >=", value, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleLessThan(String value) {
+            addCriterion("initSample <", value, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleLessThanOrEqualTo(String value) {
+            addCriterion("initSample <=", value, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleLike(String value) {
+            addCriterion("initSample like", value, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleNotLike(String value) {
+            addCriterion("initSample not like", value, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleIn(List<String> values) {
+            addCriterion("initSample in", values, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleNotIn(List<String> values) {
+            addCriterion("initSample not in", values, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleBetween(String value1, String value2) {
+            addCriterion("initSample between", value1, value2, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleNotBetween(String value1, String value2) {
+            addCriterion("initSample not between", value1, value2, "initsample");
             return (Criteria) this;
         }
 

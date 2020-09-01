@@ -335,6 +335,76 @@ public class CibrTaskProcessSamplemakeExample {
             return (Criteria) this;
         }
 
+        public Criteria andSubidIsNull() {
+            addCriterion("subId is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidIsNotNull() {
+            addCriterion("subId is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidEqualTo(String value) {
+            addCriterion("subId =", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidNotEqualTo(String value) {
+            addCriterion("subId <>", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidGreaterThan(String value) {
+            addCriterion("subId >", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidGreaterThanOrEqualTo(String value) {
+            addCriterion("subId >=", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidLessThan(String value) {
+            addCriterion("subId <", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidLessThanOrEqualTo(String value) {
+            addCriterion("subId <=", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidLike(String value) {
+            addCriterion("subId like", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidNotLike(String value) {
+            addCriterion("subId not like", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidIn(List<String> values) {
+            addCriterion("subId in", values, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidNotIn(List<String> values) {
+            addCriterion("subId not in", values, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidBetween(String value1, String value2) {
+            addCriterion("subId between", value1, value2, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidNotBetween(String value1, String value2) {
+            addCriterion("subId not between", value1, value2, "subid");
+            return (Criteria) this;
+        }
+
         public Criteria andInputidIsNull() {
             addCriterion("inputId is null");
             return (Criteria) this;
