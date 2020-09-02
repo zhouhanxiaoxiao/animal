@@ -2,6 +2,7 @@ package com.cibr.animal.demo.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.cibr.animal.demo.entity.CibrStockDrosophila;
 import com.cibr.animal.demo.service.PersonalService;
 import com.cibr.animal.demo.service.StockService;
 import com.cibr.animal.demo.util.ReturnData;
@@ -35,6 +36,26 @@ public class StockController {
             Integer currentPage = (Integer) requestBody.get("currentPage");
             Map<String, Object> allStrains = stockService.findAllStrains(pageSize.intValue(), currentPage.intValue());
             ret.setRetMap(allStrains);
+            ret.setCode("200");
+        }catch (Exception e){
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/stock/edit/init")
+    public String stockEditInit(HttpServletRequest request,
+                                HttpServletResponse response,
+                                @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try{
+            String stockId = (String) requestBody.get("stockId");
+            CibrStockDrosophila cibrStockDrosophila = stockService.stockEditInit(stockId);
+            Map<String,Object> retMap = new HashMap<>();
+            retMap.put("stock",cibrStockDrosophila);
+            ret.setRetMap(retMap);
             ret.setCode("200");
         }catch (Exception e){
             ret.setCode("E500");

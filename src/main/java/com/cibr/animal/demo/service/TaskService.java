@@ -824,6 +824,12 @@ public class TaskService {
         retMap.put("creater",creater);
         retMap.put("records",recordMeterials);
         retMap.put("partner",partner);
+        if ("02".equals(partner.getTaskstatu())){
+            CibrTaskFailExample failExample = new CibrTaskFailExample();
+            failExample.createCriteria().andDetailidEqualTo(partner.getId());
+            List<CibrTaskFail> cibrTaskFails = failMapper.selectByExample(failExample);
+            retMap.put("fail",cibrTaskFails.get(0));
+        }
         return retMap;
     }
 
