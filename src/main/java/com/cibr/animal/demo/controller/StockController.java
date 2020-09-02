@@ -57,6 +57,7 @@ public class StockController {
             retMap.put("stock",cibrStockDrosophila);
             ret.setRetMap(retMap);
             ret.setCode("200");
+
         }catch (Exception e){
             ret.setCode("E500");
             ret.setErrMsg("系统异常！");
