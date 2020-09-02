@@ -9,11 +9,12 @@ public class TaskUtil {
     public static final String ASK_TASK = "02";
     /**任务类型：流程管理任务*/
     public static final String PROCESS_TASK = "03";
-
-
+    /**任务类型：合作申请任务*/
+    public static final String PARTNER_TASK = "04";
 
     /*任务名称*/
     public static final String ASK_TASK_DROSOPHILA = "果蝇使用申请任务";
+    public static final String TASK_PARTNER = "请求协助";
     public static final String TASK_CREATE_USER = "用户注册任务";
     public static final String TASK_PROCESS = "流程管理任务";
 
@@ -59,4 +60,11 @@ public class TaskUtil {
     public static final String PROCESS_TASK_STATU_BA = "50";
     /**任务状态：待创建者确认*/
     public static final String PROCESS_TASK_STATU_READY = "60";
+
+    /**任务状态：待处理*/
+    public static final String PARTNER_TASK_UNDO = "00";
+    /**任务状态：确认*/
+    public static final String PARTNER_TASK_COMFIRM = "01";
+    /**任务状态：拒绝*/
+    public static final String PARTNER_TASK_FAIL = "02";
 }

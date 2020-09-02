@@ -3,6 +3,7 @@ package com.cibr.animal.demo.service;
 import com.cibr.animal.demo.dao.*;
 import com.cibr.animal.demo.entity.*;
 import com.cibr.animal.demo.util.TaskUtil;
+import com.cibr.animal.demo.util.TimeUtil;
 import com.cibr.animal.demo.util.Util;
 import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import org.slf4j.Logger;
@@ -73,6 +74,9 @@ public class TaskService {
 
     @Autowired
     private CibrRecordMeterialMapper recordMeterialMapper;
+
+    @Autowired
+    private CibrTaskPartnerMapper partnerMapper;
 
     public List<Map<String, Object>> getTaskStock(List<String> stockIds, List<Map<String, Object>> stockTable) {
         List<Map<String, Object>> retList = new ArrayList<Map<String, Object>>();
@@ -271,6 +275,12 @@ public class TaskService {
             uuid_process.put(process.getTaskid(),process);
         }
 
+        List<CibrTaskPartner> cibrTaskPartners = partnerMapper.selectByExample(new CibrTaskPartnerExample());
+        Map<String,CibrTaskPartner> uuid_partner = new HashMap<>();
+        for (CibrTaskPartner partner : cibrTaskPartners){
+            uuid_partner.put(partner.getTaskid(),partner);
+        }
+
         List<Map<String,Object>> retList = new ArrayList<>();
         /*组合数据*/
         for (CibrSysTask task: cibrSysTasks){
@@ -281,6 +291,9 @@ public class TaskService {
             }
             if (uuid_process.get(task.getId()) != null){
                 ret.put("process",uuid_process.get(task.getId()));
+            }
+            if (uuid_partner.get(task.getId()) != null){
+                ret.put("partner",uuid_partner.get(task.getId()));
             }
             ret.put("creater",userid_user.get(task.getCreateuser()));
             retList.add(ret);
@@ -792,6 +805,96 @@ public class TaskService {
     }
 
 
+    public Map<String,Object> findPartnerDetail(String taskId) {
+        Map<String,Object> retMap = new HashMap<>();
+        CibrTaskPartnerExample partnerExample = new CibrTaskPartnerExample();
+        partnerExample.createCriteria().andTaskidEqualTo(taskId);
+        List<CibrTaskPartner> partners = partnerMapper.selectByExample(partnerExample);
+        if (partners == null || partners.size() == 0){
+            return null;
+        }
+        CibrTaskPartner partner = partners.get(0);
+        CibrSysUser creater = userMapper.selectByPrimaryKey(partners.get(0).getCreater());
+        String[] recordIds = partner.getRecordid().split("##");
+
+        CibrRecordMeterialExample example = new CibrRecordMeterialExample();
+        example.createCriteria().andIdIn(Arrays.asList(recordIds));
+        example.setOrderByClause("startTime");
+        List<CibrRecordMeterial> recordMeterials = recordMeterialMapper.selectByExample(example);
+        retMap.put("creater",creater);
+        retMap.put("records",recordMeterials);
+        retMap.put("partner",partner);
+        return retMap;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void refusePartner(String partnerId, String reason, String remarks, CibrSysUser user) {
+        CibrTaskPartner partner = partnerMapper.selectByPrimaryKey(partnerId);
+        partner.setTaskstatu(TaskUtil.PARTNER_TASK_FAIL);
+
+        CibrSysTask task = taskMapper.selectByPrimaryKey(partner.getTaskid());
+        task.setHandletime(new Date());
+        task.setTaskstatu(TaskUtil.TASK_STATU_FAIL);
+        task.setTaskdesc(reason);
+        taskMapper.updateByPrimaryKey(task);
+
+        String[] records = partner.getRecordid().split("##");
+        CibrRecordMeterialExample example = new CibrRecordMeterialExample();
+        example.createCriteria().andIdIn(Arrays.asList(records));
+        List<CibrRecordMeterial> recordMeterials = recordMeterialMapper.selectByExample(example);
+        String rem = "";
+        for (CibrRecordMeterial record : recordMeterials){
+            rem += "自 " + TimeUtil.date2str(record.getStarttime(),"yyyy-MM-dd HH:00")
+                    + " 到 " + TimeUtil.date2str(record.getEndtime(),"yyyy-MM-dd HH:00")
+                    + "    ";
+        }
+        partner.setRemark(rem);
+        partnerMapper.updateByPrimaryKey(partner);
+        recordMeterialMapper.deleteByExample(example);
+
+        CibrTaskFail fail = new CibrTaskFail();
+        fail.setId(Util.getUUID());
+        fail.setRemarks(remarks);
+        fail.setReason(reason);
+        fail.setCreatetime(new Date());
+        fail.setHandler(user.getId());
+        fail.setDetailid(partnerId);
+        failMapper.insert(fail);
+
+        CibrSysUser creater = userMapper.selectByPrimaryKey(partner.getCreater());
+        String content = Util.EMAIL_PREFIX;
+        content += "您的协助请求被拒绝，请求协助时间【" + rem +
+                "】，原因【" + reason + "】。" + Util.EMAIL_SUFFIX;
+        emailService.simpleSendEmail(content,creater.getEmail(),TaskUtil.TASK_PARTNER);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void acceptPartner(String partnerId, CibrSysUser user) {
+        CibrTaskPartner partner = partnerMapper.selectByPrimaryKey(partnerId);
+        partner.setTaskstatu(TaskUtil.PARTNER_TASK_COMFIRM);
+
+        CibrSysTask task = taskMapper.selectByPrimaryKey(partner.getTaskid());
+        task.setHandletime(new Date());
+        task.setTaskstatu(TaskUtil.TASK_STATU_SUCCESS);
+        taskMapper.updateByPrimaryKey(task);
+        String[] records = partner.getRecordid().split("##");
+        CibrRecordMeterialExample example = new CibrRecordMeterialExample();
+        example.createCriteria().andIdIn(Arrays.asList(records));
+        List<CibrRecordMeterial> recordMeterials = recordMeterialMapper.selectByExample(example);
+        String rem = "";
+        for (CibrRecordMeterial record : recordMeterials){
+            rem += "自 " + TimeUtil.date2str(record.getStarttime(),"yyyy-MM-dd HH:00")
+                    + " 到 " + TimeUtil.date2str(record.getEndtime(),"yyyy-MM-dd HH:00")
+                    + "    ";
+        }
+        partner.setRemark(rem);
+        partnerMapper.updateByPrimaryKey(partner);
+
+        CibrSysUser creater = userMapper.selectByPrimaryKey(partner.getCreater());
+        String content = Util.EMAIL_PREFIX;
+        content += "您的协助请求已接受！请求协助时间【" + rem + "】" + Util.EMAIL_SUFFIX;
+        emailService.simpleSendEmail(content,creater.getEmail(),TaskUtil.TASK_PARTNER);
+    }
 }
 
 

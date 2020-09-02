@@ -30,4 +30,8 @@ public class UserService {
     public List<CibrSysUser> getUsersByRole(String roleType){
         return userMapper.selectUserByRoleType(roleType);
     }
+
+    public CibrSysUser getUserById(String userId){
+        return userMapper.selectByPrimaryKey(userId);
+    }
 }

@@ -356,4 +356,63 @@ public class TaskController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
+    @RequestMapping("/task/partner/init")
+    public String partnerInit(HttpServletRequest request,
+                              HttpServletResponse response,
+                              @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String taskId = (String) requestBody.get("taskId");
+            Map<String, Object> retMap = taskService.findPartnerDetail(taskId);
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/task/partner/refuse")
+    public String partnerRefuse(HttpServletRequest request,
+                              HttpServletResponse response,
+                              @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String partnerId = (String) requestBody.get("partnerId");
+            String reason = (String) requestBody.get("reason");
+            String remarks = (String) requestBody.get("remarks");
+
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+
+            taskService.refusePartner(partnerId,reason,remarks,user);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/task/partner/accept")
+    public String partnerAccept(HttpServletRequest request,
+                                HttpServletResponse response,
+                                @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String partnerId = (String) requestBody.get("partnerId");
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            taskService.acceptPartner(partnerId,user);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
 }
