@@ -545,6 +545,76 @@ public class CibrTaskProcessSamplemakeExample {
             return (Criteria) this;
         }
 
+        public Criteria andInitsampleIsNull() {
+            addCriterion("initSample is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleIsNotNull() {
+            addCriterion("initSample is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleEqualTo(String value) {
+            addCriterion("initSample =", value, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleNotEqualTo(String value) {
+            addCriterion("initSample <>", value, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleGreaterThan(String value) {
+            addCriterion("initSample >", value, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleGreaterThanOrEqualTo(String value) {
+            addCriterion("initSample >=", value, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleLessThan(String value) {
+            addCriterion("initSample <", value, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleLessThanOrEqualTo(String value) {
+            addCriterion("initSample <=", value, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleLike(String value) {
+            addCriterion("initSample like", value, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleNotLike(String value) {
+            addCriterion("initSample not like", value, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleIn(List<String> values) {
+            addCriterion("initSample in", values, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleNotIn(List<String> values) {
+            addCriterion("initSample not in", values, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleBetween(String value1, String value2) {
+            addCriterion("initSample between", value1, value2, "initsample");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitsampleNotBetween(String value1, String value2) {
+            addCriterion("initSample not between", value1, value2, "initsample");
+            return (Criteria) this;
+        }
+
         public Criteria andDerivativeindexIsNull() {
             addCriterion("derivativeIndex is null");
             return (Criteria) this;

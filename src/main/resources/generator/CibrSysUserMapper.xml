@@ -317,9 +317,9 @@
   </update>
 
   <select id="selectUserByRoleType" resultMap="BaseResultMap">
-    select user.* from cibr_sys_role role
-        left join cibr_sys_user_role gl on role.id = gl.roleid
-        left join cibr_sys_user user on user.ID = gl.userid
+    select user.* from cibr_sys_user user
+        left join cibr_sys_user_role gl on user.ID = gl.userid
+        left join cibr_sys_role role on role.id = gl.roleid
     where role.roleType = #{roleType,jdbcType=VARCHAR};
   </select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.cibr.animal.demo.entity;
 
 import java.util.Date;
+import java.util.List;
 
 public class CibrStockDrosophila implements Cloneable{
     /**
@@ -118,6 +119,16 @@ public class CibrStockDrosophila implements Cloneable{
     private CibrSysEnvironment env;
 
     private CibrAnimalDrosophila animal;
+
+    private List<CibrSysEnvironment> envs;
+
+    public List<CibrSysEnvironment> getEnvs() {
+        return envs;
+    }
+
+    public void setEnvs(List<CibrSysEnvironment> envs) {
+        this.envs = envs;
+    }
 
     public CibrSysEnvironment getEnv() {
         return env;

@@ -744,6 +744,76 @@ public class CibrAnimalDrosophilaExample {
             addCriterion("createUser not between", value1, value2, "createuser");
             return (Criteria) this;
         }
+
+        public Criteria andSelfindexIsNull() {
+            addCriterion("selfIndex is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSelfindexIsNotNull() {
+            addCriterion("selfIndex is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSelfindexEqualTo(String value) {
+            addCriterion("selfIndex =", value, "selfindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSelfindexNotEqualTo(String value) {
+            addCriterion("selfIndex <>", value, "selfindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSelfindexGreaterThan(String value) {
+            addCriterion("selfIndex >", value, "selfindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSelfindexGreaterThanOrEqualTo(String value) {
+            addCriterion("selfIndex >=", value, "selfindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSelfindexLessThan(String value) {
+            addCriterion("selfIndex <", value, "selfindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSelfindexLessThanOrEqualTo(String value) {
+            addCriterion("selfIndex <=", value, "selfindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSelfindexLike(String value) {
+            addCriterion("selfIndex like", value, "selfindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSelfindexNotLike(String value) {
+            addCriterion("selfIndex not like", value, "selfindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSelfindexIn(List<String> values) {
+            addCriterion("selfIndex in", values, "selfindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSelfindexNotIn(List<String> values) {
+            addCriterion("selfIndex not in", values, "selfindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSelfindexBetween(String value1, String value2) {
+            addCriterion("selfIndex between", value1, value2, "selfindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSelfindexNotBetween(String value1, String value2) {
+            addCriterion("selfIndex not between", value1, value2, "selfindex");
+            return (Criteria) this;
+        }
     }
 
     /**

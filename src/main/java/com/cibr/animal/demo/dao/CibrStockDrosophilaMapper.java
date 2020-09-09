@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface CibrStockDrosophilaMapper {
@@ -98,4 +99,6 @@ public interface CibrStockDrosophilaMapper {
     int updateByPrimaryKey(CibrStockDrosophila record);
 
     int batchInsert(List<CibrStockDrosophila> list);
+
+    List<CibrStockDrosophila> selectAllStocks(@Param("condition") Map condition);
 }

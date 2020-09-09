@@ -1,5 +1,7 @@
 package com.cibr.animal.demo.util;
 
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -8,11 +10,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,9 +23,9 @@ public class FileUtil {
 
     private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
-    public static final String NUCLEIC_ACID_FILENAME = "-核酸-";
-    public static final String TISSUE_FILENAME = "-组织-";
-    public static final String CELL_FILENAME = "-细胞-";
+    public static final String NUCLEIC_ACID_FILENAME = "核酸样本";
+    public static final String TISSUE_FILENAME = "组织样本";
+    public static final String CELL_FILENAME = "细胞样本";
 
 
     public static Map<String,List<List<String>>> getAllWorkSheet(File file){
@@ -155,12 +156,28 @@ public class FileUtil {
             name_code.put("口腔拭子","25");
             name_code.put("菌体","26");
             name_code.put("其它","20");
+        }else if (FileUtil.CELL_FILENAME.equals(type)){
+            name_code.put("单细胞悬液","41");
+            name_code.put("其它","40");
         }
         return name_code;
     }
 
     public static String getSampleMsgCode(String zh,String type){
         return getSampleMsgNum(type).get(zh);
+    }
+
+    public static String getInitSampleType(String sampleType){
+        switch (sampleType){
+            case "核酸样本":
+                return "01";
+            case "组织样本":
+                return "02";
+            case "细胞样本":
+                return "03";
+            default:
+                return null;
+        }
     }
 
     /**
@@ -333,5 +350,184 @@ public class FileUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * 生成Excel
+     * @param writeList
+     * @param filePath
+     */
+    public static HSSFWorkbook write(List<List<String>> writeList){
+        // 创建工作薄
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        // 创建工作表
+        HSSFSheet sheet = workbook.createSheet("sheet1");
+        for(int row=0;row<writeList.size();row++){
+            HSSFRow rows = sheet.createRow(row);
+            for (int col = 0; col < writeList.get(row).size(); col++){
+                sheet.setColumnWidth(col,5000);
+                rows.createCell(col).setCellValue(writeList.get(row).get(col));
+            }
+        }
+        return workbook;
+    }
+
+    public static String getInitSampleFlag(String initsample) {
+        if (StringUtils.isEmpty(initsample)){
+            return null;
+        }
+        switch (initsample){
+            case "01":
+                return "核酸样本";
+            case "02":
+                return "组织样本";
+            case "03":
+                return "细胞样本";
+            default:
+                return null;
+        }
+    }
+
+    public static String getSampleTypeFlag(String samplemsg) {
+        if (StringUtils.isEmpty(samplemsg)){
+            return null;
+        }
+        switch (samplemsg){
+            case "01": return"基因组DNA";
+            case "02": return"total RNA";
+            case "03": return"PCR产物";
+            case "04": return"chip-seq DNA";
+            case "05": return"单细胞扩增产物";
+            case "06": return"FFPE";
+            case "00": return"其它";
+            case "21": return "组织";
+            case "22": return "全血";
+            case "23": return "石蜡组织";
+            case "24": return "血清";
+            case "25": return "口腔拭子";
+            case "26": return "菌体";
+            case "20": return "其它";
+            case "41": return "单细胞悬液";
+            case "40": return "其它";
+            default:
+                return null;
+        }
+    }
+
+    public static String getSampleStatuFlag(String samplestatu) {
+        if (StringUtils.isEmpty(samplestatu)){
+            return null;
+        }
+        switch (samplestatu){
+            case "01": return "溶于纯水";
+            case "02": return "溶于TE";
+            case "03": return "溶于无Rnase水";
+            case "04": return "溶于EB";
+            case "05": return "干粉";
+            case "00": return "其它";
+            case "21": return"速冻组织";
+            case "22": return"活体";
+            case "23": return"RNAlater保存";
+            case "24": return"Trlzol保存";
+            case "20": return"其它";
+            case "41": return "裂解液";
+            case "42": return "液氮速冻";
+            case "40": return "其它";
+            default: return null;
+        }
+    }
+
+    public static String getCellsortFlag(String cellsort) {
+        if (StringUtils.isEmpty(cellsort)){
+            return null;
+        }
+        switch (cellsort){
+            case "01": return "过筛网";
+            case "02": return "磁珠分选";
+            case "03": return "口吸管法";
+            case "04": return "BD流式分选";
+            case "05": return "NanoCellect 流式分选";
+            default: return null;
+        }
+    }
+
+    public static String getDatabaseFlag(String databasetype) {
+        if (StringUtils.isEmpty(databasetype)){
+            return null;
+        }
+        switch (databasetype){
+            case "01": return "DNA常规小片段";
+            case "02": return "DNA非常规小片段";
+            case "03": return "人外显子";
+            case "04": return "PCR-free文库";
+            case "05": return "真核普通转录组";
+            case "06": return "真核链特异性";
+            case "07": return "LncRNA";
+            case "21": return "10X单细胞转录组";
+            case "22": return "10X空间转录组";
+            case "23": return "10X ATAC";
+            case "24": return "smart-seq";
+            case "25": return "ATAC";
+            case "26": return "HI-C";
+            case "27": return "DNA常规小片段";
+            case "28": return "DNA非常规小片段";
+            case "29": return "人外显子";
+            case "30": return "PCR-free文库";
+            case "31": return "真核普通转录组";
+            case "32": return "真核链特异性";
+            case "33": return "LncRNA";
+            case "41": return "10X单细胞转录组";
+            case "42": return "10X ATAC";
+            case "43": return "smart-seq";
+            case "44": return "ATAC";
+            case "45": return "HI-C";
+
+            default:return null;
+        }
+    }
+
+    public static String getSeqFlag(String sequencingplatform) {
+        if (StringUtils.isEmpty(sequencingplatform)){
+            return null;
+        }
+        switch (sequencingplatform){
+            case "01": return "Hiseq-SE50";
+            case "02": return "Hiseq-PE150";
+            case "03": return "Hiseq-PE250";
+            case "00": return "其它";
+            default : return null;
+        }
+    }
+
+    public static Object getExtractFlag(String extractmethod) {
+        if (StringUtils.isEmpty(extractmethod)){
+            return null;
+        }
+        switch (extractmethod){
+            case "01":
+                return "柱提法";
+            case "02":
+                return "磁珠提法";
+            case "00":
+                return "其它";
+            default:
+                return null;
+        }
+    }
+
+    public static Object getCheckResultFlag(String checkresult) {
+        if (StringUtils.isEmpty(checkresult)){
+            return null;
+        }
+        switch (checkresult){
+            case "01":
+                return "合格";
+            case "02":
+                return "风险";
+            case "03":
+                return "不合格";
+            default:
+                return null;
+        }
     }
 }

@@ -1,10 +1,14 @@
 package com.cibr.animal.demo.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cibr.animal.demo.dao.CibrSysFileMapper;
+import com.cibr.animal.demo.dao.CibrSysSampleindexMapper;
 import com.cibr.animal.demo.entity.*;
 import com.cibr.animal.demo.util.FileUtil;
+import com.cibr.animal.demo.util.TimeUtil;
 import com.cibr.animal.demo.util.Util;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +20,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
@@ -25,6 +30,8 @@ public class FileService {
 
     @Value("${animal.fileUploadPath}")
     private String filePath;
+
+    public static final String USER_HEAD_DIR = "userhead";
 
     private Logger logger = LoggerFactory.getLogger(FileService.class);
 
@@ -39,6 +46,13 @@ public class FileService {
 
     @Autowired
     private StockService stockService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private CibrSysSampleindexMapper sampleindexMapper;
+
 
     @Transactional(rollbackFor = Exception.class)
     public File saveFile(List<MultipartFile> files,String detailId,CibrSysUser user){
@@ -71,25 +85,30 @@ public class FileService {
             cibrSysFile.setMd5(md5);
             cibrSysFile.setName(dist.getName());
             cibrSysFile.setPath(dist.getPath());
+            cibrSysFile.setRealname(fileName);
             fileMapper.insert(cibrSysFile);
         }
         return dist;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public List<CibrTaskProcessSampleinput> handleSampleInput(List<List<String>> rows, MultipartFile file, String processId, CibrSysUser user) {
         String fileName = file.getOriginalFilename();
         List<CibrTaskProcessSampleinput> list = new ArrayList<CibrTaskProcessSampleinput>();
         CibrTaskProcess process = processTaskService.getPorcessById(processId);
         logger.info(JSONObject.toJSONString(process));
-        if (
-                ("01".equals(process.getSampletype()) && !fileName.contains(FileUtil.NUCLEIC_ACID_FILENAME))
-                || ("02".equals(process.getSampletype()) && !fileName.contains(FileUtil.TISSUE_FILENAME))
-                || ("03".equals(process.getSampletype()) && !fileName.contains(FileUtil.CELL_FILENAME))
-        ){
-            throw new RuntimeException("导入的文件类型与任务类型不相符");
-        }
+//        if (
+//                ("01".equals(process.getSampletype()) && !fileName.contains(FileUtil.NUCLEIC_ACID_FILENAME))
+//                || ("02".equals(process.getSampletype()) && !fileName.contains(FileUtil.TISSUE_FILENAME))
+//                || ("03".equals(process.getSampletype()) && !fileName.contains(FileUtil.CELL_FILENAME))
+//        ){
+//            throw new RuntimeException("导入的文件类型与任务类型不相符");
+//        }
 
+
+        Map<String, CibrSysSampleindex> currentIndexs = processTaskService.getCurrentIndex();
         int rowIndex = 0;
+
         for (List<String> row : rows){
             if (StringUtils.isEmpty(row.get(0))){
                 continue;
@@ -102,62 +121,71 @@ public class FileService {
             input.setRowindex(rowIndex);
             //上传文件为临时状态，等待用户确认之后再修改状态
             input.setCurrentstatu("00");
-            input.setSamplename(row.get(0));
-            input.setSpecies(row.get(1));
-            input.setTissue(row.get(2));
+            String initSample = row.get(0);
+            input.setInitsample(FileUtil.getInitSampleType(initSample));
+            input.setArrindex(row.get(1));
+            input.setSamplename(row.get(2));
+            input.setSpecies(row.get(3));
+            input.setTissue(row.get(4));
             String sampleMsg = "";
-            if (row.get(3) != null){
-                if (fileName.contains(FileUtil.NUCLEIC_ACID_FILENAME)){
-                    sampleMsg = FileUtil.getSampleMsgCode(row.get(3),FileUtil.NUCLEIC_ACID_FILENAME);
-                }else if (fileName.contains(FileUtil.TISSUE_FILENAME)){
-                    sampleMsg = FileUtil.getSampleMsgCode(row.get(3),FileUtil.TISSUE_FILENAME);
+            if (row.get(5) != null){
+                if (initSample.contains(FileUtil.NUCLEIC_ACID_FILENAME)){
+                    sampleMsg = FileUtil.getSampleMsgCode(row.get(5),FileUtil.NUCLEIC_ACID_FILENAME);
+                }else if (initSample.contains(FileUtil.TISSUE_FILENAME)){
+                    sampleMsg = FileUtil.getSampleMsgCode(row.get(5),FileUtil.TISSUE_FILENAME);
+                }else if (initSample.contains(FileUtil.CELL_FILENAME)){
+                    sampleMsg = FileUtil.getSampleMsgCode(row.get(5),FileUtil.CELL_FILENAME);
                 }
             }
             input.setSamplemsg(sampleMsg);
             String sampleStatu = "";
-            if (row.get(4) != null){
-                if (fileName.contains(FileUtil.NUCLEIC_ACID_FILENAME)){
-                    sampleStatu = FileUtil.getSampleStatuCode(row.get(4),FileUtil.NUCLEIC_ACID_FILENAME);
-                }else if (fileName.contains(FileUtil.TISSUE_FILENAME)){
-                    sampleStatu = FileUtil.getSampleStatuCode(row.get(4),FileUtil.TISSUE_FILENAME);
-                }else if (fileName.contains(FileUtil.CELL_FILENAME)){
-                    sampleStatu = FileUtil.getSampleStatuCode(row.get(4),FileUtil.CELL_FILENAME);
+            if (row.get(6) != null){
+                if (initSample.contains(FileUtil.NUCLEIC_ACID_FILENAME)){
+                    sampleStatu = FileUtil.getSampleStatuCode(row.get(6),FileUtil.NUCLEIC_ACID_FILENAME);
+                }else if (initSample.contains(FileUtil.TISSUE_FILENAME)){
+                    sampleStatu = FileUtil.getSampleStatuCode(row.get(6),FileUtil.TISSUE_FILENAME);
+                }else if (initSample.contains(FileUtil.CELL_FILENAME)){
+                    sampleStatu = FileUtil.getSampleStatuCode(row.get(6),FileUtil.CELL_FILENAME);
                 }
             }
             input.setSamplestatu(sampleStatu);
-            if (fileName != null && fileName.contains(FileUtil.TISSUE_FILENAME)){
-                input.setTissuenumber(row.get(5));
-                input.setBloodvolume(row.get(6));
+            if (initSample != null && initSample.contains(FileUtil.TISSUE_FILENAME)){
+                input.setTissuenumber(row.get(7));
+                input.setBloodvolume(row.get(8));
             }
-            if (fileName != null && !fileName.contains(FileUtil.TISSUE_FILENAME)){
-                input.setConcentration(row.get(7));
-                input.setSamplevolume(row.get(8));
-                input.setTotalnumber(row.get(9));
+            if (initSample != null && !initSample.contains(FileUtil.TISSUE_FILENAME)){
+                input.setConcentration(row.get(9));
+                input.setSamplevolume(row.get(10));
+                input.setTotalnumber(row.get(11));
             }
-            if (fileName != null && fileName.contains(FileUtil.CELL_FILENAME)){
-                input.setCelllife(row.get(10));
+            if (initSample != null && initSample.contains(FileUtil.CELL_FILENAME)){
+                input.setCelllife(row.get(12));
                 String cellSort = "";
-                cellSort = FileUtil.getCellSortCode(row.get(11));
+                cellSort = FileUtil.getCellSortCode(row.get(13));
                 input.setCellsort(cellSort);
             }
-
             String databaseType = "";
-            if (fileName != null && fileName.contains(FileUtil.NUCLEIC_ACID_FILENAME)){
-                databaseType = FileUtil.getDatabaseType(row.get(12),FileUtil.NUCLEIC_ACID_FILENAME);
-            }else if (fileName != null && fileName.contains(FileUtil.TISSUE_FILENAME)){
-                databaseType = FileUtil.getDatabaseType(row.get(12),FileUtil.TISSUE_FILENAME);
-            }else if (fileName != null && fileName.contains(FileUtil.CELL_FILENAME)){
-                databaseType = FileUtil.getDatabaseType(row.get(12),FileUtil.CELL_FILENAME);
+            if (initSample != null && initSample.contains(FileUtil.NUCLEIC_ACID_FILENAME)){
+                databaseType = FileUtil.getDatabaseType(row.get(14),FileUtil.NUCLEIC_ACID_FILENAME);
+            }else if (initSample != null && initSample.contains(FileUtil.TISSUE_FILENAME)){
+                databaseType = FileUtil.getDatabaseType(row.get(14),FileUtil.TISSUE_FILENAME);
+            }else if (initSample != null && initSample.contains(FileUtil.CELL_FILENAME)){
+                databaseType = FileUtil.getDatabaseType(row.get(14),FileUtil.CELL_FILENAME);
             }
             input.setDatabasetype(databaseType);
-
             String seq = "";
-            seq = FileUtil.getSeqCode(row.get(13));
+            seq = FileUtil.getSeqCode(row.get(15));
+            logger.info(JSON.toJSONString(input));
+            String selfNum = Util.getSelfNum(input.getInitsample(), sampleMsg, databaseType);
+            CibrSysSampleindex sampleindex = currentIndexs.get(selfNum);
+            sampleindex.setCurrentindex(sampleindex.getCurrentindex() + 1);
+            input.setSampleindex(sampleindex.getSelfNum());
             input.setSequencingplatform(seq);
-            input.setRemarks(row.get(14));
+            input.setRemarks(row.get(16));
             list.add(input);
             rowIndex ++;
         }
+        processTaskService.updateSampleIndex(currentIndexs);
         return list;
     }
 
@@ -186,42 +214,40 @@ public class FileService {
                         bzFlag = true;
                         continue;
                     }
-                    if ("stock ID".equals(list.get(0))){
+                    if ("stock ID".equals(list.get(0)) || "编号".equals(list.get(0))){
                         hasData = true;
                         continue;
                     }
                     if (StringUtils.isEmpty(list.get(0))){
                         hasData = false;
                     }
-                    if ("Phic-31".equals(list.get(0))){
-                        System.out.println();
-                    }
                     logger.info("======" + Arrays.toString(list.toArray()));
-                    if (hasData){
+                    if (hasData && bzFlag){
                         CibrAnimalDrosophila drosophila = null;
-                        if (geno_droso.get(list.get(1)) == null){
+                        if (geno_droso.get(list.get(2)) == null){
                             drosophila = new CibrAnimalDrosophila();
                             String animalId = Util.getUUID();
                             drosophila.setId(animalId);
                             drosophila.setCreatetime(new Date());
                             drosophila.setCreateuser(user.getId());
-                            drosophila.setResource(list.get(2));
-                            drosophila.setStockId(list.get(0));
+                            drosophila.setResource(list.get(3));
+                            drosophila.setStockId(list.get(1));
                             drosophila.setName("果蝇");
-                            drosophila.setGenotype(list.get(1));
+                            drosophila.setGenotype(list.get(2));
+                            drosophila.setSelfindex(list.get(0));
                             newDrosos.add(drosophila);
                             geno_droso.put(drosophila.getGenotype(),drosophila);
                         }else {
-                            drosophila = geno_droso.get(list.get(1));
+                            drosophila = geno_droso.get(list.get(2));
                         }
                         CibrStockDrosophila stockDrosophila = new CibrStockDrosophila();
                         stockDrosophila.setId(Util.getUUID());
                         stockDrosophila.setCreatetime(new Date());
-                        stockDrosophila.setContanertype(list.get(3));
-                        stockDrosophila.setContanernmuber(new BigDecimal(list.get(4)).setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
+                        stockDrosophila.setContanertype(list.get(4));
+                        stockDrosophila.setContanernmuber(new BigDecimal(list.get(5)).setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
                         stockDrosophila.setCreateuser(user.getId());
-                        stockDrosophila.setRawnumber(new BigDecimal(list.get(4)).setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
-                        stockDrosophila.setRawtype(list.get(3));
+                        stockDrosophila.setRawnumber(new BigDecimal(list.get(5)).setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
+                        stockDrosophila.setRawtype(list.get(4));
                         stockDrosophila.setDrosophilaId(drosophila.getId());
                         if (syFlag){
                             stockDrosophila.setUsagetype("stock");
@@ -234,7 +260,7 @@ public class FileService {
                             stockDrosophila.setEnvironment("sdafsdfasdfasdf");
                             clone.setEnvironment("sdafsdfasdfasde");
                             clone.setId(Util.getUUID());
-                            clone.setContanernmuber(new BigDecimal(list.get(5)).setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
+                            clone.setContanernmuber(new BigDecimal(list.get(6)).setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
                             newStock.add(clone);
                         }
                         newStock.add(stockDrosophila);
@@ -244,5 +270,52 @@ public class FileService {
                 animalService.batchInsert(newDrosos);
             }
         }
+    }
+
+    public void saveUserHeader(MultipartFile file, Object o, CibrSysUser user) throws IOException {
+        File path = new File(filePath + File.separator+ USER_HEAD_DIR + File.separator);
+        if (!path.exists()){
+            path.mkdirs();
+        }
+        String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+        String userHead = filePath + File.separator+ USER_HEAD_DIR + File.separator + user.getId() + suffix;
+        File dist = new File(userHead);
+        file.transferTo(dist);
+        user.setUserdesc(userHead);
+        userService.updateUserById(user);
+    }
+
+    public File getUserHead(String userId) {
+        CibrSysUser user = userService.getUserById(userId.substring(0,userId.indexOf(".")));
+        File img = new File(user.getUserdesc());
+        return img;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void saveMakeUploadFile(CibrSysUser user, String makeId, MultipartFile file) {
+        List<MultipartFile> files = new ArrayList<>();
+        files.add(file);
+        saveFile(files,makeId,user);
+    }
+
+    public HSSFWorkbook exportExcel(List<List<String>> excleRows,CibrSysUser user) {
+        return FileUtil.write(excleRows);
+    }
+
+    public List<CibrSysFile> getfileList(String detailId) {
+        CibrSysFileExample fileExample = new CibrSysFileExample();
+        fileExample.createCriteria().andDetailidEqualTo(detailId);
+        List<CibrSysFile> cibrSysFiles = fileMapper.selectByExample(fileExample);
+        for (CibrSysFile file : cibrSysFiles){
+            file.setPath("");
+            file.setMd5("");
+        }
+        return cibrSysFiles;
+    }
+
+    public File getFileById(String fileId) {
+        CibrSysFile file = fileMapper.selectByPrimaryKey(fileId);
+        File dbfile = new File(file.getPath());
+        return dbfile;
     }
 }

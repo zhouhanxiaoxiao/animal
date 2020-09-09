@@ -410,6 +410,39 @@
       environment = #{environment,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+
+  <select id="selectAllStocks" resultMap="stock_animal">
+    select stock.*,droso.* from cibr_stock_drosophila stock left join cibr_animal_drosophila droso
+        on stock.drosophila_id = droso.id
+  </select>
+
+  <resultMap id="stock_animal" type="com.cibr.animal.demo.entity.CibrStockDrosophila">
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="drosophila_id" property="drosophilaId" jdbcType="VARCHAR" />
+    <result column="contanerType" property="contanertype" jdbcType="VARCHAR" />
+    <result column="contanerNmuber" property="contanernmuber" jdbcType="INTEGER" />
+    <result column="usageType" property="usagetype" jdbcType="VARCHAR" />
+    <result column="birthday" property="birthday" jdbcType="TIMESTAMP" />
+    <result column="createUser" property="createuser" jdbcType="VARCHAR" />
+    <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="location" property="location" jdbcType="VARCHAR" />
+    <result column="rawNumber" property="rawnumber" jdbcType="INTEGER" />
+    <result column="rawType" property="rawtype" jdbcType="VARCHAR" />
+    <result column="updateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="updateUser" property="updateuser" jdbcType="VARCHAR" />
+    <result column="environment" property="environment" jdbcType="VARCHAR" />
+    <association property="animal" javaType="com.cibr.animal.demo.entity.CibrAnimalDrosophila" >
+      <id column="id" property="id" jdbcType="VARCHAR" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="stock_id" property="stockId" jdbcType="VARCHAR" />
+      <result column="genotype" property="genotype" jdbcType="VARCHAR" />
+      <result column="resource" property="resource" jdbcType="VARCHAR" />
+      <result column="parent_id" property="parentId" jdbcType="VARCHAR" />
+      <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
+      <result column="createUser" property="createuser" jdbcType="VARCHAR" />
+    </association>
+  </resultMap>
+
   <insert id="batchInsert" parameterType="com.cibr.animal.demo.entity.CibrStockDrosophila">
     insert into cibr_stock_drosophila(
       id, drosophila_id, contanerType,

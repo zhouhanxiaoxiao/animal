@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -110,10 +112,11 @@ public class TaskController {
         try {
             Integer currentPage = (Integer) requestBody.get("currentPage");
             Integer pageSize = (Integer) requestBody.get("pageSize");
+            String pageLocation = (String) requestBody.get("pageLocation");
 
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
-            Map<String, Object> allTask = taskService.findAllTask(currentPage, pageSize, user);
+            Map<String, Object> allTask = taskService.findAllTask(currentPage, pageSize, pageLocation, user);
             ret.setRetMap(allTask);
             ret.setCode("200");
         } catch (Exception e) {
@@ -409,6 +412,24 @@ public class TaskController {
             taskService.acceptPartner(partnerId,user);
             ret.setCode("200");
         }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/task/import/orderTask")
+    public String importOrderTask(HttpServletRequest request,
+                                  HttpServletResponse response){
+        ReturnData ret = new ReturnData();
+        try {
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
+            taskService.importOrderTask(user,file);
+        } catch (Exception e) {
+            response.setStatus(500);
             ret.setCode("E500");
             ret.setErrMsg("系统异常！");
             e.printStackTrace();

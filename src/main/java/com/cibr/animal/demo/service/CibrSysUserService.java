@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CibrSysUserService {
@@ -68,4 +70,12 @@ public class CibrSysUserService {
     }
 
 
+    public Map<String,String> getid_user() {
+        Map<String,String> retMap = new HashMap<>();
+        List<CibrSysUser> cibrSysUsers = userMapper.selectByExample(new CibrSysUserExample());
+        for (CibrSysUser user : cibrSysUsers){
+            retMap.put(user.getId(),user.getName());
+        }
+        return retMap;
+    }
 }

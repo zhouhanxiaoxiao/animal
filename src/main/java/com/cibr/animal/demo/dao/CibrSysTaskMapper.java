@@ -99,4 +99,6 @@ public interface CibrSysTaskMapper {
     int updateByPrimaryKey(CibrSysTask record);
 
     List<CibrSysTask> selectByLimit(@Param("condition") Map condition);
+
+    int selectCount(@Param("condition") Map condition);
 }

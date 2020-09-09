@@ -2,6 +2,7 @@ package com.cibr.animal.demo.service;
 
 import com.cibr.animal.demo.dao.*;
 import com.cibr.animal.demo.entity.*;
+import com.cibr.animal.demo.util.FileUtil;
 import com.cibr.animal.demo.util.TaskUtil;
 import com.cibr.animal.demo.util.TimeUtil;
 import com.cibr.animal.demo.util.Util;
@@ -12,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.text.ParseException;
 import java.util.*;
 
@@ -77,6 +80,12 @@ public class TaskService {
 
     @Autowired
     private CibrTaskPartnerMapper partnerMapper;
+
+    @Autowired
+    private FileService fileService;
+
+    @Autowired
+    private UserService userService;
 
     public List<Map<String, Object>> getTaskStock(List<String> stockIds, List<Map<String, Object>> stockTable) {
         List<Map<String, Object>> retList = new ArrayList<Map<String, Object>>();
@@ -238,12 +247,14 @@ public class TaskService {
      * @param currentPage
      * @param pageSize
      */
-    public Map<String,Object> findAllTask(Integer currentPage, Integer pageSize,CibrSysUser user) {
+    public Map<String,Object> findAllTask(Integer currentPage, Integer pageSize,String pageLocation,CibrSysUser user) {
         /*获取任务主表所有任务*/
         Map condition = new HashMap();
         condition.put("start",currentPage * pageSize);
         condition.put("pageSize", pageSize);
-        condition.put("userId", user.getId());
+        if ("mytask".equals(pageLocation)){
+            condition.put("userId", user.getId());
+        }
         List<CibrSysTask> cibrSysTasks = taskMapper.selectByLimit(condition);
         List<CibrSysUser> cibrSysUsers = userMapper.selectByExample(new CibrSysUserExample());
         Map<String,CibrSysUser> userid_user = new HashMap<String,CibrSysUser>();
@@ -298,10 +309,7 @@ public class TaskService {
             ret.put("creater",userid_user.get(task.getCreateuser()));
             retList.add(ret);
         }
-
-        CibrSysTaskExample taskExample = new CibrSysTaskExample();
-        taskExample.createCriteria().andCreateuserEqualTo(user.getId());
-        int total = taskMapper.countByExample(taskExample);
+        int total = taskMapper.selectCount(condition);
         Map<String,Object> retMap = new HashMap<String,Object>();
         retMap.put("alltask", retList);
         retMap.put("total",total);
@@ -830,6 +838,8 @@ public class TaskService {
             List<CibrTaskFail> cibrTaskFails = failMapper.selectByExample(failExample);
             retMap.put("fail",cibrTaskFails.get(0));
         }
+        CibrSysTask task = taskMapper.selectByPrimaryKey(taskId);
+        retMap.put("task",task);
         return retMap;
     }
 
@@ -900,6 +910,110 @@ public class TaskService {
         String content = Util.EMAIL_PREFIX;
         content += "您的协助请求已接受！请求协助时间【" + rem + "】" + Util.EMAIL_SUFFIX;
         emailService.simpleSendEmail(content,creater.getEmail(),TaskUtil.TASK_PARTNER);
+    }
+
+    /***
+     * 导入果蝇预约任务
+     * @param user
+     * @param file
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void importOrderTask(CibrSysUser user, MultipartFile file) throws ParseException {
+        CibrSysTask task = new CibrSysTask();
+        task.setId(Util.getUUID());
+        task.setTaskstatu(TaskUtil.ASK_TASK_STATU_TODO);
+        task.setCreatetime(new Date());
+        task.setCreateuser(user.getId());
+        task.setTasktype(TaskUtil.ASK_TASK);
+
+        CibrTaskAskDrosophila askDrosophila = new CibrTaskAskDrosophila();
+        askDrosophila.setCreater(user.getId());
+        askDrosophila.setId(Util.getUUID());
+        askDrosophila.setCreatetime(new Date());
+        askDrosophila.setTaskid(task.getId());
+        askDrosophila.setCurrentstatu(TaskUtil.ASK_TASK_STATU_UNDO);
+
+        List<MultipartFile> files = new ArrayList<>();
+        files.add(file);
+        File dist = fileService.saveFile(files, task.getId(), user);
+        List<List<String>> rows = FileUtil.getRows(dist);
+
+        List<CibrTaskDetailDrosophila> details = new ArrayList<>();
+        Set<String> expers = new HashSet<>();
+        String supporter = null;
+
+        List<CibrAnimalDrosophila> cibrAnimalDrosophilas = drosophilaMapper.selectAll();
+        Map<String,CibrAnimalDrosophila> stockId_animal = new HashMap<>();
+        for (CibrAnimalDrosophila drosophila : cibrAnimalDrosophilas){
+            stockId_animal.put(drosophila.getStockId(),drosophila);
+        }
+        List<CibrStockDrosophila> cibrStockDrosophilas = stockDrosophilaMapper.selectAllStocks(null);
+        Map<String,CibrStockDrosophila> stockid_stock = new HashMap<>();
+        for (CibrStockDrosophila stock : cibrStockDrosophilas){
+            stockid_stock.put(stock.getAnimal().getStockId(),stock);
+        }
+
+        for (List<String> row : rows){
+            CibrTaskDetailDrosophila detail = new CibrTaskDetailDrosophila();
+            detail.setId(Util.getUUID());
+            detail.setAskid(askDrosophila.getId());
+            detail.setConfirmstatu("00");
+            detail.setPurpose(Util.nullToStr(row.get(3)));
+            detail.setStockid(stockid_stock.get(Util.nullToStr(row.get(5))).getId());
+            detail.setVirginfly(Util.yesOrNo(row.get(6)));
+            detail.setGender(Util.isMale(row.get(7)));
+            detail.setIshybridizationnecessary(Util.yesOrNo(row.get(8)));
+            if (!StringUtils.isEmpty(Util.nullToStr(row.get(9)))){
+                detail.setHybridstrain(stockId_animal.get(Util.nullToStr(row.get(9))).getId());
+            }
+            detail.setSpecialfeeding(Util.yesOrNo(row.get(10)));
+            detail.setSpecificfeeding(Util.nullToStr(row.get(11)));
+            detail.setAge(Util.nullToStr(row.get(12)));
+            detail.setOrdernumber(Util.nullToStr(row.get(13)));
+            detail.setExpectedtime(TimeUtil.str2date(Util.nullToStr(row.get(14)),"yyyy/MM/dd"));
+            detail.setOperationprocess(Util.nullToStr(row.get(15)));
+            details.add(detail);
+            if (StringUtils.isEmpty(supporter)){
+                supporter = Util.nullToStr(row.get(16));
+            }
+            expers.add(Util.nullToStr(row.get(2)));
+        }
+
+        detailDrosophilaMapper.batchInsert(details);
+
+        Map<String, CibrSysUser> name_user = userService.getName_User();
+        List<CibrTaskAskDirector> directors = new ArrayList<>();
+
+        for (String name : expers){
+            CibrSysUser exp = name_user.get(name);
+            CibrTaskAskDirector director = new CibrTaskAskDirector();
+            director.setId(Util.getUUID());
+            director.setCreatetime(new Date());
+            director.setCurstatu("00");
+            director.setTaskid(askDrosophila.getId());
+            director.setUserid(exp.getId());
+            directors.add(director);
+        }
+        askDirectorMapper.batchInsert(directors);
+        askDrosophila.setCurrenthandler(name_user.get(supporter).getId());
+        task.setCurrentuser(name_user.get(supporter).getId());
+
+        taskMapper.insert(task);
+        askDrosophilaMapper.insert(askDrosophila);
+
+        /*给饲养员发邮件提醒*/
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("creater",user.getName());
+        String context = Util.getAskTaskTemplate(map);
+        CibrSysUser supper = userMapper.selectByPrimaryKey(supporter);
+        emailService.simpleSendEmail(context,supper.getEmail(),Util.EMAIL_SUB_ASKTASK);
+    }
+
+    public int findSelfTaskNumber(String userId){
+        Map cod = new HashMap();
+        cod.put("userId",userId);
+        cod.put("taskstatu",TaskUtil.TASK_STATU_TODO);
+        return taskMapper.selectCount(cod);
     }
 }
 

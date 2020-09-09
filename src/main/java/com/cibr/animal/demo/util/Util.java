@@ -13,6 +13,8 @@ public class Util {
 
     public static final String EMAIL_SUB_ASKTASK = "使用申请";
 
+    public static final String EMAIL_SUB_OVERTIME = "超时提醒";
+
     public static final String USER_CREATE = "用户账号申请";
 
     public static final String EMAIL_PREFIX = "【北京脑科学与类脑研究中心】\n\n\t";
@@ -63,5 +65,104 @@ public class Util {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         Date date = sdf.parse(dateStr);
         return date;
+    }
+
+    public static String nullToStr(Object str){
+        if (str == null){
+            return "";
+        }else {
+            return String.valueOf(str);
+        }
+    }
+
+    /**
+     * 获取性别
+     * @param flag
+     * @return
+     */
+    public static String isMale(String flag){
+        if ("雄性".equals(flag)){
+            return "male";
+        }else if ("雌性".equals(flag)){
+            return "female";
+        }else {
+            return "empty";
+        }
+    }
+
+    /**
+     * 转换是否
+     * @param flag
+     * @return
+     */
+    public static String yesOrNo(String flag){
+        if ("是".equals(flag)){
+            return "Y";
+        }else {
+            return "N";
+        }
+    }
+
+    public static String getSelfNum(String sampleInit,String sampleType,String databaseType){
+        if (
+                "01".equals(sampleType)
+                ||"03".equals(sampleType)
+                ||"04".equals(sampleType)
+        ){
+            /*DNA：ND（DNA）+19（年）+01（月）+00001（流水）
+	        例如：ND190100001，代表2019年1月第1个DNA样品。*/
+            return "ND";
+        }else if (
+                "02".equals(sampleType)
+        ){
+             /*RNA：NR（RNA）+19（年）+01（月）+0001（流水）
+	            例如：NR190100001，代表2019年1月第1个RNA样品。*/
+            return "NR";
+        }else if (
+                "01".equals(databaseType)
+                ||"02".equals(databaseType)
+                ||"03".equals(databaseType)
+                ||"04".equals(databaseType)
+        ){
+            /*DNA：ND（DNA）+19（年）+01（月）+00001（流水）
+	        例如：ND190100001，代表2019年1月第1个DNA样品。*/
+            return "ND";
+        }else if (
+                "05".equals(databaseType)
+                ||"06".equals(databaseType)
+                ||"07".equals(databaseType)
+        ){
+            /*DNA：ND（DNA）+19（年）+01（月）+00001（流水）
+	        例如：ND190100001，代表2019年1月第1个DNA样品。*/
+            return "NR";
+        }else if (
+                "21".equals(databaseType)
+                ||"22".equals(databaseType)
+                ||"23".equals(databaseType)
+                ||"24".equals(databaseType)
+                ||"25".equals(databaseType)
+                ||"31".equals(databaseType)
+                ||"32".equals(databaseType)
+                ||"33".equals(databaseType)
+        ){
+            return "NRO";
+        }else if (
+                "26".equals(databaseType)
+                ||"27".equals(databaseType)
+                ||"28".equals(databaseType)
+                ||"29".equals(databaseType)
+                ||"30".equals(databaseType)
+        ){
+            return "NDO";
+        }else if (
+                "41".equals(databaseType)
+                ||"42".equals(databaseType)
+                ||"43".equals(databaseType)
+                ||"44".equals(databaseType)
+                ||"45".equals(databaseType)
+        ){
+            return "NC";
+        }
+        return null;
     }
 }
