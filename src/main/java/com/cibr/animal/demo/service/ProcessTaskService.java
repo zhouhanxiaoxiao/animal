@@ -759,6 +759,10 @@ public class ProcessTaskService {
         HSSFWorkbook sheets = fileService.exportExcel(excleRows, user);
         return sheets;
     }
+
+    public CibrTaskProcessSubtask selectSubTaskById(String subId) {
+        return subtaskMapper.selectByPrimaryKey(subId);
+    }
 }
 
 

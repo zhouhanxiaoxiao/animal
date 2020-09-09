@@ -155,10 +155,12 @@ public class ProcessController {
             String processId = (String) requestBody.get("processId");
             String subId = (String) requestBody.get("subId");
             List<CibrTaskProcessSamplemake> allTodoMakes = processTaskService.getAllTodoMakes(processId,subId);
+            CibrTaskProcessSubtask subtask = processTaskService.selectSubTaskById(subId);
             List<CibrSysUser> allUsers = loginService.findAllUsers();
             Map<String,Object> retMap = new HashMap<>();
             retMap.put("makes",allTodoMakes);
             retMap.put("allUsers",allUsers);
+            retMap.put("subtask",subtask);
             ret.setRetMap(retMap);
             ret.setCode("200");
         }catch (Exception e) {
