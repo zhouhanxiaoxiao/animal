@@ -103,7 +103,6 @@ public class CibrSysSampleindex {
         for (int i = 0;i<curLen;i++){
             num = "0" + num;
         }
-
         return this.name + this.curtime + num;
     }
 }

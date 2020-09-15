@@ -96,6 +96,12 @@ public class FileService {
         String fileName = file.getOriginalFilename();
         List<CibrTaskProcessSampleinput> list = new ArrayList<CibrTaskProcessSampleinput>();
         CibrTaskProcess process = processTaskService.getPorcessById(processId);
+
+        CibrTaskProcessSampleinputExample sampleinputExample = new CibrTaskProcessSampleinputExample();
+        sampleinputExample.createCriteria().andProcessidEqualTo(processId);
+        sampleinputExample.setOrderByClause("rowIndex");
+
+
         logger.info(JSONObject.toJSONString(process));
 //        if (
 //                ("01".equals(process.getSampletype()) && !fileName.contains(FileUtil.NUCLEIC_ACID_FILENAME))
@@ -104,15 +110,10 @@ public class FileService {
 //        ){
 //            throw new RuntimeException("导入的文件类型与任务类型不相符");
 //        }
-
-
         Map<String, CibrSysSampleindex> currentIndexs = processTaskService.getCurrentIndex();
         int rowIndex = 0;
-
         for (List<String> row : rows){
-            if (StringUtils.isEmpty(row.get(0))){
-                continue;
-            }
+
             CibrTaskProcessSampleinput input = new CibrTaskProcessSampleinput();
             input.setId(Util.getUUID());
             input.setProcessid(processId);
@@ -317,5 +318,12 @@ public class FileService {
         CibrSysFile file = fileMapper.selectByPrimaryKey(fileId);
         File dbfile = new File(file.getPath());
         return dbfile;
+    }
+
+    /*通用上传文件*/
+    public void commonUploadFile(CibrSysUser user, String detailId, MultipartFile file) {
+        List<MultipartFile> files = new ArrayList<>();
+        files.add(file);
+        saveFile(files,detailId,user);
     }
 }

@@ -371,7 +371,7 @@
     select
     <include refid="Base_Column_List" />
     from cibr_animal_drosophila
-    order by createTime
+    order by selfindex,createTime
   </select>
 
   <select id="selectAllStock" resultMap="getAnimalStock">

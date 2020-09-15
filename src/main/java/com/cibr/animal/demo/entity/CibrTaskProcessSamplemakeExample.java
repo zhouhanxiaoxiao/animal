@@ -2324,6 +2324,206 @@ public class CibrTaskProcessSamplemakeExample {
             addCriterion("confirmer not between", value1, value2, "confirmer");
             return (Criteria) this;
         }
+
+        public Criteria andUpdatetimeIsNull() {
+            addCriterion("updateTime is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeIsNotNull() {
+            addCriterion("updateTime is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeEqualTo(Date value) {
+            addCriterion("updateTime =", value, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeNotEqualTo(Date value) {
+            addCriterion("updateTime <>", value, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeGreaterThan(Date value) {
+            addCriterion("updateTime >", value, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("updateTime >=", value, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeLessThan(Date value) {
+            addCriterion("updateTime <", value, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeLessThanOrEqualTo(Date value) {
+            addCriterion("updateTime <=", value, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeIn(List<Date> values) {
+            addCriterion("updateTime in", values, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeNotIn(List<Date> values) {
+            addCriterion("updateTime not in", values, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeBetween(Date value1, Date value2) {
+            addCriterion("updateTime between", value1, value2, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeNotBetween(Date value1, Date value2) {
+            addCriterion("updateTime not between", value1, value2, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserIsNull() {
+            addCriterion("updateUser is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserIsNotNull() {
+            addCriterion("updateUser is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserEqualTo(String value) {
+            addCriterion("updateUser =", value, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserNotEqualTo(String value) {
+            addCriterion("updateUser <>", value, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserGreaterThan(String value) {
+            addCriterion("updateUser >", value, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserGreaterThanOrEqualTo(String value) {
+            addCriterion("updateUser >=", value, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserLessThan(String value) {
+            addCriterion("updateUser <", value, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserLessThanOrEqualTo(String value) {
+            addCriterion("updateUser <=", value, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserLike(String value) {
+            addCriterion("updateUser like", value, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserNotLike(String value) {
+            addCriterion("updateUser not like", value, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserIn(List<String> values) {
+            addCriterion("updateUser in", values, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserNotIn(List<String> values) {
+            addCriterion("updateUser not in", values, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserBetween(String value1, String value2) {
+            addCriterion("updateUser between", value1, value2, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserNotBetween(String value1, String value2) {
+            addCriterion("updateUser not between", value1, value2, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransformIsNull() {
+            addCriterion("transform is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransformIsNotNull() {
+            addCriterion("transform is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransformEqualTo(String value) {
+            addCriterion("transform =", value, "transform");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransformNotEqualTo(String value) {
+            addCriterion("transform <>", value, "transform");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransformGreaterThan(String value) {
+            addCriterion("transform >", value, "transform");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransformGreaterThanOrEqualTo(String value) {
+            addCriterion("transform >=", value, "transform");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransformLessThan(String value) {
+            addCriterion("transform <", value, "transform");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransformLessThanOrEqualTo(String value) {
+            addCriterion("transform <=", value, "transform");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransformLike(String value) {
+            addCriterion("transform like", value, "transform");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransformNotLike(String value) {
+            addCriterion("transform not like", value, "transform");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransformIn(List<String> values) {
+            addCriterion("transform in", values, "transform");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransformNotIn(List<String> values) {
+            addCriterion("transform not in", values, "transform");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransformBetween(String value1, String value2) {
+            addCriterion("transform between", value1, value2, "transform");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransformNotBetween(String value1, String value2) {
+            addCriterion("transform not between", value1, value2, "transform");
+            return (Criteria) this;
+        }
     }
 
     /**

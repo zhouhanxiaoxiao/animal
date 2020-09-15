@@ -1,5 +1,7 @@
 package com.cibr.animal.demo.util;
 
+import org.springframework.util.StringUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -164,5 +166,34 @@ public class Util {
             return "NC";
         }
         return null;
+    }
+
+    public static String getTransformIndex(String sampletype,String databaseType){
+        switch (sampletype){
+            case "01":
+                switch (databaseType){
+                    case "21":
+                    case "22":
+                    case "23":
+                    case "24":
+                    case "25":
+                    case "31":
+                    case "32":
+                    case "33":
+                        return "ZNR";
+                    case "26":
+                    case "27":
+                    case "28":
+                    case "29":
+                    case "30":
+                        return "ZND";
+                    default:
+                        return null;
+                }
+            case "03":
+                return "ZNC";
+            default:
+                return null;
+        }
     }
 }

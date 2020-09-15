@@ -37,6 +37,9 @@
     <result column="rowIndex" property="rowindex" jdbcType="INTEGER" />
     <result column="confirmTime" property="confirmtime" jdbcType="TIMESTAMP" />
     <result column="confirmer" property="confirmer" jdbcType="VARCHAR" />
+    <result column="updateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="updateUser" property="updateuser" jdbcType="VARCHAR" />
+    <result column="transform" property="transform" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <!--
@@ -112,7 +115,8 @@
     id, processId, subId, inputId, sampleName, initSample, derivativeIndex, selfNumber, 
     species, tissue, testDate, concentration, sampleVolume, totalNumber, cellLife, cellSort, 
     extractMethod, checkResult, checkRemarks, checkUser, reviewer, databaseType, sequencingPlatform, 
-    remaining, remarks, createTime, creater, currentStatu, rowIndex, confirmTime, confirmer
+    remaining, remarks, createTime, creater, currentStatu, rowIndex, confirmTime, confirmer, 
+    updateTime, updateUser, transform
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.cibr.animal.demo.entity.CibrTaskProcessSamplemakeExample" >
     <!--
@@ -175,7 +179,8 @@
       databaseType, sequencingPlatform, remaining, 
       remarks, createTime, creater, 
       currentStatu, rowIndex, confirmTime, 
-      confirmer)
+      confirmer, updateTime, updateUser, 
+      transform)
     values (#{id,jdbcType=VARCHAR}, #{processid,jdbcType=VARCHAR}, #{subid,jdbcType=VARCHAR}, 
       #{inputid,jdbcType=VARCHAR}, #{samplename,jdbcType=VARCHAR}, #{initsample,jdbcType=VARCHAR}, 
       #{derivativeindex,jdbcType=VARCHAR}, #{selfnumber,jdbcType=VARCHAR}, #{species,jdbcType=VARCHAR}, 
@@ -186,7 +191,8 @@
       #{databasetype,jdbcType=VARCHAR}, #{sequencingplatform,jdbcType=VARCHAR}, #{remaining,jdbcType=VARCHAR}, 
       #{remarks,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{creater,jdbcType=VARCHAR}, 
       #{currentstatu,jdbcType=VARCHAR}, #{rowindex,jdbcType=INTEGER}, #{confirmtime,jdbcType=TIMESTAMP}, 
-      #{confirmer,jdbcType=VARCHAR})
+      #{confirmer,jdbcType=VARCHAR}, #{updatetime,jdbcType=TIMESTAMP}, #{updateuser,jdbcType=VARCHAR}, 
+      #{transform,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.cibr.animal.demo.entity.CibrTaskProcessSamplemake" >
     <!--
@@ -288,6 +294,15 @@
       <if test="confirmer != null" >
         confirmer,
       </if>
+      <if test="updatetime != null" >
+        updateTime,
+      </if>
+      <if test="updateuser != null" >
+        updateUser,
+      </if>
+      <if test="transform != null" >
+        transform,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -382,6 +397,15 @@
       </if>
       <if test="confirmer != null" >
         #{confirmer,jdbcType=VARCHAR},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateuser != null" >
+        #{updateuser,jdbcType=VARCHAR},
+      </if>
+      <if test="transform != null" >
+        #{transform,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -495,6 +519,15 @@
       <if test="record.confirmer != null" >
         confirmer = #{record.confirmer,jdbcType=VARCHAR},
       </if>
+      <if test="record.updatetime != null" >
+        updateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateuser != null" >
+        updateUser = #{record.updateuser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.transform != null" >
+        transform = #{record.transform,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -536,7 +569,10 @@
       currentStatu = #{record.currentstatu,jdbcType=VARCHAR},
       rowIndex = #{record.rowindex,jdbcType=INTEGER},
       confirmTime = #{record.confirmtime,jdbcType=TIMESTAMP},
-      confirmer = #{record.confirmer,jdbcType=VARCHAR}
+      confirmer = #{record.confirmer,jdbcType=VARCHAR},
+      updateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      updateUser = #{record.updateuser,jdbcType=VARCHAR},
+      transform = #{record.transform,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -638,6 +674,15 @@
       <if test="confirmer != null" >
         confirmer = #{confirmer,jdbcType=VARCHAR},
       </if>
+      <if test="updatetime != null" >
+        updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateuser != null" >
+        updateUser = #{updateuser,jdbcType=VARCHAR},
+      </if>
+      <if test="transform != null" >
+        transform = #{transform,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -676,7 +721,10 @@
       currentStatu = #{currentstatu,jdbcType=VARCHAR},
       rowIndex = #{rowindex,jdbcType=INTEGER},
       confirmTime = #{confirmtime,jdbcType=TIMESTAMP},
-      confirmer = #{confirmer,jdbcType=VARCHAR}
+      confirmer = #{confirmer,jdbcType=VARCHAR},
+      updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      updateUser = #{updateuser,jdbcType=VARCHAR},
+      transform = #{transform,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 
@@ -691,7 +739,7 @@
     reviewer, databaseType, sequencingPlatform,
     remaining, remarks, createTime,
     creater, currentStatu, rowIndex,
-    confirmTime, confirmer,subId,initSample
+    confirmTime, confirmer,subId,initSample,updateTime,updateUser,transform
     )
     values
     <foreach collection="list" item="record" separator=",">
@@ -726,7 +774,10 @@
       #{record.confirmtime,jdbcType=TIMESTAMP},
       #{record.confirmer,jdbcType=VARCHAR},
       #{record.subid,jdbcType=VARCHAR},
-      #{record.initsample,jdbcType=VARCHAR}
+      #{record.initsample,jdbcType=VARCHAR},
+      #{record.updatetime,jdbcType=TIMESTAMP},
+      #{record.updateuser,jdbcType=VARCHAR},
+      #{record.transform,jdbcType=VARCHAR}
       )
     </foreach>
   </insert>
@@ -763,7 +814,10 @@
       currentStatu = #{record.currentstatu,jdbcType=VARCHAR},
       rowIndex = #{record.rowindex,jdbcType=INTEGER},
       confirmTime = #{record.confirmtime,jdbcType=TIMESTAMP},
-      confirmer = #{record.confirmer,jdbcType=VARCHAR}
+      confirmer = #{record.confirmer,jdbcType=VARCHAR},
+      updateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      updateUser = #{record.updateuser,jdbcType=VARCHAR},
+      transform = #{record.transform,jdbcType=VARCHAR}
       where id = #{record.id,jdbcType=VARCHAR}
     </foreach>
   </update>

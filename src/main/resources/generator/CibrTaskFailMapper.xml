@@ -285,4 +285,17 @@
       remarks = #{remarks,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+
+  <insert id="batchInsert">
+    insert into cibr_task_fail (id, detailId, handler,
+                                createTime, reason, remarks
+    )
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.id,jdbcType=VARCHAR}, #{item.detailid,jdbcType=VARCHAR}, #{item.handler,jdbcType=VARCHAR},
+      #{item.createtime,jdbcType=TIMESTAMP}, #{item.reason,jdbcType=VARCHAR}, #{item.remarks,jdbcType=VARCHAR}
+      )
+    </foreach>
+
+  </insert>
 </mapper>

@@ -61,14 +61,8 @@ public class FileController {
             }else {
                 MultipartFile file = files.get(0);
                 List<List<String>> rows = FileUtil.getRows(dist);
-                if (file.getOriginalFilename().startsWith("样本录入-")){
-                    List<CibrTaskProcessSampleinput> list = fileService.handleSampleInput(rows, file, processId, user);
-                    processTaskService.batchInsert(list);
-                    ret.setCode("200");
-                }else {
-                    response.setStatus(500);
-                    ret.setCode("500");
-                }
+                processTaskService.handleSampleInput(rows, file, processId, user);
+                ret.setCode("200");
                 ret.setRetMap(result);
             }
         } catch (Exception e) {
@@ -147,6 +141,26 @@ public class FileController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
+    @RequestMapping("/file/import/uploadFile")
+    public String commonUploadFile(HttpServletRequest request,
+                             HttpServletResponse response){
+        ReturnData ret = new ReturnData();
+        try {
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            String detailId = request.getHeader("detailId");
+            MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
+            fileService.commonUploadFile(user,detailId,file);
+            ret.setCode("200");
+        } catch (Exception e) {
+            response.setStatus(500);
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
     @RequestMapping("/file/showFileList")
     public String showFileList(HttpServletRequest request,
                              HttpServletResponse response,
@@ -196,25 +210,76 @@ public class FileController {
         ReturnData ret = new ReturnData();
         try {
             String token = request.getHeader("token");
-            String processId = request.getHeader("processId");
+            String subId = request.getHeader("subId");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
             Map<String, Object> result = new HashMap<String, Object>();
             List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
-            File dist = fileService.saveFile(files,processId,user);
+            File dist = fileService.saveFile(files,subId,user);
             if (dist == null){
                 response.setStatus(500);
                 ret.setCode("E500");
             }else {
-                MultipartFile file = files.get(0);
                 List<List<String>> rows = FileUtil.getRows(dist);
-                if (file.getOriginalFilename().startsWith("样本录入-")){
-                    List<CibrTaskProcessSampleinput> list = fileService.handleSampleInput(rows, file, processId, user);
-                    processTaskService.batchInsert(list);
-                    ret.setCode("200");
-                }else {
-                    response.setStatus(500);
-                    ret.setCode("500");
-                }
+                processTaskService.makeInput(rows,user,subId);
+                ret.setCode("200");
+                ret.setRetMap(result);
+            }
+        } catch (Exception e) {
+            response.setStatus(500);
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/file/import/dismountImport")
+    public String dismountImport(HttpServletRequest request,
+                            HttpServletResponse response) {
+        ReturnData ret = new ReturnData();
+        try {
+            String token = request.getHeader("token");
+            String subId = request.getHeader("subId");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            Map<String, Object> result = new HashMap<String, Object>();
+            List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
+            File dist = fileService.saveFile(files,subId,user);
+            if (dist == null){
+                response.setStatus(500);
+                ret.setCode("E500");
+            }else {
+                List<List<String>> rows = FileUtil.getRows(dist);
+                processTaskService.dismountImport(rows,user,subId);
+                ret.setCode("200");
+                ret.setRetMap(result);
+            }
+        } catch (Exception e) {
+            response.setStatus(500);
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/file/import/analysisImport")
+    public String analysisImport(HttpServletRequest request,
+                                 HttpServletResponse response) {
+        ReturnData ret = new ReturnData();
+        try {
+            String token = request.getHeader("token");
+            String subId = request.getHeader("subId");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            Map<String, Object> result = new HashMap<String, Object>();
+            List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
+            File dist = fileService.saveFile(files,subId,user);
+            if (dist == null){
+                response.setStatus(500);
+                ret.setCode("E500");
+            }else {
+                List<List<String>> rows = FileUtil.getRows(dist);
+                processTaskService.analysisImport(rows,user,subId);
+                ret.setCode("200");
                 ret.setRetMap(result);
             }
         } catch (Exception e) {

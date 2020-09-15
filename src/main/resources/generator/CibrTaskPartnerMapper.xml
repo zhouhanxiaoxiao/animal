@@ -300,4 +300,17 @@
       taskstatu = #{taskstatu,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+
+  <update id="batchUpdate" parameterType="java.util.List">
+    <foreach collection="list" item="record" index="index" open="" close="" separator=";">
+      update cibr_task_partner
+      set taskId = #{record.taskid,jdbcType=VARCHAR},
+      recordId = #{record.recordid,jdbcType=VARCHAR},
+      creater = #{record.creater,jdbcType=VARCHAR},
+      createTime = #{record.createtime,jdbcType=TIMESTAMP},
+      remark = #{record.remark,jdbcType=VARCHAR},
+      taskstatu = #{record.taskstatu,jdbcType=VARCHAR}
+      where id = #{record.id,jdbcType=VARCHAR}
+    </foreach>
+  </update>
 </mapper>

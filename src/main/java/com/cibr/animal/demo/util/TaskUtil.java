@@ -67,4 +67,8 @@ public class TaskUtil {
     public static final String PARTNER_TASK_COMFIRM = "01";
     /**任务状态：拒绝*/
     public static final String PARTNER_TASK_FAIL = "02";
+    /**任务状态：取消*/
+    public static final String PARTNER_TASK_CANCEL = "03";
+    /**任务状态：过期未确认*/
+    public static final String PARTNER_TASK_PASSTIME = "04";
 }

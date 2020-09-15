@@ -355,7 +355,6 @@ public class FileUtil {
     /**
      * 生成Excel
      * @param writeList
-     * @param filePath
      */
     public static HSSFWorkbook write(List<List<String>> writeList){
         // 创建工作薄
@@ -526,6 +525,38 @@ public class FileUtil {
                 return "风险";
             case "03":
                 return "不合格";
+            default:
+                return null;
+        }
+    }
+
+    public static String getExtractCode(String extract) {
+        if (StringUtils.isEmpty(extract)){
+            return null;
+        }
+        switch (extract){
+            case "柱提法":
+                return "01";
+            case "磁珠提法":
+                return "02";
+            case "其它":
+                return "00";
+            default:
+                return null;
+        }
+    }
+
+    public static String getCheckResultCode(String checkResult) {
+        if (StringUtils.isEmpty(checkResult)){
+            return null;
+        }
+        switch (checkResult){
+            case "合格":
+                return "01";
+            case "风险":
+                return "02";
+            case "不合格":
+                return "03";
             default:
                 return null;
         }

@@ -341,4 +341,18 @@
       and taskstatu = '${condition.taskstatu}'
     </if>
   </select>
+
+  <update id="batchUpdate" parameterType="java.util.List">
+    <foreach collection="list" item="record" index="index" open="" close="" separator=";">
+      update cibr_sys_task
+      set tasktype = #{record.tasktype,jdbcType=VARCHAR},
+      createtime = #{record.createtime,jdbcType=TIMESTAMP},
+      createuser = #{record.createuser,jdbcType=VARCHAR},
+      taskstatu = #{record.taskstatu,jdbcType=VARCHAR},
+      currentuser = #{record.currentuser,jdbcType=VARCHAR},
+      handletime = #{record.handletime,jdbcType=TIMESTAMP},
+      taskdesc = #{record.taskdesc,jdbcType=VARCHAR}
+      where id = #{record.id,jdbcType=VARCHAR}
+    </foreach>
+  </update>
 </mapper>

@@ -78,4 +78,13 @@ public class CibrSysUserService {
         }
         return retMap;
     }
+
+    public Map<String,String> getname_id(){
+        Map<String,String> retMap = new HashMap<>();
+        List<CibrSysUser> cibrSysUsers = userMapper.selectByExample(new CibrSysUserExample());
+        for (CibrSysUser user : cibrSysUsers){
+            retMap.put(user.getName(),user.getId());
+        }
+        return retMap;
+    }
 }

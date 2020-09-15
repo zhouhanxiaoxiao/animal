@@ -94,4 +94,6 @@ public interface CibrTaskPartnerMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(CibrTaskPartner record);
+
+    int batchUpdate(List<CibrTaskPartner> list);
 }

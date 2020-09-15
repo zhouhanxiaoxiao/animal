@@ -7,6 +7,7 @@ import com.cibr.animal.demo.service.LoginService;
 import com.cibr.animal.demo.service.ProcessTaskService;
 import com.cibr.animal.demo.util.RedisUtil;
 import com.cibr.animal.demo.util.ReturnData;
+import com.cibr.animal.demo.util.TaskUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,9 +87,11 @@ public class ProcessController {
         ReturnData ret = new ReturnData();
         try {
             String processId = (String) requestBody.get("processId");
+            String curFlag = (String) requestBody.get("curFlag");
+            String subId = (String) requestBody.get("subId");
             Map<String,Object> retMap = new HashMap<>();
-            List<CibrTaskProcessSampleinput> sampleInputs = processTaskService.getSampleInputs(processId);
-            List<CibrTaskProcessSubtask> allSubTask = processTaskService.getAllSubTask(processId);
+            List<CibrTaskProcessSampleinput> sampleInputs = processTaskService.getSampleInputs(processId,curFlag,subId);
+            List<CibrTaskProcessSubtask> allSubTask = processTaskService.getAllSubTask(processId, TaskUtil.PROCESS_TASK_STATU_SP);
             retMap.put("subs",allSubTask);
             retMap.put("sampleInputs",sampleInputs);
             ret.setRetMap(retMap);
@@ -154,13 +157,14 @@ public class ProcessController {
         try {
             String processId = (String) requestBody.get("processId");
             String subId = (String) requestBody.get("subId");
-            List<CibrTaskProcessSamplemake> allTodoMakes = processTaskService.getAllTodoMakes(processId,subId);
-            CibrTaskProcessSubtask subtask = processTaskService.selectSubTaskById(subId);
+            String curFlag = (String) requestBody.get("curFlag");
+            List<CibrTaskProcessSamplemake> allTodoMakes = processTaskService.getAllTodoMakes(processId,subId,curFlag);
+            List<CibrTaskProcessSubtask> allSubTask = processTaskService.getAllSubTask(processId,TaskUtil.PROCESS_TASK_STATU_SPWAIT);
             List<CibrSysUser> allUsers = loginService.findAllUsers();
             Map<String,Object> retMap = new HashMap<>();
             retMap.put("makes",allTodoMakes);
             retMap.put("allUsers",allUsers);
-            retMap.put("subtask",subtask);
+            retMap.put("subs",allSubTask);
             ret.setRetMap(retMap);
             ret.setCode("200");
         }catch (Exception e) {
@@ -178,13 +182,15 @@ public class ProcessController {
         ReturnData ret = new ReturnData();
         try {
             String processId = (String) requestBody.get("processId");
+//            String subId = (String) requestBody.get("subId");
             String data = (String) requestBody.get("data");
-            logger.info("data : =========== : " + data);
             String flag = (String) requestBody.get("flag");
+            String subProcessName = (String) requestBody.get("subProcessName");
+            String remarks = (String) requestBody.get("remarks");
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
             List<CibrTaskProcessSamplemake> list = JSON.parseArray(data, CibrTaskProcessSamplemake.class);
-            processTaskService.saveSampleMakes(processId,flag,list,user);
+            processTaskService.saveSampleMakes(processId,flag,list,user,null,subProcessName,remarks);
             ret.setCode("200");
         }catch (Exception e) {
             ret.setCode("E500");
@@ -201,10 +207,13 @@ public class ProcessController {
         ReturnData ret = new ReturnData();
         try {
             String processId = (String) requestBody.get("processId");
-            List<CibrTaskProcessLibrary> libs = processTaskService.selectAllLibs(processId);
+            String subId = (String) requestBody.get("subId");
+            List<CibrTaskProcessLibrary> libs = processTaskService.selectAllLibs(processId,subId);
+            List<CibrTaskProcessSubtask> allSubTask = processTaskService.getAllSubTask(processId, TaskUtil.PROCESS_TASK_STATU_LIB);
             List<CibrSysUser> allUsers = loginService.findAllUsers();
             Map<String,Object> retMap = new HashMap<>();
             retMap.put("libs",libs);
+            retMap.put("subs",allSubTask);
             retMap.put("allUsers",allUsers);
             ret.setRetMap(retMap);
             ret.setCode("200");
@@ -223,12 +232,15 @@ public class ProcessController {
         ReturnData ret = new ReturnData();
         try {
             String processId = (String) requestBody.get("processId");
+            String subId = (String) requestBody.get("subId");
             String datas = (String) requestBody.get("datas");
             String type = (String) requestBody.get("type");
+            String subProcessName = (String) requestBody.get("subProcessName");
+            String remarks = (String) requestBody.get("remarks");
             List<CibrTaskProcessLibrary> libs = JSON.parseArray(datas, CibrTaskProcessLibrary.class);
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
-            processTaskService.tempSaveLibs(processId,libs,type,user);
+            processTaskService.tempSaveLibs(processId,libs,type,user,subId,subProcessName,remarks);
             ret.setCode("200");
         }catch (Exception e) {
             ret.setCode("E500");
@@ -245,7 +257,8 @@ public class ProcessController {
         ReturnData ret = new ReturnData();
         try {
             String processId = (String) requestBody.get("processId");
-            List<CibrTaskProcessDismountdata> list = processTaskService.selectAllDismountDatas(processId);
+            boolean showAll = (boolean) requestBody.get("showAll");
+            List<CibrTaskProcessDismountdata> list = processTaskService.selectAllDismountDatas(processId,showAll);
             List<CibrSysUser> allUsers = loginService.findAllUsers();
             Map<String,Object> retMap = new HashMap<>();
             retMap.put("allUsers",allUsers);
@@ -267,12 +280,15 @@ public class ProcessController {
         ReturnData ret = new ReturnData();
         try {
             String processId = (String) requestBody.get("processId");
+//            String subId = (String) requestBody.get("subId");
             String datas = (String) requestBody.get("datas");
             String type = (String) requestBody.get("type");
+            String subProcessName = (String) requestBody.get("subProcessName");
+            String remarks = (String) requestBody.get("remarks");
             List<CibrTaskProcessDismountdata> dismountdata = JSON.parseArray(datas, CibrTaskProcessDismountdata.class);
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
-            processTaskService.saveDismountData(processId,dismountdata,type,user);
+            processTaskService.saveDismountData(processId,null,dismountdata,type,user,subProcessName,remarks);
             ret.setCode("200");
         }catch (Exception e) {
             ret.setCode("E500");
@@ -289,11 +305,14 @@ public class ProcessController {
         ReturnData ret = new ReturnData();
         try {
             String processId = (String) requestBody.get("processId");
+            String subId = (String) requestBody.get("subId");
             List<CibrSysUser> allUsers = loginService.findAllUsers();
-            List<CibrTaskProcessAnalysis> analyses = processTaskService.selectAllAnalyses(processId);
+            List<CibrTaskProcessAnalysis> analyses = processTaskService.selectAllAnalyses(processId,subId);
+            CibrTaskProcessSubtask subtask = processTaskService.selectSubTaskById(subId);
             Map<String,Object> retMap = new HashMap<>();
             retMap.put("allUsers",allUsers);
             retMap.put("datas",analyses);
+            retMap.put("subtask",subtask);
             ret.setRetMap(retMap);
             ret.setCode("200");
         }catch (Exception e) {
@@ -311,12 +330,13 @@ public class ProcessController {
         ReturnData ret = new ReturnData();
         try {
             String processId = (String) requestBody.get("processId");
+            String subId = (String) requestBody.get("subId");
             String datas = (String) requestBody.get("datas");
             String type = (String) requestBody.get("type");
             List<CibrTaskProcessAnalysis> analyses = JSON.parseArray(datas, CibrTaskProcessAnalysis.class);
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
-            processTaskService.saveAnalyses(processId,analyses,type,user);
+            processTaskService.saveAnalyses(processId,subId,analyses,type,user);
             ret.setCode("200");
         }catch (Exception e) {
             ret.setCode("E500");
@@ -392,6 +412,75 @@ public class ProcessController {
         CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
         String subId = (String) requestBody.get("subId");
         HSSFWorkbook sheets = processTaskService.downloadMakes(subId, user);
+        OutputStream outputStream = response.getOutputStream();
+        response.setHeader("Content-disposition", "attachment; filename=Info.xls");
+        response.setContentType("application/msexcel");
+        sheets.write(outputStream);
+        outputStream.flush();
+        outputStream.close();
+    }
+
+    @RequestMapping("/task/process/stopLib")
+    public String stopLib(HttpServletRequest request,
+                           HttpServletResponse response,
+                           @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String libId = (String) requestBody.get("libId");
+            String reason = (String) requestBody.get("reason");
+            String remark = (String) requestBody.get("remark");
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            processTaskService.stopLib(libId,reason,remark,user);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/task/process/downloadLibs")
+    public void downloadLibs(HttpServletRequest request,
+                              HttpServletResponse response,
+                              @RequestBody Map requestBody) throws IOException {
+        String token = request.getHeader("token");
+        CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+        String subId = (String) requestBody.get("subId");
+        HSSFWorkbook sheets = processTaskService.downloadLibs(subId, user);
+        OutputStream outputStream = response.getOutputStream();
+        response.setHeader("Content-disposition", "attachment; filename=Info.xls");
+        response.setContentType("application/msexcel");
+        sheets.write(outputStream);
+        outputStream.flush();
+        outputStream.close();
+    }
+
+    @RequestMapping("/task/process/downloadDismount")
+    public void downloadDismount(HttpServletRequest request,
+                             HttpServletResponse response,
+                             @RequestBody Map requestBody) throws IOException {
+        String token = request.getHeader("token");
+        CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+        String subId = (String) requestBody.get("subId");
+        HSSFWorkbook sheets = processTaskService.downloadDismount(subId, user);
+        OutputStream outputStream = response.getOutputStream();
+        response.setHeader("Content-disposition", "attachment; filename=Info.xls");
+        response.setContentType("application/msexcel");
+        sheets.write(outputStream);
+        outputStream.flush();
+        outputStream.close();
+    }
+
+    @RequestMapping("/task/process/downloadAnalysis")
+    public void downloadAnalysis(HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 @RequestBody Map requestBody) throws IOException {
+        String token = request.getHeader("token");
+        CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+        String subId = (String) requestBody.get("subId");
+        HSSFWorkbook sheets = processTaskService.downloadAnalysis(subId, user);
         OutputStream outputStream = response.getOutputStream();
         response.setHeader("Content-disposition", "attachment; filename=Info.xls");
         response.setContentType("application/msexcel");

@@ -7,6 +7,7 @@ import com.cibr.animal.demo.util.TaskUtil;
 import com.cibr.animal.demo.util.TimeUtil;
 import com.cibr.animal.demo.util.Util;
 import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
+import javafx.concurrent.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1014,6 +1015,35 @@ public class TaskService {
         cod.put("userId",userId);
         cod.put("taskstatu",TaskUtil.TASK_STATU_TODO);
         return taskMapper.selectCount(cod);
+    }
+
+    public void cancelPartner(String partnerId, CibrSysUser user) {
+        CibrTaskPartner partner = partnerMapper.selectByPrimaryKey(partnerId);
+        partner.setTaskstatu(TaskUtil.PARTNER_TASK_CANCEL);
+        CibrSysTask task = taskMapper.selectByPrimaryKey(partner.getTaskid());
+        task.setHandletime(new Date());
+        task.setTaskstatu(TaskUtil.TASK_STATU_FAIL);
+        task.setTaskdesc("已取消");
+        taskMapper.updateByPrimaryKey(task);
+
+        String[] records = partner.getRecordid().split("##");
+        CibrRecordMeterialExample example = new CibrRecordMeterialExample();
+        example.createCriteria().andIdIn(Arrays.asList(records));
+        List<CibrRecordMeterial> recordMeterials = recordMeterialMapper.selectByExample(example);
+        String rem = "";
+        for (CibrRecordMeterial record : recordMeterials){
+            rem += "自 " + TimeUtil.date2str(record.getStarttime(),"yyyy-MM-dd HH:00")
+                    + " 到 " + TimeUtil.date2str(record.getEndtime(),"yyyy-MM-dd HH:00")
+                    + "    ";
+        }
+        partner.setRemark(rem);
+        partnerMapper.updateByPrimaryKey(partner);
+        recordMeterialMapper.deleteByExample(example);
+
+        CibrSysUser curent = userMapper.selectByPrimaryKey(task.getCurrentuser());
+        String content = Util.EMAIL_PREFIX;
+        content += "您的协助请求任务已取消！请求协助时间【" + rem + "】" + Util.EMAIL_SUFFIX;
+        emailService.simpleSendEmail(content,curent.getEmail(),TaskUtil.TASK_PARTNER);
     }
 }
 

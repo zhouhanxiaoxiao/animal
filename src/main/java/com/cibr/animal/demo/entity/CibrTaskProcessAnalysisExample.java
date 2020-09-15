@@ -335,6 +335,76 @@ public class CibrTaskProcessAnalysisExample {
             return (Criteria) this;
         }
 
+        public Criteria andSubidIsNull() {
+            addCriterion("subId is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidIsNotNull() {
+            addCriterion("subId is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidEqualTo(String value) {
+            addCriterion("subId =", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidNotEqualTo(String value) {
+            addCriterion("subId <>", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidGreaterThan(String value) {
+            addCriterion("subId >", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidGreaterThanOrEqualTo(String value) {
+            addCriterion("subId >=", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidLessThan(String value) {
+            addCriterion("subId <", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidLessThanOrEqualTo(String value) {
+            addCriterion("subId <=", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidLike(String value) {
+            addCriterion("subId like", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidNotLike(String value) {
+            addCriterion("subId not like", value, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidIn(List<String> values) {
+            addCriterion("subId in", values, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidNotIn(List<String> values) {
+            addCriterion("subId not in", values, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidBetween(String value1, String value2) {
+            addCriterion("subId between", value1, value2, "subid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubidNotBetween(String value1, String value2) {
+            addCriterion("subId not between", value1, value2, "subid");
+            return (Criteria) this;
+        }
+
         public Criteria andDismountidIsNull() {
             addCriterion("dismountId is null");
             return (Criteria) this;
@@ -1152,6 +1222,136 @@ public class CibrTaskProcessAnalysisExample {
 
         public Criteria andRowindexNotBetween(Integer value1, Integer value2) {
             addCriterion("rowIndex not between", value1, value2, "rowindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeIsNull() {
+            addCriterion("updateTime is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeIsNotNull() {
+            addCriterion("updateTime is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeEqualTo(Date value) {
+            addCriterion("updateTime =", value, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeNotEqualTo(Date value) {
+            addCriterion("updateTime <>", value, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeGreaterThan(Date value) {
+            addCriterion("updateTime >", value, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("updateTime >=", value, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeLessThan(Date value) {
+            addCriterion("updateTime <", value, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeLessThanOrEqualTo(Date value) {
+            addCriterion("updateTime <=", value, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeIn(List<Date> values) {
+            addCriterion("updateTime in", values, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeNotIn(List<Date> values) {
+            addCriterion("updateTime not in", values, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeBetween(Date value1, Date value2) {
+            addCriterion("updateTime between", value1, value2, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdatetimeNotBetween(Date value1, Date value2) {
+            addCriterion("updateTime not between", value1, value2, "updatetime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserIsNull() {
+            addCriterion("updateUser is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserIsNotNull() {
+            addCriterion("updateUser is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserEqualTo(String value) {
+            addCriterion("updateUser =", value, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserNotEqualTo(String value) {
+            addCriterion("updateUser <>", value, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserGreaterThan(String value) {
+            addCriterion("updateUser >", value, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserGreaterThanOrEqualTo(String value) {
+            addCriterion("updateUser >=", value, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserLessThan(String value) {
+            addCriterion("updateUser <", value, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserLessThanOrEqualTo(String value) {
+            addCriterion("updateUser <=", value, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserLike(String value) {
+            addCriterion("updateUser like", value, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserNotLike(String value) {
+            addCriterion("updateUser not like", value, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserIn(List<String> values) {
+            addCriterion("updateUser in", values, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserNotIn(List<String> values) {
+            addCriterion("updateUser not in", values, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserBetween(String value1, String value2) {
+            addCriterion("updateUser between", value1, value2, "updateuser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateuserNotBetween(String value1, String value2) {
+            addCriterion("updateUser not between", value1, value2, "updateuser");
             return (Criteria) this;
         }
     }

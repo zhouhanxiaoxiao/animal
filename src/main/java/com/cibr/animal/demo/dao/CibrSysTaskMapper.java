@@ -101,4 +101,6 @@ public interface CibrSysTaskMapper {
     List<CibrSysTask> selectByLimit(@Param("condition") Map condition);
 
     int selectCount(@Param("condition") Map condition);
+
+    int batchUpdate(List<CibrSysTask> list);
 }

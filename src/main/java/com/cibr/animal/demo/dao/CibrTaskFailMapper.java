@@ -94,4 +94,6 @@ public interface CibrTaskFailMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(CibrTaskFail record);
+
+    int batchInsert(List<CibrTaskFail> list);
 }
