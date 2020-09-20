@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cibr.animal.demo.entity.CibrSysRole;
 import com.cibr.animal.demo.entity.CibrSysUser;
+import com.cibr.animal.demo.entity.CibrSysUserGroup;
 import com.cibr.animal.demo.entity.CibrSysVerification;
 import com.cibr.animal.demo.service.EmailService;
 import com.cibr.animal.demo.service.LoginService;
@@ -69,6 +70,8 @@ public class LoginController {
                     else {
                         String uuid = Util.getUUID();
                         List<CibrSysRole> roles = loginService.getRoles(user.getId());
+                        CibrSysUserGroup group = loginService.getGroupById(user.getRoleid());
+                        user.setGroup(group);
                         user.setRoles(roles);
                         redisUtil.set(uuid,JSON.toJSONString(user));
                         retMap.put("token",uuid);

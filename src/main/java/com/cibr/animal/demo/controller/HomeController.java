@@ -49,4 +49,23 @@ public class HomeController {
         }
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
+
+    @RequestMapping("/home/menus")
+    public String getMenus(HttpServletRequest request,
+                             HttpServletResponse response){
+        ReturnData ret = new ReturnData();
+        try {
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            Map<String,Object> retMap = new HashMap<>();
+
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
 }

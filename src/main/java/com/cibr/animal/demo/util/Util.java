@@ -77,6 +77,20 @@ public class Util {
         }
     }
 
+    public static String statuFlag(String statu){
+        switch (statu){
+            case "01":
+            case "00":
+                return "已保存";
+            case "02":
+                return "已提交";
+            case "09":
+                return "已终止";
+            default:
+                return null;
+        }
+    }
+
     /**
      * 获取性别
      * @param flag

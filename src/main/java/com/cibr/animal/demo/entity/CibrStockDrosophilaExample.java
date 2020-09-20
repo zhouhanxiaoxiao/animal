@@ -1124,6 +1124,76 @@ public class CibrStockDrosophilaExample {
             addCriterion("environment not between", value1, value2, "environment");
             return (Criteria) this;
         }
+
+        public Criteria andStatuIsNull() {
+            addCriterion("statu is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatuIsNotNull() {
+            addCriterion("statu is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatuEqualTo(String value) {
+            addCriterion("statu =", value, "statu");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatuNotEqualTo(String value) {
+            addCriterion("statu <>", value, "statu");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatuGreaterThan(String value) {
+            addCriterion("statu >", value, "statu");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatuGreaterThanOrEqualTo(String value) {
+            addCriterion("statu >=", value, "statu");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatuLessThan(String value) {
+            addCriterion("statu <", value, "statu");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatuLessThanOrEqualTo(String value) {
+            addCriterion("statu <=", value, "statu");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatuLike(String value) {
+            addCriterion("statu like", value, "statu");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatuNotLike(String value) {
+            addCriterion("statu not like", value, "statu");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatuIn(List<String> values) {
+            addCriterion("statu in", values, "statu");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatuNotIn(List<String> values) {
+            addCriterion("statu not in", values, "statu");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatuBetween(String value1, String value2) {
+            addCriterion("statu between", value1, value2, "statu");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatuNotBetween(String value1, String value2) {
+            addCriterion("statu not between", value1, value2, "statu");
+            return (Criteria) this;
+        }
     }
 
     /**

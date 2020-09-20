@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cibr.animal.demo.dao.*;
 import com.cibr.animal.demo.entity.*;
 import com.cibr.animal.demo.util.*;
+import com.cibr.animal.demo.util.exception.CommonException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -165,10 +166,13 @@ public class ProcessTaskService {
     public List<CibrTaskProcessSampleinput> getSampleInputs(String processId,String curFlag,String subId) {
         CibrTaskProcessSampleinputExample sampleinputExample = new CibrTaskProcessSampleinputExample();
         CibrTaskProcessSampleinputExample.Criteria criteria = sampleinputExample.createCriteria();
+        criteria.andCurrentstatuNotEqualTo("09");
         criteria.andProcessidEqualTo(processId);
         if ("00".equals(subId)){
             criteria.andCurrentstatuNotEqualTo("02");
-        }else if (!"01".equals(subId)){
+        }else if ("02".equals(subId)){
+            criteria.andCurrentstatuEqualTo("02");
+        }else {
             criteria.andSubidEqualTo(subId);
         }
 //        if ("01".equals(curFlag)){
@@ -191,17 +195,21 @@ public class ProcessTaskService {
     public void saveSampleInput(String processId, CibrSysUser user, List<CibrTaskProcessSampleinput> list,String type) {
         CibrTaskProcess process = processMapper.selectByPrimaryKey(processId);
         CibrTaskProcessSampleinputExample example = new CibrTaskProcessSampleinputExample();
-        example.createCriteria().andProcessidEqualTo(processId);
+        example.createCriteria().andProcessidEqualTo(processId).andCurrentstatuNotEqualTo("09");
         final List<CibrTaskProcessSampleinput> list_database = sampleinputMapper.selectByExample(example);
 
         List<CibrTaskProcessSampleinput> updateList = new ArrayList<CibrTaskProcessSampleinput>();
         List<CibrTaskProcessSampleinput> delList = new ArrayList<CibrTaskProcessSampleinput>();
         List<CibrTaskProcessSampleinput> insertList = new ArrayList<CibrTaskProcessSampleinput>();
         Map<String,CibrTaskProcessSampleinput> update_map = new HashMap<>();
+        Map<String, CibrSysSampleindex> currentIndexs = getCurrentIndex();
         for (CibrTaskProcessSampleinput input : list){
             if ("real".equals(type)){
                 input.setCurrentstatu("02");
-            }else {
+            }else if ("complete".equals(type)){
+                input.setCurrentstatu("02");
+            }
+            else {
                 if (!"02".equals(input.getCurrentstatu())){
                     input.setCurrentstatu("01");
                 }
@@ -216,27 +224,32 @@ public class ProcessTaskService {
                 updateList.add(input);
                 update_map.put(input.getId(),input);
             }
+            if (
+                    StringUtils.isEmpty(input.getSampleindex())
+                    && !StringUtils.isEmpty(input.getInitsample())
+                    && !StringUtils.isEmpty(input.getDatabasetype())
+                    && !StringUtils.isEmpty(input.getSamplemsg())
+            ){
+                String selfNum = Util.getSelfNum(input.getInitsample(), input.getSamplemsg(), input.getDatabasetype());
+                CibrSysSampleindex sampleindex = currentIndexs.get(selfNum);
+                sampleindex.setCurrentindex(sampleindex.getCurrentindex() + 1);
+                input.setSampleindex(sampleindex.getSelfNum());
+            }
         }
-
         int maxRowIndex = -1;
         for (CibrTaskProcessSampleinput input : list_database){
             if (maxRowIndex < input.getRowindex()){
                 maxRowIndex = input.getRowindex();
-            }
-            if (update_map.get(input.getId()) == null){
-                input.setCurrentstatu("09");
-                delList.add(input);
             }
         }
         for (CibrTaskProcessSampleinput input : insertList){
             maxRowIndex ++;
             input.setRowindex(maxRowIndex);
         }
-
         if ("real".equals(type)){
-            process.setTaskstatu(TaskUtil.PROCESS_TASK_STATU_SPWAIT);
-            process.setInputtime(new Date());
-            processMapper.updateByPrimaryKey(process);
+//            process.setTaskstatu(TaskUtil.PROCESS_TASK_STATU_SPWAIT);
+//            process.setInputtime(new Date());
+//            processMapper.updateByPrimaryKey(process);
             /*创建样本制备信息*/
             List<CibrTaskProcessSamplemake> makes = createMakes(list);
             makeMapper.batchInsert(makes);
@@ -296,7 +309,10 @@ public class ProcessTaskService {
 //        }
         if ("00".equals(subId)){
             criteria.andCurrentstatuNotEqualTo("02");
-        }else if (!"01".equals(subId)){
+        }else  if ("02".equals(subId)){
+            criteria.andCurrentstatuEqualTo("02");
+        }
+        else{
             criteria.andSubidEqualTo(subId);
         }
         samplemakeExample.setOrderByClause("rowIndex desc");
@@ -354,7 +370,10 @@ public class ProcessTaskService {
             if("tmp".equals(flag)){
                 make.setCreater(user.getId());
                 make.setCreatetime(new Date());
-            }else {
+            }else if ("complete".equals(flag)){
+                make.setCurrentstatu("02");
+            }
+            else {
                 make.setConfirmer(user.getId());
                 make.setConfirmtime(new Date());
                 make.setCurrentstatu("02");
@@ -419,7 +438,9 @@ public class ProcessTaskService {
 //        }
         if ("00".equals(subId)){
             criteria.andCurrentstatuNotEqualTo("02");
-        }else if (!"01".equals(subId)){
+        }else if ("02".equals(subId)){
+            criteria.andCurrentstatuEqualTo("02");
+        }else{
             criteria.andSubidEqualTo(subId);
         }
         example.setOrderByClause("rowIndex");
@@ -443,7 +464,10 @@ public class ProcessTaskService {
             lib.setUpdateuser(user.getId());
             if ("tmp".equals(type)){
 //                lib.setCurrentstatu("01");
-            }else {
+            }else if ("complete".equals(type)){
+                lib.setCurrentstatu("02");
+            }
+            else {
                 lib.setCurrentstatu("02");
                 lib.setSubid(subTask.getId());
                 list.add(createDismountData(user,lib,processId));
@@ -477,12 +501,17 @@ public class ProcessTaskService {
         return dismountdata;
     }
 
-    public List<CibrTaskProcessDismountdata> selectAllDismountDatas(String processId,boolean showAll) {
+    public List<CibrTaskProcessDismountdata> selectAllDismountDatas(String processId,String subId) {
         CibrTaskProcessDismountdataExample example = new CibrTaskProcessDismountdataExample();
         CibrTaskProcessDismountdataExample.Criteria criteria = example.createCriteria();
         criteria.andProcessidEqualTo(processId);
-        if (!showAll){
+        if ("00".equals(subId)){
             criteria.andCurrentstatuNotEqualTo("02");
+        }else if ("02".equals(subId)){
+            criteria.andCurrentstatuEqualTo("02");
+        }
+        else{
+            criteria.andSubidEqualTo(subId);
         }
         example.setOrderByClause("rowIndex");
         return dismountdataMapper.selectByExample(example);
@@ -497,11 +526,13 @@ public class ProcessTaskService {
         if ("real".equals(type)){
             subTask = createSubTask(user, subProcessName, process, remarks, TaskUtil.PROCESS_TASK_STATU_DIS);
         }
-
         for (CibrTaskProcessDismountdata dismountdata : dismountdatas){
             dismountdata.setUpdatetime(new Date());
             dismountdata.setUpdateuser(user.getId());
             if ("tmp".equals(type)){
+            }
+            else if ("complete".equals(type)){
+                dismountdata.setCurrentstatu("02");
             }else {
                 dismountdata.setSubid(subTask.getId());
                 dismountdata.setCurrentstatu("02");
@@ -538,26 +569,38 @@ public class ProcessTaskService {
 
     public List<CibrTaskProcessAnalysis> selectAllAnalyses(String processId,String subId) {
         CibrTaskProcessAnalysisExample analysisExample = new CibrTaskProcessAnalysisExample();
-        analysisExample.createCriteria().andProcessidEqualTo(processId).andSubidEqualTo(subId);
+        CibrTaskProcessAnalysisExample.Criteria criteria = analysisExample.createCriteria();
+        criteria.andProcessidEqualTo(processId);
+        if ("00".equals(subId)){
+            criteria.andCurrentstatuNotEqualTo("02");
+        }else if (!"01".equals(subId)){
+            criteria.andSubidEqualTo(subId);
+        }
         analysisExample.setOrderByClause("rowIndex desc");
         return analysisMapper.selectByExample(analysisExample);
     }
 
-    public void saveAnalyses(String processId, String subId, List<CibrTaskProcessAnalysis> analyses, String type, CibrSysUser user) {
+    public void saveAnalyses(String processId, String subId, List<CibrTaskProcessAnalysis> analyses, String type,
+                             CibrSysUser user,String subProcessName,String remarks) {
+        CibrTaskProcess process = processMapper.selectByPrimaryKey(processId);
+        CibrTaskProcessSubtask subTask = null;
+        if ("real".equals(type)){
+            subTask = createSubTask(user, subProcessName, process, remarks, TaskUtil.PROCESS_TASK_STATU_BA);
+        }
         for (CibrTaskProcessAnalysis analysis : analyses){
             analysis.setUpdatetime(new Date());
             analysis.setUpdateuser(user.getId());
             if ("tmp".equals(type)){
-                analysis.setCurrentstatu("01");
             }else {
+                analysis.setSubid(subTask.getId());
                 analysis.setCurrentstatu("02");
             }
         }
         analysisMapper.batchUpdate(analyses);
         if ("real".equals(type)){
-            CibrTaskProcessSubtask subtask = subtaskMapper.selectByPrimaryKey(subId);
-            subtask.setCurrentstatu(TaskUtil.PROCESS_TASK_STATU_READY);
-            subtaskMapper.updateByPrimaryKey(subtask);
+//            CibrTaskProcessSubtask subtask = subtaskMapper.selectByPrimaryKey(subId);
+//            subtask.setCurrentstatu(TaskUtil.PROCESS_TASK_STATU_READY);
+//            subtaskMapper.updateByPrimaryKey(subtask);
 
 //            CibrTaskProcess process = processMapper.selectByPrimaryKey(processId);
 //            process.setBaupdatetime(new Date());
@@ -736,14 +779,16 @@ public class ProcessTaskService {
 
     public HSSFWorkbook downloadSampleInput(String processId,CibrSysUser user) {
         CibrTaskProcessSampleinputExample sampleinputExample = new CibrTaskProcessSampleinputExample();
-        sampleinputExample.createCriteria().andProcessidEqualTo(processId);
+        sampleinputExample.createCriteria().andProcessidEqualTo(processId).andCurrentstatuNotEqualTo("09");
         sampleinputExample.setOrderByClause("rowIndex");
         List<CibrTaskProcessSampleinput> list = sampleinputMapper.selectByExample(sampleinputExample);
+
+        Map<String, String> uuid_subname = getSubTaskUuidName(processId);
 
         List<List<String>> excleRows = new ArrayList<>();
         List<String> heads = new ArrayList<>();
         heads.add("批次");
-        heads.add("初始样本");
+        heads.add("初始样本(必填)");
         heads.add("样本名称");
         heads.add("样本编号");
         heads.add("物种");
@@ -760,6 +805,8 @@ public class ProcessTaskService {
         heads.add("建库类型");
         heads.add("测序平台");
         heads.add("备注");
+        heads.add("子任务名称");
+        heads.add("状态");
         excleRows.add(heads);
         for (CibrTaskProcessSampleinput input : list){
             List<String> row = new ArrayList<>();
@@ -781,10 +828,25 @@ public class ProcessTaskService {
             row.add(Util.nullToStr(FileUtil.getDatabaseFlag(input.getDatabasetype())));
             row.add(Util.nullToStr(FileUtil.getSeqFlag(input.getSequencingplatform())));
             row.add(Util.nullToStr(input.getRemarks()));
+            row.add(Util.nullToStr(uuid_subname.get(input.getSubid())));
+            row.add(Util.nullToStr(Util.statuFlag(input.getCurrentstatu())));
             excleRows.add(row);
         }
         HSSFWorkbook sheets = fileService.exportExcel(excleRows, user);
         return sheets;
+    }
+
+    public Map<String, String> getSubTaskUuidName(String processId) {
+        CibrTaskProcessSubtaskExample subtaskExample = new CibrTaskProcessSubtaskExample();
+        subtaskExample.createCriteria().andProcessidEqualTo(processId);
+        List<CibrTaskProcessSubtask> cibrTaskProcessSubtasks = subtaskMapper.selectByExample(subtaskExample);
+        Map<String, String> uuid_subname = new HashMap<>();
+        if (cibrTaskProcessSubtasks != null && cibrTaskProcessSubtasks.size() > 0) {
+            for (CibrTaskProcessSubtask subtask : cibrTaskProcessSubtasks) {
+                uuid_subname.put(subtask.getId(), subtask.getName());
+            }
+        }
+        return uuid_subname;
     }
 
     /**
@@ -825,12 +887,14 @@ public class ProcessTaskService {
 
     }
 
-    public HSSFWorkbook downloadMakes(String subId,CibrSysUser user) {
+    public HSSFWorkbook downloadMakes(String processId,CibrSysUser user) {
         CibrTaskProcessSamplemakeExample samplemakeExample = new CibrTaskProcessSamplemakeExample();
-        samplemakeExample.createCriteria().andSubidEqualTo(subId);
+        samplemakeExample.createCriteria().andProcessidEqualTo(processId);
         samplemakeExample.setOrderByClause("rowIndex");
         List<CibrTaskProcessSamplemake> samplemakes = makeMapper.selectByExample(samplemakeExample);
         Map<String, String> uuid_user = userService.getid_user();
+
+        Map<String, String> uuid_subName = getSubTaskUuidName(processId);
 
         List<List<String>> excleRows = new ArrayList<>();
         List<String> heads = new ArrayList<>();
@@ -856,6 +920,8 @@ public class ProcessTaskService {
         heads.add("测序平台");
         heads.add("剩余量");
         heads.add("备注");
+        heads.add("子任务名称");
+        heads.add("状态");
         excleRows.add(heads);
         for (CibrTaskProcessSamplemake make : samplemakes){
             List<String> row = new ArrayList<>();
@@ -881,6 +947,8 @@ public class ProcessTaskService {
             row.add(Util.nullToStr(FileUtil.getSeqFlag(make.getSequencingplatform())));
             row.add(Util.nullToStr(make.getRemaining()));
             row.add(Util.nullToStr(make.getRemarks()));
+            row.add(Util.nullToStr(uuid_subName.get(make.getSubid())));
+            row.add(Util.nullToStr(Util.statuFlag(make.getCurrentstatu())));
             excleRows.add(row);
         }
         HSSFWorkbook sheets = fileService.exportExcel(excleRows, user);
@@ -892,14 +960,15 @@ public class ProcessTaskService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void makeInput(List<List<String>> rows, CibrSysUser user, String subId) throws ParseException {
+    public void makeInput(List<List<String>> rows, CibrSysUser user, String processId) throws ParseException {
         CibrTaskProcessSamplemakeExample samplemakeExample = new CibrTaskProcessSamplemakeExample();
-        samplemakeExample.createCriteria().andSubidEqualTo(subId).andCurrentstatuNotEqualTo("09");
+        samplemakeExample.createCriteria().andProcessidEqualTo(processId);
         List<CibrTaskProcessSamplemake> samplemakes = makeMapper.selectByExample(samplemakeExample);
         Map<String,CibrTaskProcessSamplemake> index_make = new HashMap<>();
         for (CibrTaskProcessSamplemake make : samplemakes){
             index_make.put(make.getSelfnumber(),make);
         }
+
         Map<String, String> name_id = userService.getname_id();
         Map<String, CibrSysSampleindex> currentIndexs = getCurrentIndex();
 
@@ -908,10 +977,15 @@ public class ProcessTaskService {
             if (importMake == null){
                 continue;
             }
+            if ("02".equals(importMake.getCurrentstatu()) ||
+                    "09".equals(importMake.getCurrentstatu())
+            ){
+                continue;
+            }
             int rowIndex = 0;
             rowIndex++;
 //            importMake.setInitsample(Util.nullToStr(FileUtil.getInitSampleType(row.get(rowIndex++))));
-            if ("02".equals(importMake.getInitsample())){
+            if ("02".equals(importMake.getInitsample()) && StringUtils.isEmpty(importMake.getTransform())){
                 importMake.setTransform(Util.nullToStr(FileUtil.getInitSampleType(row.get(rowIndex++))));
             }else {
                 rowIndex++;
@@ -970,22 +1044,23 @@ public class ProcessTaskService {
         failMapper.insert(fail);
     }
 
-    public HSSFWorkbook downloadLibs(String subId, CibrSysUser user) {
+    public HSSFWorkbook downloadLibs(String processId, CibrSysUser user) {
         CibrTaskProcessLibraryExample libraryExample = new CibrTaskProcessLibraryExample();
-        libraryExample.createCriteria().andSubidEqualTo(subId);
+        libraryExample.createCriteria().andProcessidEqualTo(processId);
         libraryExample.setOrderByClause("rowIndex");
         List<CibrTaskProcessLibrary> libs = libraryMapper.selectByExample(libraryExample);
-
         Map<String, String> uuid_user = userService.getid_user();
-
+        Map<String, String> uuid_subName = getSubTaskUuidName(processId);
         List<List<String>> excleRows = new ArrayList<>();
         List<String> heads = new ArrayList<>();
         heads.add("建库时间");
         heads.add("样本编号");
         heads.add("中间产物编号");
+        heads.add("样本名称");
         heads.add("物种");
         heads.add("浓度(细胞个数/μl)");
         heads.add("细胞总量(细胞个数)");
+        heads.add("细胞活性");
         heads.add("样本使用量(ug)/细胞使用量（细胞个数）");
         heads.add("片段大小（bp）");
         heads.add("index");
@@ -1002,6 +1077,8 @@ public class ProcessTaskService {
         heads.add("数据量单位");
         heads.add("建库备注");
         heads.add("上机备注");
+        heads.add("子任务名称");
+        heads.add("状态");
         excleRows.add(heads);
 
         for (CibrTaskProcessLibrary lib : libs){
@@ -1034,20 +1111,24 @@ public class ProcessTaskService {
             row.add(Util.nullToStr(lib.getDatabaseunit()));
             row.add(Util.nullToStr(lib.getLibremark()));
             row.add(Util.nullToStr(lib.getUploadremark()));
+            row.add(Util.nullToStr(uuid_subName.get(lib.getSubid())));
+            row.add(Util.nullToStr(Util.statuFlag(lib.getCurrentstatu())));
             excleRows.add(row);
         }
         HSSFWorkbook sheets = fileService.exportExcel(excleRows, user);
         return sheets;
     }
 
-    public HSSFWorkbook downloadDismount(String subId, CibrSysUser user) {
+    public HSSFWorkbook downloadDismount(String processId, CibrSysUser user) {
         CibrTaskProcessDismountdataExample dismountdataExample = new CibrTaskProcessDismountdataExample();
-        dismountdataExample.createCriteria().andSubidEqualTo(subId);
+        dismountdataExample.createCriteria().andProcessidEqualTo(processId);
         dismountdataExample.setOrderByClause("rowIndex");
         List<CibrTaskProcessDismountdata> dismountdataList = dismountdataMapper.selectByExample(dismountdataExample);
 
         List<List<String>> excleRows = new ArrayList<>();
         List<String> heads = new ArrayList<>();
+
+        Map<String, String> uuid_subName = getSubTaskUuidName(processId);
 
         heads.add("样本编号");
         heads.add("样本名称");
@@ -1056,6 +1137,8 @@ public class ProcessTaskService {
         heads.add("数据目录");
         heads.add("测序平台");
         heads.add("备注");
+        heads.add("子任务名称");
+        heads.add("状态");
         excleRows.add(heads);
         for (CibrTaskProcessDismountdata dismountdata : dismountdataList){
             List<String> row = new ArrayList<>();
@@ -1066,15 +1149,17 @@ public class ProcessTaskService {
             row.add(Util.nullToStr(dismountdata.getDatepath()));
             row.add(Util.nullToStr(FileUtil.getSeqFlag(dismountdata.getSequencingplatform())));
             row.add(Util.nullToStr(dismountdata.getRemarks()));
+            row.add(Util.nullToStr(uuid_subName.get(dismountdata.getSubid())));
+            row.add(Util.statuFlag(dismountdata.getCurrentstatu()));
             excleRows.add(row);
         }
         HSSFWorkbook sheets = fileService.exportExcel(excleRows, user);
         return sheets;
     }
 
-    public void dismountImport(List<List<String>> rows, CibrSysUser user, String subId) {
+    public void dismountImport(List<List<String>> rows, CibrSysUser user, String processId) {
         CibrTaskProcessDismountdataExample dismountdataExample = new CibrTaskProcessDismountdataExample();
-        dismountdataExample.createCriteria().andSubidEqualTo(subId);
+        dismountdataExample.createCriteria().andProcessidEqualTo(processId);
         List<CibrTaskProcessDismountdata> list = dismountdataMapper.selectByExample(dismountdataExample);
 
         Map<String,CibrTaskProcessDismountdata> index_dis = new HashMap<>();
@@ -1085,7 +1170,9 @@ public class ProcessTaskService {
         for (List<String> row : rows){
             int index = 2;
             CibrTaskProcessDismountdata dismountdata = index_dis.get(Util.nullToStr(row.get(0)));
-            if (dismountdata == null){
+            if (dismountdata == null
+                    || "02".equals(dismountdata.getCurrentstatu())
+            ){
                 continue;
             }
             dismountdata.setDateaccount(Util.nullToStr(row.get(index++)));
@@ -1097,14 +1184,16 @@ public class ProcessTaskService {
         dismountdataMapper.batchUpdate(list);
     }
 
-    public HSSFWorkbook downloadAnalysis(String subId, CibrSysUser user) {
+    public HSSFWorkbook downloadAnalysis(String processId, CibrSysUser user) {
         CibrTaskProcessAnalysisExample analysisExample = new CibrTaskProcessAnalysisExample();
-        analysisExample.createCriteria().andSubidEqualTo(subId);
+        analysisExample.createCriteria().andProcessidEqualTo(processId);
         analysisExample.setOrderByClause("rowIndex");
         List<CibrTaskProcessAnalysis> analyses = analysisMapper.selectByExample(analysisExample);
 
         List<List<String>> excleRows = new ArrayList<>();
         List<String> heads = new ArrayList<>();
+
+        Map<String, String> uuid_subName = getSubTaskUuidName(processId);
 
         heads.add("样本编号");
         heads.add("样本名称");
@@ -1113,7 +1202,8 @@ public class ProcessTaskService {
         heads.add("分析流程/参数");
         heads.add("分析人");
         heads.add("备注");
-
+        heads.add("子任务名称");
+        heads.add("状态");
         excleRows.add(heads);
 
         Map<String, String> uuid_user = userService.getid_user();
@@ -1127,15 +1217,17 @@ public class ProcessTaskService {
             row.add(Util.nullToStr(analysis.getArgs()));
             row.add(Util.nullToStr(uuid_user.get(analysis.getAnalyst())));
             row.add(Util.nullToStr(analysis.getRemarks()));
+            row.add(Util.nullToStr(uuid_subName.get(analysis.getSubid())));
+            row.add(Util.nullToStr(Util.statuFlag(analysis.getCurrentstatu())));
             excleRows.add(row);
         }
         HSSFWorkbook sheets = fileService.exportExcel(excleRows, user);
         return sheets;
     }
 
-    public void analysisImport(List<List<String>> rows, CibrSysUser user, String subId) {
+    public void analysisImport(List<List<String>> rows, CibrSysUser user, String processId) {
         CibrTaskProcessAnalysisExample analysisExample = new CibrTaskProcessAnalysisExample();
-        analysisExample.createCriteria().andSubidEqualTo(subId);
+        analysisExample.createCriteria().andProcessidEqualTo(processId);
         analysisExample.setOrderByClause("rowIndex");
         List<CibrTaskProcessAnalysis> analyses = analysisMapper.selectByExample(analysisExample);
         Map<String,CibrTaskProcessAnalysis> index_analysis = new HashMap<>();
@@ -1146,7 +1238,9 @@ public class ProcessTaskService {
         for (List<String> row : rows){
             int index = 2;
             CibrTaskProcessAnalysis analysis = index_analysis.get(Util.nullToStr(row.get(0)));
-            if (analysis == null){
+            if (analysis == null
+                    || "02".equals(analysis.getCurrentstatu())
+            ){
                 continue;
             }
             analysis.setResultpath(Util.nullToStr(row.get(index++)));
@@ -1190,6 +1284,9 @@ public class ProcessTaskService {
             if (!StringUtils.isEmpty(row.get(3)) && index_input.get(row.get(3)) != null){
                 hasAlreadyExist = true;
                 input = index_input.get(row.get(3));
+                if ("02".equals(input.getCurrentstatu())){
+                    continue;
+                }
             }else {
                 input.setId(Util.getUUID());
                 input.setProcessid(processId);
@@ -1271,6 +1368,13 @@ public class ProcessTaskService {
                 updateList.add(input);
             }else {
                 if (!StringUtils.isEmpty(input.getSampleindex())){
+                    CibrTaskProcessSampleinputExample inputExam = new CibrTaskProcessSampleinputExample();
+                    inputExam.createCriteria().andSampleindexEqualTo(row.get(2));
+                    List<CibrTaskProcessSampleinput> list = sampleinputMapper.selectByExample(inputExam);
+                    if (list != null && list.size()>0){
+                        CommonException commonException = new CommonException("【" + row.get(2) +"】重复");
+                        throw commonException;
+                    }
                     input.setSampleindex(row.get(2));
                 }else {
                     String selfNum = Util.getSelfNum(input.getInitsample(), sampleMsg, databaseType);
@@ -1290,6 +1394,67 @@ public class ProcessTaskService {
         }else {
             sampleinputMapper.batchInsert(saveList);
         }
+    }
+
+    public void libImport(List<List<String>> rows, CibrSysUser user, String processId) throws ParseException {
+        CibrTaskProcessLibraryExample libraryExample = new CibrTaskProcessLibraryExample();
+        libraryExample.createCriteria().andProcessidEqualTo(processId);
+        List<CibrTaskProcessLibrary> dblibs = libraryMapper.selectByExample(libraryExample);
+        Map<String,CibrTaskProcessLibrary> index_lib = new HashMap<>();
+        for (CibrTaskProcessLibrary lib : dblibs){
+            index_lib.put(lib.getSelfnumber(),lib);
+        }
+        Map<String, String> name_id = userService.getname_id();
+        for (List<String> row : rows){
+            int index = 0;
+            CibrTaskProcessLibrary dblib = index_lib.get(row.get(1));
+            if (dblib == null
+                    || "02".equals(dblib.getCurrentstatu())
+                    || "09".equals(dblib.getCurrentstatu())
+            ){
+                continue;
+            }
+            String createDbtime = row.get(index++);
+            if (!StringUtils.isEmpty(createDbtime)){
+                dblib.setCreatedbtime(TimeUtil.str2date(createDbtime,"yyyy-MM-dd"));
+            }
+            index++;
+            dblib.setMiddleindex(Util.nullToStr(row.get(index++)));
+            dblib.setSamplename(Util.nullToStr(row.get(index++)));
+            dblib.setSpecies(Util.nullToStr(row.get(index++)));
+            dblib.setConcentration(Util.nullToStr(row.get(index++)));
+            dblib.setTotalnumber(Util.nullToStr(row.get(index++)));
+            dblib.setCelllife(Util.nullToStr(row.get(index++)));
+            dblib.setUsenumber(Util.nullToStr(row.get(index++)));
+            dblib.setPartsize(Util.nullToStr(row.get(index++)));
+            dblib.setLibindex(Util.nullToStr(row.get(index++)));
+            dblib.setLibbarcode(Util.nullToStr(row.get(index++)));
+            dblib.setCyclenumber(Util.nullToStr(row.get(index++)));
+            dblib.setDatabasetype(FileUtil.getDatabaseType(row.get(index++),FileUtil.getInitSampleFlag(dblib.getInitsample())));
+            dblib.setDatabaseindex(row.get(index++));
+            dblib.setCreatedbuser(Util.nullToStr(name_id.get(row.get(index++))));
+            dblib.setReviewer(Util.nullToStr(name_id.get(row.get(index++))));
+            dblib.setQbit(Util.nullToStr(row.get(index++)));
+            dblib.setLibsize(Util.nullToStr(row.get(index++)));
+            dblib.setSeqmethods(Util.nullToStr(row.get(index++)));
+            dblib.setUploadsize(Util.nullToStr(row.get(index++)));
+            dblib.setDatabaseunit(Util.nullToStr(row.get(index++)));
+            dblib.setLibremark(Util.nullToStr(row.get(index++)));
+            dblib.setUploadremark(Util.nullToStr(row.get(index++)));
+        }
+        if (dblibs != null && dblibs.size()>0){
+            libraryMapper.batchUpdate(dblibs);
+        }
+    }
+
+    public void deleteInput(List<String> inputIds, CibrSysUser user) {
+        CibrTaskProcessSampleinputExample sampleinputExample = new CibrTaskProcessSampleinputExample();
+        sampleinputExample.createCriteria().andIdIn(inputIds);
+        List<CibrTaskProcessSampleinput> list = sampleinputMapper.selectByExample(sampleinputExample);
+        for (CibrTaskProcessSampleinput input : list){
+            input.setCurrentstatu("09");
+        }
+        sampleinputMapper.batchUpdate(list);
     }
 }
 

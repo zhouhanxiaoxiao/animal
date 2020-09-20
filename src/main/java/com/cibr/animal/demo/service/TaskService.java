@@ -308,6 +308,12 @@ public class TaskService {
                 ret.put("partner",uuid_partner.get(task.getId()));
             }
             ret.put("creater",userid_user.get(task.getCreateuser()));
+            if (TaskUtil.PROCESS_TASK.equals(task.getTasktype())){
+                if (!user.getId().equals(task.getCreateuser())
+                        && !user.getId().equals(user.getGroup().getGroupadmin())){
+                    continue;
+                }
+            }
             retList.add(ret);
         }
         int total = taskMapper.selectCount(condition);

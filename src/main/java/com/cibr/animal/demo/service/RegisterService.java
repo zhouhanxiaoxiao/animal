@@ -32,6 +32,9 @@ public class RegisterService {
 
     @Autowired
     CibrSysUserRoleMapper userRoleMapper;
+
+    @Autowired
+    CibrSysUserGroupMapper groupMapper;
     /**
      * 发送验证码邮件
      * @param registerEmail
@@ -78,7 +81,7 @@ public class RegisterService {
         }
     }
 
-    public void createUser(String registerName, String registerEmail, String registerPwd) {
+    public void createUser(String registerName, String registerEmail, String registerPwd,String usergroup) {
         CibrSysUser user = new CibrSysUser();
         String userId = Util.getUUID();
         user.setId(userId);
@@ -86,7 +89,7 @@ public class RegisterService {
         user.setUserstatu("1");
         user.setPassword(registerPwd);
         user.setEmail(registerEmail);
-        user.setRoleid("9");
+        user.setRoleid(usergroup);
         user.setCreatetime(new Date());
         //TO-DO 权限设置 发送邮件给管理员
         CibrSysTask task = new CibrSysTask();
@@ -94,17 +97,20 @@ public class RegisterService {
         task.setCreatetime(new Date());
         task.setCreateuser(userId);
 
-        CibrSysRoleExample roleExample = new CibrSysRoleExample();
-        roleExample.createCriteria().andRoletypeEqualTo("999999");
-        List<CibrSysRole> cibrSysRoles = roleMapper.selectByExample(roleExample);
+//        CibrSysRoleExample roleExample = new CibrSysRoleExample();
+//        roleExample.createCriteria().andRoletypeEqualTo("999999");
+//        List<CibrSysRole> cibrSysRoles = roleMapper.selectByExample(roleExample);
+//
+//        CibrSysUserRoleExample userRoleExample = new CibrSysUserRoleExample();
+//        userRoleExample.createCriteria().andRoleidEqualTo(cibrSysRoles.get(0).getId());
+//        List<CibrSysUserRole> cibrSysUserRoles = userRoleMapper.selectByExample(userRoleExample);
+//
+//        CibrSysUser adminer = userMapper.selectByPrimaryKey(cibrSysUserRoles.get(0).getUserid());
 
-        CibrSysUserRoleExample userRoleExample = new CibrSysUserRoleExample();
-        userRoleExample.createCriteria().andRoleidEqualTo(cibrSysRoles.get(0).getId());
-        List<CibrSysUserRole> cibrSysUserRoles = userRoleMapper.selectByExample(userRoleExample);
+        CibrSysUserGroup group = groupMapper.selectByPrimaryKey(usergroup);
+        CibrSysUser admin = userMapper.selectByPrimaryKey(group.getGroupadmin());
 
-        CibrSysUser adminer = userMapper.selectByPrimaryKey(cibrSysUserRoles.get(0).getUserid());
-
-        task.setCurrentuser(adminer.getId());
+        task.setCurrentuser(admin.getId());
         task.setTaskstatu(TaskUtil.ASK_TASK_STATU_TODO);
         task.setTasktype(TaskUtil.REGISTER_TASK);
         taskMapper.insert(task);
@@ -112,12 +118,16 @@ public class RegisterService {
         String emailMsg = Util.EMAIL_PREFIX +
                 "您有一个用户注册审批任务，请及时处理。申请人【" + registerName + "】，邮箱【" + registerEmail + "】"
                 + Util.EMAIL_SUFFIX;
-        CibrSysEmail adminEmail = emailService.createCibrSysEmail(adminer.getEmail(), emailMsg, Util.USER_CREATE);
+        CibrSysEmail adminEmail = emailService.createCibrSysEmail(admin.getEmail(), emailMsg, Util.USER_CREATE);
         emailService.sendMail(adminEmail);
         /*给申请者发送邮件提醒*/
         emailMsg = "非常感谢，您的注册申请已收到。请耐心等待管理员审核，稍后将给您发送审核结果邮件，请注意查收。";
         CibrSysEmail userEmail = emailService.createCibrSysEmail(registerEmail, emailMsg, Util.USER_CREATE);
         emailService.sendMail(userEmail);
         userMapper.insert(user);
+    }
+
+    public List<CibrSysUserGroup> getGroup() {
+        return  groupMapper.selectByExample(new CibrSysUserGroupExample());
     }
 }

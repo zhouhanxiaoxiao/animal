@@ -169,11 +169,11 @@ public class FileUtil {
 
     public static String getInitSampleType(String sampleType){
         switch (sampleType){
-            case "核酸样本":
+            case NUCLEIC_ACID_FILENAME:
                 return "01";
-            case "组织样本":
+            case TISSUE_FILENAME:
                 return "02";
-            case "细胞样本":
+            case CELL_FILENAME:
                 return "03";
             default:
                 return null;
@@ -377,11 +377,11 @@ public class FileUtil {
         }
         switch (initsample){
             case "01":
-                return "核酸样本";
+                return NUCLEIC_ACID_FILENAME;
             case "02":
-                return "组织样本";
+                return TISSUE_FILENAME;
             case "03":
-                return "细胞样本";
+                return CELL_FILENAME;
             default:
                 return null;
         }

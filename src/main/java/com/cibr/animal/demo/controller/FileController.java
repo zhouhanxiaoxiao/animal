@@ -12,6 +12,7 @@ import com.cibr.animal.demo.service.ProcessTaskService;
 import com.cibr.animal.demo.util.FileUtil;
 import com.cibr.animal.demo.util.RedisUtil;
 import com.cibr.animal.demo.util.ReturnData;
+import com.cibr.animal.demo.util.exception.CommonException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +70,10 @@ public class FileController {
             response.setStatus(500);
             ret.setCode("E500");
             ret.setErrMsg("系统异常！");
+            if (e instanceof CommonException){
+                CommonException err = (CommonException) e;
+                ret.setErrMsg(err.getErrMsg());
+            }
             e.printStackTrace();
         }
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
@@ -210,17 +215,46 @@ public class FileController {
         ReturnData ret = new ReturnData();
         try {
             String token = request.getHeader("token");
-            String subId = request.getHeader("subId");
+            String processId = request.getHeader("processId");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
             Map<String, Object> result = new HashMap<String, Object>();
             List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
-            File dist = fileService.saveFile(files,subId,user);
+            File dist = fileService.saveFile(files,processId,user);
             if (dist == null){
                 response.setStatus(500);
                 ret.setCode("E500");
             }else {
                 List<List<String>> rows = FileUtil.getRows(dist);
-                processTaskService.makeInput(rows,user,subId);
+                processTaskService.makeInput(rows,user,processId);
+                ret.setCode("200");
+                ret.setRetMap(result);
+            }
+        } catch (Exception e) {
+            response.setStatus(500);
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/file/import/libImport")
+    public String libImport(HttpServletRequest request,
+                                 HttpServletResponse response) {
+        ReturnData ret = new ReturnData();
+        try {
+            String token = request.getHeader("token");
+            String processId = request.getHeader("processId");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            Map<String, Object> result = new HashMap<String, Object>();
+            List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
+            File dist = fileService.saveFile(files,processId,user);
+            if (dist == null){
+                response.setStatus(500);
+                ret.setCode("E500");
+            }else {
+                List<List<String>> rows = FileUtil.getRows(dist);
+                processTaskService.libImport(rows,user,processId);
                 ret.setCode("200");
                 ret.setRetMap(result);
             }
@@ -239,17 +273,17 @@ public class FileController {
         ReturnData ret = new ReturnData();
         try {
             String token = request.getHeader("token");
-            String subId = request.getHeader("subId");
+            String processId = request.getHeader("processId");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
             Map<String, Object> result = new HashMap<String, Object>();
             List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
-            File dist = fileService.saveFile(files,subId,user);
+            File dist = fileService.saveFile(files,processId,user);
             if (dist == null){
                 response.setStatus(500);
                 ret.setCode("E500");
             }else {
                 List<List<String>> rows = FileUtil.getRows(dist);
-                processTaskService.dismountImport(rows,user,subId);
+                processTaskService.dismountImport(rows,user,processId);
                 ret.setCode("200");
                 ret.setRetMap(result);
             }
@@ -268,17 +302,17 @@ public class FileController {
         ReturnData ret = new ReturnData();
         try {
             String token = request.getHeader("token");
-            String subId = request.getHeader("subId");
+            String processId = request.getHeader("processId");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
             Map<String, Object> result = new HashMap<String, Object>();
             List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
-            File dist = fileService.saveFile(files,subId,user);
+            File dist = fileService.saveFile(files,processId,user);
             if (dist == null){
                 response.setStatus(500);
                 ret.setCode("E500");
             }else {
                 List<List<String>> rows = FileUtil.getRows(dist);
-                processTaskService.analysisImport(rows,user,subId);
+                processTaskService.analysisImport(rows,user,processId);
                 ret.setCode("200");
                 ret.setRetMap(result);
             }

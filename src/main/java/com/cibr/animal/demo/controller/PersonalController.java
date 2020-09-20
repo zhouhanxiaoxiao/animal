@@ -101,6 +101,8 @@ public class PersonalController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
+
+
     @RequestMapping("/personal/checkGenTypeExist")
     public String checkGenTypeExist(HttpServletRequest request,
                                     HttpServletResponse response,

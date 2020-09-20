@@ -1,6 +1,7 @@
 package com.cibr.animal.demo.service;
 
 import com.cibr.animal.demo.dao.CibrSysRoleMapper;
+import com.cibr.animal.demo.dao.CibrSysUserGroupMapper;
 import com.cibr.animal.demo.dao.CibrSysUserMapper;
 import com.cibr.animal.demo.dao.CibrSysUserRoleMapper;
 import com.cibr.animal.demo.entity.*;
@@ -21,6 +22,9 @@ public class LoginService {
 
     @Autowired
     private CibrSysRoleMapper roleMapper;
+
+    @Autowired
+    private CibrSysUserGroupMapper groupMapper;
 
     public CibrSysUser findUser(String email){
         CibrSysUserExample example = new CibrSysUserExample();
@@ -51,5 +55,9 @@ public class LoginService {
         CibrSysUserExample userExample = new CibrSysUserExample();
         List<CibrSysUser> cibrSysUsers = cibrSysUserMapper.selectByExample(userExample);
         return cibrSysUsers;
+    }
+
+    public CibrSysUserGroup getGroupById(String groupId){
+        return groupMapper.selectByPrimaryKey(groupId);
     }
 }

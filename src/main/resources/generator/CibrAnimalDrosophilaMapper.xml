@@ -400,7 +400,7 @@
       stock.updateUser        as stock_updateUser     ,
       stock.environment       as stock_environment
     from cibr_animal_drosophila animal left join cibr_stock_drosophila stock
-                                                 on animal.id = stock.drosophila_id
+                                                 on animal.id = stock.drosophila_id and stock.statu != "09"
     order by animal.selfIndex,animal.createTime,animal.genotype
   </select>
 

@@ -3,6 +3,7 @@ package com.cibr.animal.demo.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cibr.animal.demo.entity.CibrSysUser;
+import com.cibr.animal.demo.entity.CibrSysUserGroup;
 import com.cibr.animal.demo.entity.CibrSysVerification;
 import com.cibr.animal.demo.service.CibrSysUserService;
 import com.cibr.animal.demo.service.EmailService;
@@ -79,6 +80,7 @@ public class RegisterController {
             String registerEmail = request.getParameter("registerEmail");
             String registerPwd = request.getParameter("registerPwd");
             String verificationCode = request.getParameter("verificationCode");
+            String usergroup = request.getParameter("usergroup");
             /*判断该邮箱是否已注册*/
             List<CibrSysUser> userByEmail = userService.findUserByEmail(registerEmail);
             CibrSysVerification verification = registerService.findVerification(registerEmail, verificationCode);
@@ -103,13 +105,29 @@ public class RegisterController {
                     returnData.setErrMsg("验证码已过期，请重新发送！");
                 }else {
                     /*用户注册流程*/
-                    registerService.createUser(registerName,registerEmail,registerPwd);
+                    registerService.createUser(registerName,registerEmail,registerPwd,usergroup);
                     returnData.setCode("200");
                 }
             }
         }catch (Exception e){
             returnData.setCode("E500");
             returnData.setErrMsg("注册失败失败，稍后重试！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(returnData, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/getGroups")
+    public String getGroup(){
+        ReturnData returnData = new ReturnData();
+        try {
+            Map<String,Object> retMap = new HashMap<>();
+            List<CibrSysUserGroup> group = registerService.getGroup();
+            retMap.put("groups",group);
+            returnData.setCode("200");
+            returnData.setRetMap(retMap);
+        }catch (Exception e){
+            returnData.setCode("E500");
             e.printStackTrace();
         }
         return JSON.toJSONString(returnData, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);

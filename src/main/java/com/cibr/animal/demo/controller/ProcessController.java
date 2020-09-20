@@ -257,12 +257,14 @@ public class ProcessController {
         ReturnData ret = new ReturnData();
         try {
             String processId = (String) requestBody.get("processId");
-            boolean showAll = (boolean) requestBody.get("showAll");
-            List<CibrTaskProcessDismountdata> list = processTaskService.selectAllDismountDatas(processId,showAll);
+            String subId = (String) requestBody.get("subId");
+            List<CibrTaskProcessDismountdata> list = processTaskService.selectAllDismountDatas(processId,subId);
+            List<CibrTaskProcessSubtask> allSubTask = processTaskService.getAllSubTask(processId, TaskUtil.PROCESS_TASK_STATU_DIS);
             List<CibrSysUser> allUsers = loginService.findAllUsers();
             Map<String,Object> retMap = new HashMap<>();
             retMap.put("allUsers",allUsers);
             retMap.put("datas",list);
+            retMap.put("subs",allSubTask);
             ret.setRetMap(retMap);
             ret.setCode("200");
         }catch (Exception e) {
@@ -308,11 +310,11 @@ public class ProcessController {
             String subId = (String) requestBody.get("subId");
             List<CibrSysUser> allUsers = loginService.findAllUsers();
             List<CibrTaskProcessAnalysis> analyses = processTaskService.selectAllAnalyses(processId,subId);
-            CibrTaskProcessSubtask subtask = processTaskService.selectSubTaskById(subId);
+            List<CibrTaskProcessSubtask> allSubTask = processTaskService.getAllSubTask(processId, TaskUtil.PROCESS_TASK_STATU_BA);
             Map<String,Object> retMap = new HashMap<>();
             retMap.put("allUsers",allUsers);
             retMap.put("datas",analyses);
-            retMap.put("subtask",subtask);
+            retMap.put("subs",allSubTask);
             ret.setRetMap(retMap);
             ret.setCode("200");
         }catch (Exception e) {
@@ -333,10 +335,12 @@ public class ProcessController {
             String subId = (String) requestBody.get("subId");
             String datas = (String) requestBody.get("datas");
             String type = (String) requestBody.get("type");
+            String subProcessName = (String) requestBody.get("subProcessName");
+            String remarks = (String) requestBody.get("remarks");
             List<CibrTaskProcessAnalysis> analyses = JSON.parseArray(datas, CibrTaskProcessAnalysis.class);
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
-            processTaskService.saveAnalyses(processId,subId,analyses,type,user);
+            processTaskService.saveAnalyses(processId,subId,analyses,type,user,subProcessName,remarks);
             ret.setCode("200");
         }catch (Exception e) {
             ret.setCode("E500");
@@ -410,8 +414,8 @@ public class ProcessController {
                                     @RequestBody Map requestBody) throws IOException {
         String token = request.getHeader("token");
         CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
-        String subId = (String) requestBody.get("subId");
-        HSSFWorkbook sheets = processTaskService.downloadMakes(subId, user);
+        String processId = (String) requestBody.get("processId");
+        HSSFWorkbook sheets = processTaskService.downloadMakes(processId, user);
         OutputStream outputStream = response.getOutputStream();
         response.setHeader("Content-disposition", "attachment; filename=Info.xls");
         response.setContentType("application/msexcel");
@@ -447,8 +451,8 @@ public class ProcessController {
                               @RequestBody Map requestBody) throws IOException {
         String token = request.getHeader("token");
         CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
-        String subId = (String) requestBody.get("subId");
-        HSSFWorkbook sheets = processTaskService.downloadLibs(subId, user);
+        String processId = (String) requestBody.get("processId");
+        HSSFWorkbook sheets = processTaskService.downloadLibs(processId, user);
         OutputStream outputStream = response.getOutputStream();
         response.setHeader("Content-disposition", "attachment; filename=Info.xls");
         response.setContentType("application/msexcel");
@@ -463,8 +467,8 @@ public class ProcessController {
                              @RequestBody Map requestBody) throws IOException {
         String token = request.getHeader("token");
         CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
-        String subId = (String) requestBody.get("subId");
-        HSSFWorkbook sheets = processTaskService.downloadDismount(subId, user);
+        String processId = (String) requestBody.get("processId");
+        HSSFWorkbook sheets = processTaskService.downloadDismount(processId, user);
         OutputStream outputStream = response.getOutputStream();
         response.setHeader("Content-disposition", "attachment; filename=Info.xls");
         response.setContentType("application/msexcel");
@@ -479,13 +483,32 @@ public class ProcessController {
                                  @RequestBody Map requestBody) throws IOException {
         String token = request.getHeader("token");
         CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
-        String subId = (String) requestBody.get("subId");
-        HSSFWorkbook sheets = processTaskService.downloadAnalysis(subId, user);
+        String processId = (String) requestBody.get("processId");
+        HSSFWorkbook sheets = processTaskService.downloadAnalysis(processId, user);
         OutputStream outputStream = response.getOutputStream();
         response.setHeader("Content-disposition", "attachment; filename=Info.xls");
         response.setContentType("application/msexcel");
         sheets.write(outputStream);
         outputStream.flush();
         outputStream.close();
+    }
+
+    @RequestMapping("/task/process/deleteInput")
+    public String deleteInput(HttpServletRequest request,
+                          HttpServletResponse response,
+                          @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            List<String> inputIds = (List<String>) requestBody.get("inputIds");
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            processTaskService.deleteInput(inputIds,user);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 }

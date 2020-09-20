@@ -70,6 +70,16 @@ public class CibrSysUser {
 
     private List<CibrSysRole> roles;
 
+    private CibrSysUserGroup group;
+
+    public CibrSysUserGroup getGroup() {
+        return group;
+    }
+
+    public void setGroup(CibrSysUserGroup group) {
+        this.group = group;
+    }
+
     public List<CibrSysRole> getRoles() {
         return roles;
     }

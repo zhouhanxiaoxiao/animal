@@ -3,10 +3,7 @@ package com.cibr.animal.demo.service;
 import com.cibr.animal.demo.dao.CibrAnimalDrosophilaMapper;
 import com.cibr.animal.demo.dao.CibrStockDrosophilaMapper;
 import com.cibr.animal.demo.dao.CibrSysEnvironmentMapper;
-import com.cibr.animal.demo.entity.CibrAnimalDrosophila;
-import com.cibr.animal.demo.entity.CibrStockDrosophila;
-import com.cibr.animal.demo.entity.CibrSysEnvironment;
-import com.cibr.animal.demo.entity.CibrSysUser;
+import com.cibr.animal.demo.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,5 +55,23 @@ public class StockService {
         stock.setUpdateuser(user.getId());
         stock.setUpdatetime(new Date());
         stockDrosophilaMapper.updateByPrimaryKey(stock);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteStock(CibrSysUser user, String stockId) {
+        CibrStockDrosophila stock = stockDrosophilaMapper.selectByPrimaryKey(stockId);
+        stock.setStatu("09");
+        stock.setUpdateuser(user.getId());
+        stock.setUpdatetime(new Date());
+        stockDrosophilaMapper.updateByPrimaryKey(stock);
+    }
+
+    public Map<String, Object> currentStock(int currentPage, int pageSize) {
+        Map<String, Object> retMap = new HashMap<>();
+        List<CibrStockDrosophila> cibrStockDrosophilas = stockDrosophilaMapper.selectAllStocks(null);
+        retMap.put("currentStock",cibrStockDrosophilas);
+        CibrStockDrosophilaExample stockDrosophilaExample = new CibrStockDrosophilaExample();
+        stockDrosophilaExample.createCriteria().andStatuNotEqualTo("09");
+        return retMap;
     }
 }
