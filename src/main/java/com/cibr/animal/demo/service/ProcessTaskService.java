@@ -236,6 +236,7 @@ public class ProcessTaskService {
                 input.setSampleindex(sampleindex.getSelfNum());
             }
         }
+        this.updateSampleIndex(currentIndexs);
         int maxRowIndex = -1;
         for (CibrTaskProcessSampleinput input : list_database){
             if (maxRowIndex < input.getRowindex()){
@@ -291,7 +292,7 @@ public class ProcessTaskService {
             make.setReviewer("");
             make.setRemaining("");
             make.setRemarks("");
-            make.setCurrentstatu("00");
+            make.setCurrentstatu("01");
             make.setRowindex(sampleinput.getRowindex());
             samplemakes.add(make);
         }
@@ -311,8 +312,7 @@ public class ProcessTaskService {
             criteria.andCurrentstatuNotEqualTo("02");
         }else  if ("02".equals(subId)){
             criteria.andCurrentstatuEqualTo("02");
-        }
-        else{
+        }else{
             criteria.andSubidEqualTo(subId);
         }
         samplemakeExample.setOrderByClause("rowIndex desc");
@@ -347,7 +347,7 @@ public class ProcessTaskService {
         List<CibrTaskProcessLibrary> libs = new ArrayList<CibrTaskProcessLibrary>();
         Map<String, CibrSysSampleindex> currentIndexs = getCurrentIndex();
         CibrTaskProcessSubtask subTask = null;
-        if ("real".equals(flag)){
+        if ("complete".equals(flag)){
             subTask = createSubTask(user, subProcessName, process, remarks, TaskUtil.PROCESS_TASK_STATU_SPWAIT);
         }
         for (CibrTaskProcessSamplemake make : list){
@@ -372,12 +372,9 @@ public class ProcessTaskService {
                 make.setCreatetime(new Date());
             }else if ("complete".equals(flag)){
                 make.setCurrentstatu("02");
-            }
-            else {
-                make.setConfirmer(user.getId());
-                make.setConfirmtime(new Date());
-                make.setCurrentstatu("02");
                 make.setSubid(subTask.getId());
+            }else {
+                make.setCurrentstatu("02");
                 CibrTaskProcessLibrary lib = createLib(make,user);
                 libs.add(lib);
             }
@@ -430,7 +427,7 @@ public class ProcessTaskService {
     public List<CibrTaskProcessLibrary> selectAllLibs(String processId,String subId) {
         CibrTaskProcessLibraryExample example = new CibrTaskProcessLibraryExample();
         CibrTaskProcessLibraryExample.Criteria criteria = example.createCriteria();
-        criteria.andProcessidEqualTo(processId);
+        criteria.andProcessidEqualTo(processId).andCurrentstatuNotEqualTo("08");
 //        if (!StringUtils.isEmpty(subId) && !"showAll".equals(subId)){
 //            criteria.andSubidEqualTo(subId);
 //        }else if (StringUtils.isEmpty(subId)){
@@ -453,7 +450,7 @@ public class ProcessTaskService {
         List<CibrTaskProcessDismountdata> list = new ArrayList<>();
         CibrTaskProcess process = processMapper.selectByPrimaryKey(processId);
         CibrTaskProcessSubtask subTask = null;
-        if("real".equals(type)){
+        if("complete".equals(type)){
             subTask = createSubTask(user, subProcessName, process, remarks, TaskUtil.PROCESS_TASK_STATU_LIB);
         }
         for (CibrTaskProcessLibrary lib : libs){
@@ -463,14 +460,13 @@ public class ProcessTaskService {
             lib.setUpdatetime(new Date());
             lib.setUpdateuser(user.getId());
             if ("tmp".equals(type)){
-//                lib.setCurrentstatu("01");
-            }else if ("complete".equals(type)){
+            }else if ("real".equals(type)){
                 lib.setCurrentstatu("02");
+                list.add(createDismountData(user,lib,processId));
             }
             else {
                 lib.setCurrentstatu("02");
                 lib.setSubid(subTask.getId());
-                list.add(createDismountData(user,lib,processId));
             }
         }
         libraryMapper.batchUpdate(libs);
@@ -504,7 +500,7 @@ public class ProcessTaskService {
     public List<CibrTaskProcessDismountdata> selectAllDismountDatas(String processId,String subId) {
         CibrTaskProcessDismountdataExample example = new CibrTaskProcessDismountdataExample();
         CibrTaskProcessDismountdataExample.Criteria criteria = example.createCriteria();
-        criteria.andProcessidEqualTo(processId);
+        criteria.andProcessidEqualTo(processId).andCurrentstatuNotEqualTo("08");
         if ("00".equals(subId)){
             criteria.andCurrentstatuNotEqualTo("02");
         }else if ("02".equals(subId)){
@@ -523,7 +519,7 @@ public class ProcessTaskService {
         List<CibrTaskProcessAnalysis> analyses = new ArrayList<>();
         CibrTaskProcess process = processMapper.selectByPrimaryKey(processId);
         CibrTaskProcessSubtask subTask = null;
-        if ("real".equals(type)){
+        if ("complete".equals(type)){
             subTask = createSubTask(user, subProcessName, process, remarks, TaskUtil.PROCESS_TASK_STATU_DIS);
         }
         for (CibrTaskProcessDismountdata dismountdata : dismountdatas){
@@ -533,8 +529,8 @@ public class ProcessTaskService {
             }
             else if ("complete".equals(type)){
                 dismountdata.setCurrentstatu("02");
-            }else {
                 dismountdata.setSubid(subTask.getId());
+            }else {
                 dismountdata.setCurrentstatu("02");
                 analyses.add(createAnalyse(dismountdata,processId,user));
             }
@@ -637,11 +633,11 @@ public class ProcessTaskService {
         if (saveList.size()>0){
             sampleinputMapper.batchInsert(saveList);
         }
-        List<CibrTaskProcessSamplemake> makes = createMakes(list);
-        for (CibrTaskProcessSamplemake make : makes) {
-            make.setSubid(subtask.getId());
-        }
-        makeMapper.batchInsert(makes);
+//        List<CibrTaskProcessSamplemake> makes = createMakes(list);
+//        for (CibrTaskProcessSamplemake make : makes) {
+//            make.setSubid(subtask.getId());
+//        }
+//        makeMapper.batchInsert(makes);
     }
 
     /**
@@ -1472,6 +1468,28 @@ public class ProcessTaskService {
                 samplemake.setUpdatetime(new Date());
             }
             makeMapper.batchUpdate(samplemakes);
+        }else if ("03".equals(type)){
+            //文库制备
+            CibrTaskProcessLibraryExample libraryExample = new CibrTaskProcessLibraryExample();
+            libraryExample.createCriteria().andIdIn(ids);
+            List<CibrTaskProcessLibrary> libs = libraryMapper.selectByExample(libraryExample);
+            for (CibrTaskProcessLibrary lib : libs){
+                lib.setUpdatetime(new Date());
+                lib.setUpdateuser(user.getId());
+                lib.setCurrentstatu("08");
+            }
+            libraryMapper.batchUpdate(libs);
+        }else if ("04".equals(type)){
+            //测序分析
+            CibrTaskProcessDismountdataExample dismountdataExample = new CibrTaskProcessDismountdataExample();
+            dismountdataExample.createCriteria().andIdIn(ids);
+            List<CibrTaskProcessDismountdata> dis = dismountdataMapper.selectByExample(dismountdataExample);
+            for (CibrTaskProcessDismountdata data : dis){
+                data.setUpdatetime(new Date());
+                data.setUpdateuser(user.getId());
+                data.setCurrentstatu("08");
+            }
+            dismountdataMapper.batchUpdate(dis);
         }
     }
 }
