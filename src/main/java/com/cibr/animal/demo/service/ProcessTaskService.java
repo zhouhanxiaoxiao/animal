@@ -301,7 +301,7 @@ public class ProcessTaskService {
     public List<CibrTaskProcessSamplemake> getAllTodoMakes(String processId,String subId,String curFlag) {
         CibrTaskProcessSamplemakeExample samplemakeExample = new CibrTaskProcessSamplemakeExample();
         CibrTaskProcessSamplemakeExample.Criteria criteria = samplemakeExample.createCriteria();
-        criteria.andProcessidEqualTo(processId);
+        criteria.andProcessidEqualTo(processId).andCurrentstatuNotEqualTo("08");
 //        if (!"showAll".equals(subId) && !StringUtils.isEmpty(subId)){
 //            criteria.andSubidEqualTo(subId);
 //        }else if (StringUtils.isEmpty(subId)){
@@ -1396,6 +1396,7 @@ public class ProcessTaskService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void libImport(List<List<String>> rows, CibrSysUser user, String processId) throws ParseException {
         CibrTaskProcessLibraryExample libraryExample = new CibrTaskProcessLibraryExample();
         libraryExample.createCriteria().andProcessidEqualTo(processId);
@@ -1447,6 +1448,7 @@ public class ProcessTaskService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void deleteInput(List<String> inputIds, CibrSysUser user) {
         CibrTaskProcessSampleinputExample sampleinputExample = new CibrTaskProcessSampleinputExample();
         sampleinputExample.createCriteria().andIdIn(inputIds);
@@ -1455,6 +1457,22 @@ public class ProcessTaskService {
             input.setCurrentstatu("09");
         }
         sampleinputMapper.batchUpdate(list);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteByIds(List<String> ids, String type, CibrSysUser user) {
+        if ("02".equals(type)){
+            // 样本制备
+            CibrTaskProcessSamplemakeExample example = new CibrTaskProcessSamplemakeExample();
+            example.createCriteria().andIdIn(ids);
+            List<CibrTaskProcessSamplemake> samplemakes = makeMapper.selectByExample(example);
+            for (CibrTaskProcessSamplemake samplemake : samplemakes){
+                samplemake.setCurrentstatu("08");
+                samplemake.setUpdateuser(user.getId());
+                samplemake.setUpdatetime(new Date());
+            }
+            makeMapper.batchUpdate(samplemakes);
+        }
     }
 }
 

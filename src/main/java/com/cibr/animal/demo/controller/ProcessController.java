@@ -445,6 +445,26 @@ public class ProcessController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
+    @RequestMapping("/task/process/deleteByIds")
+    public String deleteByIds(HttpServletRequest request,
+                          HttpServletResponse response,
+                          @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            List<String> ids = (List<String>) requestBody.get("ids");
+            String type = (String) requestBody.get("type");
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            processTaskService.deleteByIds(ids,type,user);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
     @RequestMapping("/task/process/downloadLibs")
     public void downloadLibs(HttpServletRequest request,
                               HttpServletResponse response,
