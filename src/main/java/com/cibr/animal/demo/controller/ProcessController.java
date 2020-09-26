@@ -356,7 +356,9 @@ public class ProcessController {
         String token = request.getHeader("token");
         CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
         String processId = (String) requestBody.get("processId");
-        HSSFWorkbook sheets = processTaskService.downloadSampleInput(processId, user);
+        String inputIds = (String) requestBody.get("inputIds");
+        List<String> ids = JSON.parseArray(inputIds, String.class);
+        HSSFWorkbook sheets = processTaskService.downloadSampleInput(processId, user,ids);
         OutputStream outputStream = response.getOutputStream();
         response.setHeader("Content-disposition", "attachment; filename=Info.xls");
         response.setContentType("application/msexcel");
@@ -415,7 +417,9 @@ public class ProcessController {
         String token = request.getHeader("token");
         CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
         String processId = (String) requestBody.get("processId");
-        HSSFWorkbook sheets = processTaskService.downloadMakes(processId, user);
+        String makeIds = (String) requestBody.get("makeIds");
+        List<String> ids = JSON.parseArray(makeIds, String.class);
+        HSSFWorkbook sheets = processTaskService.downloadMakes(processId, user,ids);
         OutputStream outputStream = response.getOutputStream();
         response.setHeader("Content-disposition", "attachment; filename=Info.xls");
         response.setContentType("application/msexcel");
@@ -472,7 +476,9 @@ public class ProcessController {
         String token = request.getHeader("token");
         CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
         String processId = (String) requestBody.get("processId");
-        HSSFWorkbook sheets = processTaskService.downloadLibs(processId, user);
+        String libIds = (String) requestBody.get("libIds");
+        List<String> ids = JSON.parseArray(libIds, String.class);
+        HSSFWorkbook sheets = processTaskService.downloadLibs(processId, user, ids);
         OutputStream outputStream = response.getOutputStream();
         response.setHeader("Content-disposition", "attachment; filename=Info.xls");
         response.setContentType("application/msexcel");
@@ -488,7 +494,9 @@ public class ProcessController {
         String token = request.getHeader("token");
         CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
         String processId = (String) requestBody.get("processId");
-        HSSFWorkbook sheets = processTaskService.downloadDismount(processId, user);
+        String disIds = (String) requestBody.get("disIds");
+        List<String> list = JSON.parseArray(disIds, String.class);
+        HSSFWorkbook sheets = processTaskService.downloadDismount(processId, user,list);
         OutputStream outputStream = response.getOutputStream();
         response.setHeader("Content-disposition", "attachment; filename=Info.xls");
         response.setContentType("application/msexcel");
@@ -523,6 +531,25 @@ public class ProcessController {
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
             processTaskService.deleteInput(inputIds,user);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/task/process/completeProject")
+    public String completeProject(HttpServletRequest request,
+                              HttpServletResponse response,
+                              @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String processId = (String) requestBody.get("processId");
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            processTaskService.completeProject(processId,user);
             ret.setCode("200");
         }catch (Exception e) {
             ret.setCode("E500");

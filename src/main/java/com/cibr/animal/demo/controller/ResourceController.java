@@ -96,11 +96,12 @@ public class ResourceController {
         try {
             String resourceId = (String) requestBody.get("resourceId");
             String str = (String) requestBody.get("times");
+            String remarks = (String) requestBody.get("remarks");
             List<Date> times = JSON.parseArray(str,Date.class);
             Map<String,Object> retMap = new HashMap<>();
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
-            resourceService.commitTimes(resourceId,times,user);
+            resourceService.commitTimes(resourceId,times,user,remarks);
             ret.setRetMap(retMap);
             ret.setCode("200");
         }catch (Exception e) {

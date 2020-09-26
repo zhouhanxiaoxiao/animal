@@ -59,7 +59,7 @@ public class ResourceService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void commitTimes(String resourceId, List<Date> times, CibrSysUser user) throws ParseException {
+    public void commitTimes(String resourceId, List<Date> times, CibrSysUser user,String remarks) throws ParseException {
         List<CibrRecordMeterial> recordMeterials = new ArrayList<>();
         for (Date time : times){
             time = TimeUtil.str2date(TimeUtil.date2str(time,"yyyy-MM-dd HH"),"yyyy-MM-dd HH");
@@ -84,6 +84,7 @@ public class ResourceService {
             task.setCreatetime(new Date());
             task.setTaskstatu(TaskUtil.TASK_STATU_TODO);
             task.setCurrentuser(resourceId);
+            task.setTaskdesc(remarks);
             taskMapper.insert(task);
 
             CibrTaskPartner partner = new CibrTaskPartner();

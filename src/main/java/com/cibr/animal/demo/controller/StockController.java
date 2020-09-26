@@ -136,4 +136,42 @@ public class StockController {
         }
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
+
+    @RequestMapping("/stock/initAddStockPage")
+    public String initAddStockPage(HttpServletRequest request,
+                               HttpServletResponse response
+    ){
+        ReturnData ret = new ReturnData();
+        try {
+            Map<String, Object> retMap = stockService.initAddStockPage();
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        }catch (Exception e){
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/stock/addNewStock")
+    public String addNewStock(HttpServletRequest request,
+                               HttpServletResponse response,
+                              @RequestBody Map requestBody
+    ){
+        ReturnData ret = new ReturnData();
+        try {
+            String stock = (String) requestBody.get("stock");
+            CibrStockDrosophila stockDrosophila = JSON.parseObject(stock, CibrStockDrosophila.class);
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            stockService.saveStock(stockDrosophila,user);
+            ret.setCode("200");
+        }catch (Exception e){
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
 }

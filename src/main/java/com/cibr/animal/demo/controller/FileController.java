@@ -9,6 +9,7 @@ import com.cibr.animal.demo.entity.CibrTaskProcessSampleinput;
 import com.cibr.animal.demo.entity.CibrTaskProcessSamplemake;
 import com.cibr.animal.demo.service.FileService;
 import com.cibr.animal.demo.service.ProcessTaskService;
+import com.cibr.animal.demo.service.StockService;
 import com.cibr.animal.demo.util.FileUtil;
 import com.cibr.animal.demo.util.RedisUtil;
 import com.cibr.animal.demo.util.ReturnData;
@@ -44,6 +45,9 @@ public class FileController {
 
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private StockService stockService;
 
     @RequestMapping("/file/import/sampleInput")
     public String uploadProcessFile(HttpServletRequest request,
@@ -313,6 +317,34 @@ public class FileController {
             }else {
                 List<List<String>> rows = FileUtil.getRows(dist);
                 processTaskService.analysisImport(rows,user,processId);
+                ret.setCode("200");
+                ret.setRetMap(result);
+            }
+        } catch (Exception e) {
+            response.setStatus(500);
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/file/import/stockImport")
+    public String stockImport(HttpServletRequest request,
+                                 HttpServletResponse response) {
+        ReturnData ret = new ReturnData();
+        try {
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            Map<String, Object> result = new HashMap<String, Object>();
+            List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
+            File dist = fileService.saveFile(files,user.getId(),user);
+            if (dist == null){
+                response.setStatus(500);
+                ret.setCode("E500");
+            }else {
+                List<List<String>> rows = FileUtil.getRows(dist);
+                stockService.stockImport(rows,user);
                 ret.setCode("200");
                 ret.setRetMap(result);
             }

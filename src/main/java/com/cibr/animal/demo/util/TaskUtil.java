@@ -60,6 +60,8 @@ public class TaskUtil {
     public static final String PROCESS_TASK_STATU_BA = "50";
     /**任务状态：待创建者确认*/
     public static final String PROCESS_TASK_STATU_READY = "60";
+    /**任务状态：待创建者确认*/
+    public static final String PROCESS_TASK_STATU_COMPLETE = "70";
 
     /**任务状态：待处理*/
     public static final String PARTNER_TASK_UNDO = "00";
