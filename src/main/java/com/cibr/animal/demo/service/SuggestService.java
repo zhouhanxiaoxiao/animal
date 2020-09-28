@@ -6,6 +6,7 @@ import com.cibr.animal.demo.entity.CibrSysSuggestExample;
 import com.cibr.animal.demo.entity.CibrSysUser;
 import com.cibr.animal.demo.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -21,6 +22,12 @@ public class SuggestService {
 
     @Autowired
     private LoginService loginService;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Value("${animal.authorEmail}")
+    private String projectEmail;
 
     public List<CibrSysSuggest> getAllSuggest(){
         CibrSysSuggestExample suggestExample = new CibrSysSuggestExample();
@@ -44,5 +51,11 @@ public class SuggestService {
         suggest.setComments(comment);
         suggest.setCreatetime(new Date());
         suggestMapper.insert(suggest);
+
+        String email = Util.EMAIL_PREFIX;
+        email += comment;
+        email += Util.EMAIL_SUFFIX;
+
+        emailService.simpleSendEmail(email,projectEmail,Util.EMAIL_SUB_SUGGEST);
     }
 }

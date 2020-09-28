@@ -100,4 +100,5 @@ public interface CibrStockDrosophilaMapper {
 
     List<CibrStockDrosophila> selectAllStocks(@Param("condition") Map condition);
 
+    void batchUpdate(List<CibrStockDrosophila> list);
 }

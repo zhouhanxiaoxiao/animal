@@ -104,4 +104,6 @@ public interface CibrAnimalDrosophilaMapper {
     int selectTotalNumber();
 
     int batchInsert(List<CibrAnimalDrosophila> list);
+
+    void batchUpdate(List<CibrAnimalDrosophila> list);
 }

@@ -29,10 +29,14 @@ public class StockService {
     public Map<String,Object> findAllStrains(int pageSize, int currentPage) {
         Map<String,Object> map = new HashMap<String,Object>();
         int currIndex = currentPage * pageSize;
-        List<CibrAnimalDrosophila> cibrAnimalDrosophilas = animalDrosophilaMapper.selectAllStockLimit(currIndex, pageSize);
-        map.put("strains",cibrAnimalDrosophilas);
-        int total = animalDrosophilaMapper.selectTotalNumber();
-        map.put("totalnumber",total);
+//        List<CibrAnimalDrosophila> cibrAnimalDrosophilas = animalDrosophilaMapper.selectAllStockLimit(currIndex, pageSize);
+        CibrAnimalDrosophilaExample example = new CibrAnimalDrosophilaExample();
+        example.createCriteria().andCurstatuNotEqualTo("09");
+        example.setOrderByClause("selfindex,createTime");
+        List<CibrAnimalDrosophila> list = animalDrosophilaMapper.selectByExample(example);
+        map.put("strains",list);
+//        int total = animalDrosophilaMapper.selectTotalNumber();
+//        map.put("totalnumber",total);
         return map;
     }
 
@@ -59,12 +63,18 @@ public class StockService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteStock(CibrSysUser user, String stockId) {
-        CibrStockDrosophila stock = stockDrosophilaMapper.selectByPrimaryKey(stockId);
-        stock.setStatu("09");
-        stock.setUpdateuser(user.getId());
-        stock.setUpdatetime(new Date());
-        stockDrosophilaMapper.updateByPrimaryKey(stock);
+    public void deleteStock(CibrSysUser user, List<String> stockIds) {
+        CibrStockDrosophilaExample stockDrosophilaExample = new CibrStockDrosophilaExample();
+        stockDrosophilaExample.createCriteria().andIdIn(stockIds);
+        List<CibrStockDrosophila> list = stockDrosophilaMapper.selectByExample(stockDrosophilaExample);
+        if (list != null && list.size()>0){
+            for (CibrStockDrosophila stock : list){
+                stock.setStatu("09");
+                stock.setUpdateuser(user.getId());
+                stock.setUpdatetime(new Date());
+            }
+        }
+        stockDrosophilaMapper.batchUpdate(list);
     }
 
     public Map<String, Object> currentStock(int currentPage, int pageSize) {
@@ -140,5 +150,44 @@ public class StockService {
         if (list.size()>0){
             stockDrosophilaMapper.batchInsert(list);
         }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteStrains(List<String> ids, CibrSysUser user) {
+        /*删除品系*/
+        CibrAnimalDrosophilaExample animalDrosophilaExample = new CibrAnimalDrosophilaExample();
+        animalDrosophilaExample.createCriteria().andIdIn(ids);
+        List<CibrAnimalDrosophila> list = animalDrosophilaMapper.selectByExample(animalDrosophilaExample);
+        if (list != null && list.size() > 0){
+            for (CibrAnimalDrosophila animalDrosophila : list){
+                animalDrosophila.setCurstatu("09");
+                animalDrosophila.setUpdatetime(new Date());
+                animalDrosophila.setUpdateuser(user.getId());
+            }
+            animalDrosophilaMapper.batchUpdate(list);
+        }
+        /*删除库存*/
+        CibrStockDrosophilaExample stockDrosophilaExample = new CibrStockDrosophilaExample();
+        stockDrosophilaExample.createCriteria().andDrosophilaIdIn(ids);
+        List<CibrStockDrosophila> stocks = stockDrosophilaMapper.selectByExample(stockDrosophilaExample);
+        if (stocks != null && stocks.size() > 0){
+            for (CibrStockDrosophila stock : stocks){
+                stock.setStatu("09");
+                stock.setUpdatetime(new Date());
+                stock.setUpdateuser(user.getId());
+            }
+            stockDrosophilaMapper.batchUpdate(stocks);
+        }
+    }
+
+    public CibrAnimalDrosophila getStrainById(String strainId) {
+        return animalDrosophilaMapper.selectByPrimaryKey(strainId);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateStrain(CibrAnimalDrosophila drosophila, CibrSysUser user) {
+        drosophila.setUpdateuser(user.getId());
+        drosophila.setUpdatetime(new Date());
+        animalDrosophilaMapper.updateByPrimaryKey(drosophila);
     }
 }

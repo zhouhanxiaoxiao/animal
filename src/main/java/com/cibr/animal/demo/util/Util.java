@@ -17,6 +17,8 @@ public class Util {
 
     public static final String EMAIL_SUB_OVERTIME = "超时提醒";
 
+    public static final String EMAIL_SUB_SUGGEST = "suggest";
+
     public static final String USER_CREATE = "用户账号申请";
 
     public static final String EMAIL_PREFIX = "【北京脑科学与类脑研究中心】\n\n\t";
