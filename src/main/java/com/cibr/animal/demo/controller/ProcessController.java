@@ -1,10 +1,13 @@
 package com.cibr.animal.demo.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cibr.animal.demo.entity.*;
+import com.cibr.animal.demo.service.CibrSysUserService;
 import com.cibr.animal.demo.service.LoginService;
 import com.cibr.animal.demo.service.ProcessTaskService;
+import com.cibr.animal.demo.service.TaskService;
 import com.cibr.animal.demo.util.RedisUtil;
 import com.cibr.animal.demo.util.ReturnData;
 import com.cibr.animal.demo.util.TaskUtil;
@@ -23,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +42,12 @@ public class ProcessController {
 
     @Autowired
     private LoginService loginService;
+
+    @Autowired
+    private CibrSysUserService userService;
+
+    @Autowired
+    private TaskService taskService;
 
     private Logger logger = LoggerFactory.getLogger(ProcessController.class);
 
@@ -550,6 +560,54 @@ public class ProcessController {
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
             processTaskService.completeProject(processId,user);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/task/process/baseInfo")
+    public String processBaseInfo(HttpServletRequest request,
+                              HttpServletResponse response,
+                              @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            Map retMap = new HashMap();
+            String processId = (String) requestBody.get("processId");
+            List<CibrSysUser> allUsers = userService.getAllUsers();
+            retMap.put("users",allUsers);
+            List<CibrTaskProcessEmail> processEmails = processTaskService.findProcessEmails(processId);
+            CibrSysUserGroup jyzxzx = userService.getGroupByName("基因组学中心");
+            CibrTaskProcess process = processTaskService.getPorcessById(processId);
+            CibrSysTask task = processTaskService.selectTask(process.getTaskid());
+            retMap.put("processEmails",processEmails);
+            retMap.put("jyzxzx",jyzxzx);
+            retMap.put("task",task);
+
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/task/process/setPrincepal")
+    public String setPrincepal(HttpServletRequest request,
+                                  HttpServletResponse response,
+                                  @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String processStr = (String) requestBody.get("process");
+            CibrTaskProcess process = JSONObject.parseObject(processStr, CibrTaskProcess.class);
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            processTaskService.updateProcess(process,user);
             ret.setCode("200");
         }catch (Exception e) {
             ret.setCode("E500");

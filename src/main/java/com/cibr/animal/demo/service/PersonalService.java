@@ -3,7 +3,9 @@ package com.cibr.animal.demo.service;
 import com.cibr.animal.demo.dao.CibrAnimalDrosophilaMapper;
 import com.cibr.animal.demo.dao.CibrStockDrosophilaMapper;
 import com.cibr.animal.demo.dao.CibrSysEnvironmentMapper;
+import com.cibr.animal.demo.dao.CibrSysSampleindexMapper;
 import com.cibr.animal.demo.entity.*;
+import com.cibr.animal.demo.util.TimeUtil;
 import com.cibr.animal.demo.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,9 @@ public class PersonalService {
 
     @Autowired
     CibrSysEnvironmentMapper environmentMapper;
+
+    @Autowired
+    CibrSysSampleindexMapper sampleindexMapper;
 
     public Map<String, Object> stockTable(int currentPage,int pageSize){
         Map<String, Object> retMap = new HashMap<String, Object>();
@@ -91,6 +96,20 @@ public class PersonalService {
         drosophila.setResource(resource);
 
         CibrStockDrosophila stockDrosophila = new CibrStockDrosophila();
+
+        CibrSysSampleindexExample sampleindexExample = new CibrSysSampleindexExample();
+        sampleindexExample.createCriteria().andNameEqualTo("FLY").andCurtimeEqualTo(TimeUtil.date2str(new Date(),"yyMM"));
+        List<CibrSysSampleindex> sampleindices = sampleindexMapper.selectByExample(sampleindexExample);
+        CibrSysSampleindex droInd = null;
+        if (sampleindices == null || sampleindices.size() == 0){
+            droInd = new CibrSysSampleindex();
+            droInd.setName("DRO");
+            droInd.setCurtime(TimeUtil.date2str(new Date(),"yyMM"));
+            droInd.setCurrentindex(0);
+        }else {
+            droInd = sampleindices.get(0);
+        }
+
         for (Map row : rows){
             String birthday = (String) row.get("birthday");
             String number = "";
@@ -103,6 +122,9 @@ public class PersonalService {
             String useType = (String) row.get("useType");
             String location = (String) row.get("location");
             String environmentId = (String) row.get("environmentId");
+
+            droInd.setCurrentindex(droInd.getCurrentindex()+1);
+            stockDrosophila.setStockindex(droInd.getSelfNum());
             stockDrosophila.setId(Util.getUUID());
             stockDrosophila.setBirthday(Util.str2date(birthday,"yyyy-MM-dd"));
             stockDrosophila.setContanernmuber(Integer.parseInt(number));
@@ -118,6 +140,10 @@ public class PersonalService {
             stockDrosophilaMapper.insert(stockDrosophila);
         }
         animalDrosophilaMapper.insert(drosophila);
-
+        if (sampleindices == null || sampleindices.size() == 0){
+            sampleindexMapper.insert(droInd);
+        }else {
+            sampleindexMapper.updateByPrimaryKey(droInd);
+        }
     }
 }

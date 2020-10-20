@@ -34,6 +34,9 @@ public class ScheduleHandle {
     @Autowired
     private CibrTaskFailMapper failMapper;
 
+    @Autowired
+    private CibrStockDrosophilaMapper stockDrosophilaMapper;
+
     @Transactional(rollbackFor = Exception.class)
     public void checkPartnerTask() {
         CibrTaskPartnerExample partnerExample = new CibrTaskPartnerExample();
@@ -115,6 +118,39 @@ public class ScheduleHandle {
                         emailService.simpleSendEmail(content,user.getEmail(), Util.EMAIL_SUB_OVERTIME);
                     }
                 }
+            }
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void checkThreeWeekStock() {
+        CibrStockDrosophilaExample stockDrosophilaExample = new CibrStockDrosophilaExample();
+        stockDrosophilaExample.createCriteria().andStatuEqualTo("01");
+        List<CibrStockDrosophila> list = stockDrosophilaMapper.selectByExample(stockDrosophilaExample);
+        Date now = new Date();
+        Date threeWeekAgo = TimeUtil.dateAdd(now, Calendar.DATE, -7 * 3);
+        List<CibrStockDrosophila> delList = new ArrayList<>();
+        String delIndex = "";
+        if (list != null && list.size() > 0){
+            for (CibrStockDrosophila tmp : list){
+                if (threeWeekAgo.compareTo(tmp.getCreatetime()) >= 0){
+                    tmp.setStatu("09");
+                    delIndex += tmp.getStockindex() + "，";
+                    delList.add(tmp);
+                }
+            }
+        }
+        if (delList.size()>0){
+            stockDrosophilaMapper.batchUpdate(delList);
+            String cont = Util.EMAIL_PREFIX + "【库存自动清理】本次共清除库存【" + delList.size() + "】条，" +
+                    "编号为：" + delIndex + Util.EMAIL_SUFFIX;
+            List<CibrSysUser> feeders = userMapper.selectUserByRoleType("02");
+            if (feeders != null && feeders.size() > 0){
+                List<String> addrs = new ArrayList<>();
+                for (CibrSysUser user : feeders){
+                    addrs.add(user.getEmail());
+                }
+                emailService.simpleSendEmail(cont,addrs,"库存自动清理");
             }
         }
     }

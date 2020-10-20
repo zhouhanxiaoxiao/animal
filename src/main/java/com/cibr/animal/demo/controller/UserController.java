@@ -1,8 +1,11 @@
 package com.cibr.animal.demo.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.cibr.animal.demo.entity.CibrSysRole;
 import com.cibr.animal.demo.entity.CibrSysUser;
+import com.cibr.animal.demo.entity.CibrSysUserGroup;
 import com.cibr.animal.demo.service.FileService;
 import com.cibr.animal.demo.service.LoginService;
 import com.cibr.animal.demo.service.RegisterService;
@@ -117,6 +120,88 @@ public class UserController {
                 userService.updatePassword(password,vid,user);
                 ret.setCode("200");
             }
+        } catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue);
+    }
+
+
+    @RequestMapping("/user/manager/init")
+    public String userManagerInit(HttpServletRequest request,
+                          HttpServletResponse response) {
+        ReturnData ret = new ReturnData();
+        try {
+            List<CibrSysUser> cibrSysUsers = userService.selectAllUserWithDesc();
+            List<CibrSysRole> roles = userService.selectAllRoles();
+            List<CibrSysUserGroup> groups = userService.selectAllGroups();
+            Map<String,Object> retMap = new HashMap<>();
+            retMap.put("users",cibrSysUsers);
+            retMap.put("roles",roles);
+            retMap.put("groups",groups);
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        } catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/user/manager/addNewDepartment")
+    public String addNewDepartment(HttpServletRequest request,
+                                      HttpServletResponse response,
+                                      @RequestBody Map requestBody) {
+        ReturnData ret = new ReturnData();
+        try {
+            String name = (String) requestBody.get("name");
+            String groupAdmin = (String) requestBody.get("groupAdmin");
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            String code = userService.addNewDepartment(name, groupAdmin, user);
+            ret.setCode(code);
+        } catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/user/manager/updateUsers")
+    public String updateUsers(HttpServletRequest request,
+                                   HttpServletResponse response,
+                                   @RequestBody Map requestBody) {
+        ReturnData ret = new ReturnData();
+        try {
+            String usersStr = (String) requestBody.get("users");
+            List<CibrSysUser> users = JSONObject.parseArray(usersStr, CibrSysUser.class);
+            userService.updateusers(users);
+
+            ret.setCode("200");
+        } catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/user/manager/addNewRole")
+    public String addNewRole(HttpServletRequest request,
+                                   HttpServletResponse response,
+                                   @RequestBody Map requestBody) {
+        ReturnData ret = new ReturnData();
+        try {
+            String name = (String) requestBody.get("name");
+            String index = (String) requestBody.get("index");
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            String code = userService.addnewRole(name,index,user);
+            ret.setCode(code);
         } catch (Exception e) {
             ret.setCode("E500");
             ret.setErrMsg("系统异常！");

@@ -462,13 +462,14 @@
   <insert id="batchInsert" parameterType="com.cibr.animal.demo.entity.CibrTaskDetailDrosophila">
     insert into cibr_task_detail_drosophila (
     id,askid,createtime,stockid,purpose,virginFly,gender,isHybridizationNecessary,hybridStrain,
-    specialFeeding,specificFeeding,age,orderNumber,confirmStatu,expectedTime
+    specialFeeding,specificFeeding,age,orderNumber,confirmStatu,expectedTime,operationProcess
     )
     values
     <foreach collection="list" item="item" separator=",">
       (#{item.id},#{item.askid},#{item.createtime},#{item.stockid},#{item.purpose},#{item.virginfly},
       #{item.gender},#{item.ishybridizationnecessary},#{item.hybridstrain},#{item.specialfeeding},
-      #{item.specificfeeding},#{item.age},#{item.ordernumber},#{item.confirmstatu},#{item.expectedtime})
+      #{item.specificfeeding},#{item.age},#{item.ordernumber},#{item.confirmstatu},#{item.expectedtime},
+      #{item.operationprocess})
     </foreach>
   </insert>
 </mapper>

@@ -1,6 +1,7 @@
 package com.cibr.animal.demo.service;
 
 import com.cibr.animal.demo.dao.CibrSysRoleMapper;
+import com.cibr.animal.demo.dao.CibrSysUserGroupMapper;
 import com.cibr.animal.demo.dao.CibrSysUserMapper;
 import com.cibr.animal.demo.dao.CibrSysUserRoleMapper;
 import com.cibr.animal.demo.entity.*;
@@ -28,6 +29,10 @@ public class CibrSysUserService {
 
     @Autowired
     private LoginService loginService;
+
+    @Autowired
+    private CibrSysUserGroupMapper groupMapper;
+
 
     private Logger logger = LoggerFactory.getLogger(CibrSysUserService.class);
 
@@ -84,6 +89,31 @@ public class CibrSysUserService {
         List<CibrSysUser> cibrSysUsers = userMapper.selectByExample(new CibrSysUserExample());
         for (CibrSysUser user : cibrSysUsers){
             retMap.put(user.getName(),user.getId());
+        }
+        return retMap;
+    }
+
+    public List<CibrSysUser> getAllUsers(){
+        return userMapper.selectByExample(new CibrSysUserExample());
+    }
+
+    public CibrSysUserGroup getGroupByName(String name){
+        CibrSysUserGroupExample groupExample = new CibrSysUserGroupExample();
+        groupExample.createCriteria().andGroupnameEqualTo(name);
+        List<CibrSysUserGroup> groups = groupMapper.selectByExample(groupExample);
+        if (groups != null && groups.size()>0){
+            return groups.get(0);
+        }
+        return null;
+    }
+
+    public Map<String,CibrSysUser> getuuid_userObject(){
+        List<CibrSysUser> cibrSysUsers = userMapper.selectByExample(new CibrSysUserExample());
+        Map<String,CibrSysUser> retMap = new HashMap<>();
+        if (cibrSysUsers != null && cibrSysUsers.size()>0){
+            for (CibrSysUser user : cibrSysUsers){
+                retMap.put(user.getId(),user);
+            }
         }
         return retMap;
     }

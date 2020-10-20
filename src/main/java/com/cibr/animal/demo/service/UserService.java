@@ -1,14 +1,16 @@
 package com.cibr.animal.demo.service;
 
 import com.cibr.animal.demo.dao.CibrSysRoleMapper;
+import com.cibr.animal.demo.dao.CibrSysUserGroupMapper;
 import com.cibr.animal.demo.dao.CibrSysUserMapper;
 import com.cibr.animal.demo.dao.CibrSysUserRoleMapper;
-import com.cibr.animal.demo.entity.CibrSysRole;
-import com.cibr.animal.demo.entity.CibrSysUser;
-import com.cibr.animal.demo.entity.CibrSysUserExample;
+import com.cibr.animal.demo.entity.*;
+import com.cibr.animal.demo.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,9 @@ public class UserService {
 
     @Autowired
     private RegisterService registerService;
+
+    @Autowired
+    private CibrSysUserGroupMapper groupMapper;
 
     /**
      *
@@ -70,5 +75,87 @@ public class UserService {
             name_user.put(user.getName(),user);
         }
         return name_user;
+    }
+
+    public List<CibrSysUser> selectAllUserWithDesc() {
+        return userMapper.selectAllUserWithDesc();
+    }
+
+    public List<CibrSysRole> selectAllRoles() {
+        return roleMapper.selectByExample(new CibrSysRoleExample());
+    }
+
+    public List<CibrSysUserGroup> selectAllGroups() {
+        return groupMapper.selectByExample(new CibrSysUserGroupExample());
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public String addNewDepartment(String name, String groupAdmin, CibrSysUser user) {
+        CibrSysUserGroupExample groupExample = new CibrSysUserGroupExample();
+        groupExample.createCriteria().andGroupnameEqualTo(name);
+        List<CibrSysUserGroup> groups = groupMapper.selectByExample(groupExample);
+        if (groups != null && groups.size() != 0){
+            return "E550";
+        }
+        CibrSysUserGroup newGroup = new CibrSysUserGroup();
+        newGroup.setId(Util.getUUID());
+        newGroup.setGroupname(name);
+        newGroup.setGroupadmin(groupAdmin);
+        newGroup.setGroupstatu("01");
+        newGroup.setGrouptype("1");
+        groupMapper.insert(newGroup);
+        return "200";
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateusers(List<CibrSysUser> users) {
+        for (CibrSysUser user : users){
+            CibrSysUserRoleExample userRoleExample = new CibrSysUserRoleExample();
+            userRoleExample.createCriteria().andUseridEqualTo(user.getId());
+            userRoleMapper.deleteByExample(userRoleExample);
+            List<CibrSysUserRole> roles = new ArrayList<>();
+            for (String roleid : user.getRolesIds()){
+                CibrSysUserRole userRole = new CibrSysUserRole();
+                userRole.setRoleid(roleid);
+                userRole.setUserid(user.getId());
+                roles.add(userRole);
+            }
+            userRoleMapper.batchInsert(roles);
+        }
+        userMapper.batchUpdate(users);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public String addnewRole(String name, String index, CibrSysUser user) {
+        CibrSysRoleExample roleExample = new CibrSysRoleExample();
+        roleExample.createCriteria().andRolenameEqualTo(name);
+        List<CibrSysRole> roles = roleMapper.selectByExample(roleExample);
+        if (roles != null && roles.size()>0){
+            return "E551";
+        }
+        roleExample = new CibrSysRoleExample();
+        roleExample.createCriteria().andRoletypeEqualTo(index);
+        roles = new ArrayList<>();
+        roles = roleMapper.selectByExample(roleExample);
+        if (roles.size() > 0){
+            return "E552";
+        }
+        CibrSysRole role = new CibrSysRole();
+        role.setId(Util.getUUID());
+        role.setRolename(name);
+        role.setRoletype(index);
+        roleMapper.insert(role);
+        return "200";
+    }
+
+    public Map<String,CibrSysUserGroup> getuuid_group() {
+        List<CibrSysUserGroup> groups = groupMapper.selectByExample(new CibrSysUserGroupExample());
+        Map<String,CibrSysUserGroup> uuid_group = new HashMap<>();
+        if (groups != null && groups.size()>0){
+            for (CibrSysUserGroup group : groups){
+                uuid_group.put(group.getId(),group);
+            }
+        }
+        return uuid_group;
     }
 }

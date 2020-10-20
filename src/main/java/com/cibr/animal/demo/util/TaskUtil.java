@@ -16,7 +16,7 @@ public class TaskUtil {
     public static final String ASK_TASK_DROSOPHILA = "果蝇使用申请任务";
     public static final String TASK_PARTNER = "请求协助";
     public static final String TASK_CREATE_USER = "用户注册任务";
-    public static final String TASK_PROCESS = "流程管理任务";
+    public static final String TASK_PROCESS = "测序流程任务";
 
     /**
      * _task_ 任务状态

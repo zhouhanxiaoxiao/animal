@@ -101,4 +101,8 @@ public interface CibrSysUserMapper {
      * @return
      */
     List<CibrSysUser> selectUserByRoleType(@Param("roleType")String roleType);
+
+    List<CibrSysUser> selectAllUserWithDesc();
+
+    void batchUpdate(List<CibrSysUser> users);
 }

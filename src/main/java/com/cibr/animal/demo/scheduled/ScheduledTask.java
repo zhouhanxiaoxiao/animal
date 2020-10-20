@@ -24,4 +24,12 @@ public class ScheduledTask {
         /*查看协助申请，是否有超过一个小时未确定的。*/
         handle.checkPartnerTask();
     }
+
+    /**
+     * 每天凌晨1点执行一次
+     */
+    @Scheduled(cron = "0 0 1 * * ?")
+    public void time1(){
+        handle.checkThreeWeekStock();
+    }
 }

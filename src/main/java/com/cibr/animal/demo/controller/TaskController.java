@@ -338,6 +338,7 @@ public class TaskController {
             String principal = (String) requestBody.get("principal");
             List<String> emails = (List<String>) requestBody.get("emails");
             String sampleMsg = (String) requestBody.get("sampleMsg");
+            String sampleInput = (String) requestBody.get("sampleInput");
             String samplePreparation = (String) requestBody.get("samplePreparation");
             String libraryPreparation = (String) requestBody.get("libraryPreparation");
             String dismountData = (String) requestBody.get("dismountData");
@@ -347,7 +348,7 @@ public class TaskController {
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
 
-            processTaskService.createProcessTask(user,projectName,dataType,principal,emails,sampleMsg,
+            processTaskService.createProcessTask(user,projectName,dataType,principal,emails,sampleMsg,sampleInput,
                     samplePreparation,libraryPreparation,dismountData,bioinformaticsAnalysis,remarks);
 
             ret.setCode("200");

@@ -3,6 +3,7 @@ package com.cibr.animal.demo.service;
 import com.cibr.animal.demo.dao.CibrAnimalDrosophilaMapper;
 import com.cibr.animal.demo.dao.CibrStockDrosophilaMapper;
 import com.cibr.animal.demo.dao.CibrSysEnvironmentMapper;
+import com.cibr.animal.demo.dao.CibrSysSampleindexMapper;
 import com.cibr.animal.demo.entity.*;
 import com.cibr.animal.demo.util.TimeUtil;
 import com.cibr.animal.demo.util.Util;
@@ -25,6 +26,9 @@ public class StockService {
 
     @Autowired
     private CibrSysEnvironmentMapper environmentMapper;
+
+    @Autowired
+    private CibrSysSampleindexMapper sampleindexMapper;
 
     public Map<String,Object> findAllStrains(int pageSize, int currentPage) {
         Map<String,Object> map = new HashMap<String,Object>();
@@ -80,7 +84,20 @@ public class StockService {
     public Map<String, Object> currentStock(int currentPage, int pageSize) {
         Map<String, Object> retMap = new HashMap<>();
         List<CibrStockDrosophila> cibrStockDrosophilas = stockDrosophilaMapper.selectAllStocks(null);
-        retMap.put("currentStock",cibrStockDrosophilas);
+        List<CibrStockDrosophila> tenDays = new ArrayList<>();
+        List<CibrStockDrosophila> others = new ArrayList<>();
+        List<CibrStockDrosophila> ret = new ArrayList<>();
+
+        for (CibrStockDrosophila tmp : cibrStockDrosophilas){
+            if (TimeUtil.date2str(tmp.getCreatetime(),"yyyy-MM-dd").equals(TimeUtil.date2str(TimeUtil.dateAdd(new Date(),Calendar.DATE,-10),"yyyy-MM-dd"))){
+                tenDays.add(tmp);
+            }else {
+                others.add(tmp);
+            }
+        }
+        ret.addAll(tenDays);
+        ret.addAll(others);
+        retMap.put("currentStock",ret);
         CibrStockDrosophilaExample stockDrosophilaExample = new CibrStockDrosophilaExample();
         stockDrosophilaExample.createCriteria().andStatuNotEqualTo("09");
         return retMap;
@@ -97,6 +114,7 @@ public class StockService {
         return retMap;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void saveStock(CibrStockDrosophila stockDrosophila, CibrSysUser user) {
         stockDrosophila.setId(Util.getUUID());
         stockDrosophila.setCreateuser(user.getId());
@@ -104,6 +122,25 @@ public class StockService {
         stockDrosophila.setRawtype(stockDrosophila.getContanertype());
         stockDrosophila.setRawnumber(stockDrosophila.getContanernmuber());
         stockDrosophila.setStatu("01");
+        CibrSysSampleindexExample sampleindexExample = new CibrSysSampleindexExample();
+        sampleindexExample.createCriteria().andNameEqualTo("FLY").andCurtimeEqualTo(TimeUtil.date2str(new Date(),"yyMM"));
+        List<CibrSysSampleindex> sampleindices = sampleindexMapper.selectByExample(sampleindexExample);
+        CibrSysSampleindex droInd = null;
+        if (sampleindices == null || sampleindices.size() == 0){
+            droInd = new CibrSysSampleindex();
+            droInd.setName("FLY");
+            droInd.setCurtime(TimeUtil.date2str(new Date(),"yyMM"));
+            droInd.setCurrentindex(0);
+        }else {
+            droInd = sampleindices.get(0);
+        }
+        droInd.setCurrentindex(droInd.getCurrentindex() + 1);
+        stockDrosophila.setStockindex(droInd.getSelfNum());
+        if (sampleindices == null || sampleindices.size() == 0){
+            sampleindexMapper.insert(droInd);
+        }else {
+            sampleindexMapper.updateByPrimaryKey(droInd);
+        }
         stockDrosophilaMapper.insert(stockDrosophila);
     }
 
@@ -121,6 +158,19 @@ public class StockService {
             name_uuid.put(env.getDisplayname(),env.getId());
         }
         List<CibrStockDrosophila> list = new ArrayList<>();
+
+        CibrSysSampleindexExample sampleindexExample = new CibrSysSampleindexExample();
+        sampleindexExample.createCriteria().andNameEqualTo("FLY").andCurtimeEqualTo(TimeUtil.date2str(new Date(),"yyMM"));
+        List<CibrSysSampleindex> sampleindices = sampleindexMapper.selectByExample(sampleindexExample);
+        CibrSysSampleindex droInd = null;
+        if (sampleindices == null || sampleindices.size() == 0){
+            droInd = new CibrSysSampleindex();
+            droInd.setName("FLY");
+            droInd.setCurtime(TimeUtil.date2str(new Date(),"yyMM"));
+            droInd.setCurrentindex(0);
+        }else {
+            droInd = sampleindices.get(0);
+        }
         if (rows != null && rows.size()>0){
             for (List<String> row : rows){
                 CibrStockDrosophila stock = new CibrStockDrosophila();
@@ -135,6 +185,8 @@ public class StockService {
                 if (num == 0){
                     continue;
                 }
+                droInd.setCurrentindex(droInd.getCurrentindex() + 1);
+                stock.setStockindex(droInd.getSelfNum());
                 stock.setContanernmuber(num);
                 stock.setUsagetype("保种".equals(Util.nullToStr(row.get(index++))) ? "keep" : "stock");
                 stock.setEnvironment(name_uuid.get(row.get((index++))));
@@ -149,6 +201,11 @@ public class StockService {
         }
         if (list.size()>0){
             stockDrosophilaMapper.batchInsert(list);
+        }
+        if (sampleindices == null || sampleindices.size() == 0){
+            sampleindexMapper.insert(droInd);
+        }else {
+            sampleindexMapper.updateByPrimaryKey(droInd);
         }
     }
 

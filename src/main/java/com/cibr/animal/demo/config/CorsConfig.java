@@ -31,6 +31,7 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addInterceptor(initAuthInterceptor())
                 .addPathPatterns("/**")
                 .excludePathPatterns("/")
+                .excludePathPatterns("/wechat/**")
                 .excludePathPatterns("/static/**")
                 .excludePathPatterns("/js/**")
                 .excludePathPatterns("/**.html")

@@ -68,9 +68,19 @@ public class CibrSysUser {
      */
     private Date createtime;
 
+    private List<String> rolesIds;
+
     private List<CibrSysRole> roles;
 
     private CibrSysUserGroup group;
+
+    public List<String> getRolesIds() {
+        return rolesIds;
+    }
+
+    public void setRolesIds(List<String> rolesIds) {
+        this.rolesIds = rolesIds;
+    }
 
     public CibrSysUserGroup getGroup() {
         return group;

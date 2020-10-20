@@ -293,26 +293,37 @@ public class TaskService {
             uuid_partner.put(partner.getTaskid(),partner);
         }
 
+        Map<String, CibrSysUserGroup> uuid_group = userService.getuuid_group();
+
         List<Map<String,Object>> retList = new ArrayList<>();
         /*组合数据*/
         for (CibrSysTask task: cibrSysTasks){
             Map<String,Object> ret = new HashMap<>();
             ret.put("task",task);
+            CibrSysUser creater = userid_user.get(task.getCreateuser());
+            ret.put("creater",creater);
             if (uuid_ask.get(task.getId()) != null){
                 ret.put("ask",uuid_ask.get(task.getId()));
             }
             if (uuid_process.get(task.getId()) != null){
-                ret.put("process",uuid_process.get(task.getId()));
+                CibrTaskProcess process = uuid_process.get(task.getId());
+                ret.put("process",process);
+                CibrSysUserGroup group = uuid_group.get(creater.getRoleid());
+                if (TaskUtil.PROCESS_TASK.equals(task.getTasktype())){
+                    if (!user.getId().equals(task.getCreateuser())
+                            && !user.getId().equals(group.getGroupadmin())
+                            && !user.getId().equals(process.getSampleinput())
+                            && !user.getId().equals(process.getSamplepreparation())
+                            && !user.getId().equals(process.getLibrarypreparation())
+                            && !user.getId().equals(process.getDismountdata())
+                            && !user.getId().equals(process.getBioinformaticsanalysis())
+                    ){
+                        continue;
+                    }
+                }
             }
             if (uuid_partner.get(task.getId()) != null){
                 ret.put("partner",uuid_partner.get(task.getId()));
-            }
-            ret.put("creater",userid_user.get(task.getCreateuser()));
-            if (TaskUtil.PROCESS_TASK.equals(task.getTasktype())){
-                if (!user.getId().equals(task.getCreateuser())
-                        && !user.getId().equals(user.getGroup().getGroupadmin())){
-                    continue;
-                }
             }
             retList.add(ret);
         }
@@ -713,6 +724,7 @@ public class TaskService {
         CibrSysTask task = taskMapper.selectByPrimaryKey(taskId);
         CibrSysUser user = userMapper.selectByPrimaryKey(task.getCreateuser());
         CibrSysRoleExample roleExample = new CibrSysRoleExample();
+        roleExample.createCriteria().andRoletypeNotEqualTo("999999");
         List<CibrSysRole> cibrSysRoles = roleMapper.selectByExample(roleExample);
         if (TaskUtil.TASK_STATU_FAIL.equals(task.getTaskstatu())){
             CibrTaskFailExample failExample = new CibrTaskFailExample();
@@ -724,7 +736,6 @@ public class TaskService {
         retMap.put("creater",user);
         retMap.put("roles",cibrSysRoles);
         return retMap;
-
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -952,36 +963,46 @@ public class TaskService {
         List<CibrAnimalDrosophila> cibrAnimalDrosophilas = drosophilaMapper.selectAll();
         Map<String,CibrAnimalDrosophila> stockId_animal = new HashMap<>();
         for (CibrAnimalDrosophila drosophila : cibrAnimalDrosophilas){
-            stockId_animal.put(drosophila.getStockId(),drosophila);
+            stockId_animal.put(drosophila.getSelfindex(),drosophila);
         }
         List<CibrStockDrosophila> cibrStockDrosophilas = stockDrosophilaMapper.selectAllStocks(null);
         Map<String,CibrStockDrosophila> stockid_stock = new HashMap<>();
         for (CibrStockDrosophila stock : cibrStockDrosophilas){
-            stockid_stock.put(stock.getAnimal().getStockId(),stock);
+            stockid_stock.put(stock.getStockindex(),stock);
         }
 
         for (List<String> row : rows){
             CibrTaskDetailDrosophila detail = new CibrTaskDetailDrosophila();
+            int index = 3;
+            if (StringUtils.isEmpty(row.get(index))){
+                continue;
+            }
             detail.setId(Util.getUUID());
             detail.setAskid(askDrosophila.getId());
             detail.setConfirmstatu("00");
-            detail.setPurpose(Util.nullToStr(row.get(3)));
-            detail.setStockid(stockid_stock.get(Util.nullToStr(row.get(5))).getId());
-            detail.setVirginfly(Util.yesOrNo(row.get(6)));
-            detail.setGender(Util.isMale(row.get(7)));
-            detail.setIshybridizationnecessary(Util.yesOrNo(row.get(8)));
-            if (!StringUtils.isEmpty(Util.nullToStr(row.get(9)))){
-                detail.setHybridstrain(stockId_animal.get(Util.nullToStr(row.get(9))).getId());
+            detail.setPurpose(Util.nullToStr(row.get(index++)));
+//            detail.setStockid(stockid_stock.get(Util.nullToStr(row.get(5))).getId());
+            detail.setVirginfly(Util.yesOrNo(row.get(index++)));
+            detail.setGender(Util.isMale(row.get(index++)));
+            detail.setIshybridizationnecessary(Util.yesOrNo(row.get(index++)));
+            String xStrain = row.get(index++);
+            if (!StringUtils.isEmpty(Util.nullToStr(xStrain))){
+                detail.setHybridstrain(stockId_animal.get(Util.nullToStr(xStrain)).getId());
             }
-            detail.setSpecialfeeding(Util.yesOrNo(row.get(10)));
-            detail.setSpecificfeeding(Util.nullToStr(row.get(11)));
-            detail.setAge(Util.nullToStr(row.get(12)));
-            detail.setOrdernumber(Util.nullToStr(row.get(13)));
-            detail.setExpectedtime(TimeUtil.str2date(Util.nullToStr(row.get(14)),"yyyy/MM/dd"));
-            detail.setOperationprocess(Util.nullToStr(row.get(15)));
+            detail.setSpecialfeeding(Util.yesOrNo(row.get(index++)));
+            detail.setSpecificfeeding(Util.nullToStr(row.get(index++)));
+            detail.setAge(Util.nullToStr(row.get(index++)));
+            detail.setOrdernumber(Util.nullToStr(row.get(index++)));
+            detail.setExpectedtime(TimeUtil.str2date(Util.nullToStr(row.get(index++)),"yyyy/MM/dd"));
+            detail.setOperationprocess(Util.nullToStr(row.get(index++)));
+            index++;
+            detail.setStockid(stockid_stock.get(Util.nullToStr(row.get(index++))).getId());
+            if (StringUtils.isEmpty(detail.getStockid())){
+                continue;
+            }
             details.add(detail);
             if (StringUtils.isEmpty(supporter)){
-                supporter = Util.nullToStr(row.get(16));
+                supporter = Util.nullToStr(row.get(14));
             }
             expers.add(Util.nullToStr(row.get(2)));
         }
@@ -1012,7 +1033,7 @@ public class TaskService {
         Map<String,Object> map = new HashMap<String,Object>();
         map.put("creater",user.getName());
         String context = Util.getAskTaskTemplate(map);
-        CibrSysUser supper = userMapper.selectByPrimaryKey(supporter);
+        CibrSysUser supper = name_user.get(supporter);
         emailService.simpleSendEmail(context,supper.getEmail(),Util.EMAIL_SUB_ASKTASK);
     }
 

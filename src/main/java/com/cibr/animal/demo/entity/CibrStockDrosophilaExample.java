@@ -1194,6 +1194,76 @@ public class CibrStockDrosophilaExample {
             addCriterion("statu not between", value1, value2, "statu");
             return (Criteria) this;
         }
+
+        public Criteria andStockindexIsNull() {
+            addCriterion("stockIndex is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockindexIsNotNull() {
+            addCriterion("stockIndex is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockindexEqualTo(String value) {
+            addCriterion("stockIndex =", value, "stockindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockindexNotEqualTo(String value) {
+            addCriterion("stockIndex <>", value, "stockindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockindexGreaterThan(String value) {
+            addCriterion("stockIndex >", value, "stockindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockindexGreaterThanOrEqualTo(String value) {
+            addCriterion("stockIndex >=", value, "stockindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockindexLessThan(String value) {
+            addCriterion("stockIndex <", value, "stockindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockindexLessThanOrEqualTo(String value) {
+            addCriterion("stockIndex <=", value, "stockindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockindexLike(String value) {
+            addCriterion("stockIndex like", value, "stockindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockindexNotLike(String value) {
+            addCriterion("stockIndex not like", value, "stockindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockindexIn(List<String> values) {
+            addCriterion("stockIndex in", values, "stockindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockindexNotIn(List<String> values) {
+            addCriterion("stockIndex not in", values, "stockindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockindexBetween(String value1, String value2) {
+            addCriterion("stockIndex between", value1, value2, "stockindex");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockindexNotBetween(String value1, String value2) {
+            addCriterion("stockIndex not between", value1, value2, "stockindex");
+            return (Criteria) this;
+        }
     }
 
     /**

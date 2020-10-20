@@ -53,7 +53,6 @@ public class ProcessTaskService {
     @Autowired
     private CibrTaskProcessAnalysisMapper analysisMapper;
 
-
     @Autowired
     private CibrTaskProcessSubtaskMapper subtaskMapper;
 
@@ -66,14 +65,19 @@ public class ProcessTaskService {
     @Autowired
     private CibrTaskFailMapper failMapper;
 
+    @Autowired
+    private CibrSysUserMapper userMapper;
+
     @Transactional(rollbackFor = Exception.class)
-    public void createProcessTask(CibrSysUser user, String projectName, String dataType, String principal, List<String> emails, String sampleMsg, String samplePreparation, String libraryPreparation, String dismountData, String bioinformaticsAnalysis, String remarks) {
+    public void createProcessTask(CibrSysUser user, String projectName, String dataType, String principal, List<String> emails, String sampleMsg,String sampleInput, String samplePreparation, String libraryPreparation, String dismountData, String bioinformaticsAnalysis, String remarks) {
+        CibrSysUserGroup group = userService.getGroupByName("基因组学中心");
+        CibrSysUser groupAdmin = userMapper.selectByPrimaryKey(group.getGroupadmin());
         /*任务主表*/
         CibrSysTask task = new CibrSysTask();
         String taskId = Util.getUUID();
         task.setId(taskId);
         task.setTaskstatu(TaskUtil.TASK_STATU_TODO);
-        task.setCurrentuser(samplePreparation);
+        task.setCurrentuser(group.getGroupadmin());
         task.setCreatetime(new Date());
         task.setCreateuser(user.getId());
         task.setTasktype(TaskUtil.PROCESS_TASK);
@@ -90,6 +94,7 @@ public class ProcessTaskService {
         process.setDatatype(dataType);
         process.setPrincipal(principal);
         process.setSampletype(sampleMsg);
+        process.setSampleinput(sampleInput);
         process.setSamplepreparation(samplePreparation);
         process.setLibrarypreparation(libraryPreparation);
         process.setDismountdata(dismountData);
@@ -97,7 +102,6 @@ public class ProcessTaskService {
         process.setRemarks(remarks);
         process.setTaskstatu(TaskUtil.PROCESS_TASK_STATU_SP);
         processMapper.insert(process);
-
         List<CibrTaskProcessEmail> list = new ArrayList<CibrTaskProcessEmail>();
         for (String email : emails){
             CibrTaskProcessEmail processEmail = new CibrTaskProcessEmail();
@@ -117,23 +121,29 @@ public class ProcessTaskService {
         business.setBusiness("创建流程管理任务");
         businessMapper.insert(business);
 
-        List<String> userIds = new ArrayList<String>();
-        userIds.add(samplePreparation);
-        userIds.add(libraryPreparation);
-        userIds.add(dismountData);
-        userIds.add(bioinformaticsAnalysis);
-        List<CibrSysUser> users = userService.findUserByIds(userIds);
-        List<String> addrs = new ArrayList<String>();
-        for (CibrSysUser cibrSysUser : users){
-            addrs.add(cibrSysUser.getEmail());
-        }
+//        List<String> userIds = new ArrayList<String>();
+//        userIds.add(samplePreparation);
+//        userIds.add(libraryPreparation);
+//        userIds.add(dismountData);
+//        userIds.add(bioinformaticsAnalysis);
+//        List<CibrSysUser> users = userService.findUserByIds(userIds);
+//        List<String> addrs = new ArrayList<String>();
+//        for (CibrSysUser cibrSysUser : users){
+//            addrs.add(cibrSysUser.getEmail());
+//        }
+
         StringBuilder sb = new StringBuilder(Util.EMAIL_PREFIX);
         sb.append("您有一个【" + TaskUtil.TASK_PROCESS + "】待处理，请及时查看！");
         sb.append("\n如有疑问，请联系【");
         sb.append(user.getEmail());
         sb.append("】");
         sb.append(Util.EMAIL_SUFFIX);
-        emailService.simpleSendEmail(sb.toString(),addrs,TaskUtil.TASK_PROCESS);
+        emailService.simpleSendEmail(sb.toString(),groupAdmin.getEmail(),TaskUtil.TASK_PROCESS);
+
+        String createrEmail = "";
+        createrEmail += Util.EMAIL_PREFIX + "您的测序任务【" + projectName + "】提交成功！" +
+                "\n如有疑问，请联系【" + groupAdmin.getEmail() + "】" + Util.EMAIL_SUFFIX;
+        emailService.simpleSendEmail(createrEmail,user.getEmail(),TaskUtil.TASK_PROCESS);
     }
 
     public List<CibrTaskProcess> findAllPorcess(){
@@ -461,10 +471,11 @@ public class ProcessTaskService {
             }else if ("real".equals(type)){
                 lib.setCurrentstatu("02");
                 list.add(createDismountData(user,lib,processId));
-            }else {
+            }else if ("complete".equals(type)){
                 lib.setCurrentstatu("02");
             }
         }
+
         libraryMapper.batchUpdate(libs);
         if ("real".equals(type)){
 //            CibrTaskProcessSubtask subtask = subtaskMapper.selectByPrimaryKey(subId);
@@ -524,7 +535,7 @@ public class ProcessTaskService {
             }
             else if ("complete".equals(type)){
                 dismountdata.setCurrentstatu("02");
-            }else {
+            }else if ("real".equals(type)){
                 dismountdata.setCurrentstatu("02");
                 analyses.add(createAnalyse(dismountdata,processId,user));
             }
@@ -1513,6 +1524,49 @@ public class ProcessTaskService {
         task.setTaskstatu(TaskUtil.TASK_STATU_SUCCESS);
         task.setHandletime(new Date());
         cibrSysTaskMapper.updateByPrimaryKey(task);
+    }
+
+    public List<CibrTaskProcessEmail> findProcessEmails(String processId) {
+        CibrTaskProcessEmailExample emailExample = new CibrTaskProcessEmailExample();
+        emailExample.createCriteria().andProcessidEqualTo(processId);
+        return processEmailMapper.selectByExample(emailExample);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateProcess(CibrTaskProcess process, CibrSysUser user) {
+        process.setTaskstatu("11");
+        processMapper.updateByPrimaryKey(process);
+        Map<String, CibrSysUser> uuid_user = userService.getuuid_userObject();
+
+        String emailEnd = "\n如有疑问，请联系【" + user.getEmail() + "】" + Util.EMAIL_SUFFIX;
+        String inputEmail = Util.EMAIL_PREFIX + "您有一个【测序流程】任务，项目名称【" + process.getProjectname()
+                + "】，您被指定为【样品录入负责人】，请及时处理！" + emailEnd;
+        CibrSysUser sampleInput = uuid_user.get(process.getSampleinput());
+        emailService.simpleSendEmail(inputEmail,sampleInput.getEmail(),TaskUtil.TASK_PROCESS);
+
+        String makeEmail = Util.EMAIL_PREFIX + "您有一个【测序流程】任务，项目名称【" + process.getProjectname()
+                + "】，您被指定为【样品制备负责人】，请及时处理！" + emailEnd;
+        CibrSysUser make = uuid_user.get(process.getSamplepreparation());
+        emailService.simpleSendEmail(makeEmail,make.getEmail(),TaskUtil.TASK_PROCESS);
+
+        String libEmail = Util.EMAIL_PREFIX + "您有一个【测序流程】任务，项目名称【" + process.getProjectname()
+                + "】，您被指定为【文库制备负责人】，请及时处理！" + emailEnd;
+        CibrSysUser lib = uuid_user.get(process.getSamplepreparation());
+        emailService.simpleSendEmail(libEmail,lib.getEmail(),TaskUtil.TASK_PROCESS);
+
+        String disEmail = Util.EMAIL_PREFIX + "您有一个【测序流程】任务，项目名称【" + process.getProjectname()
+                + "】，您被指定为【测序分析负责人】，请及时处理！" + emailEnd;
+        CibrSysUser dis = uuid_user.get(process.getSamplepreparation());
+        emailService.simpleSendEmail(disEmail,dis.getEmail(),TaskUtil.TASK_PROCESS);
+
+        String bioEmail = Util.EMAIL_PREFIX + "您有一个【测序流程】任务，项目名称【" + process.getProjectname()
+                + "】，您被指定为【生信分析负责人】，请及时处理！" + emailEnd;
+        CibrSysUser bio = uuid_user.get(process.getSamplepreparation());
+        emailService.simpleSendEmail(bioEmail,bio.getEmail(),TaskUtil.TASK_PROCESS);
+    }
+
+    public CibrSysTask selectTask(String taskid) {
+        return cibrSysTaskMapper.selectByPrimaryKey(taskid);
     }
 }
 
