@@ -110,13 +110,12 @@ public class TaskController {
                              @RequestBody Map requestBody) {
         ReturnData ret = new ReturnData();
         try {
-            Integer currentPage = (Integer) requestBody.get("currentPage");
-            Integer pageSize = (Integer) requestBody.get("pageSize");
             String pageLocation = (String) requestBody.get("pageLocation");
 
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
-            Map<String, Object> allTask = taskService.findAllTask(currentPage, pageSize, pageLocation, user);
+//            Map<String, Object> allTask = taskService.findAllTask(currentPage, pageSize, pageLocation, user);
+            Map<String, Object> allTask = taskService.findAllTask(user,pageLocation);
             ret.setRetMap(allTask);
             ret.setCode("200");
         } catch (Exception e) {
@@ -344,12 +343,13 @@ public class TaskController {
             String dismountData = (String) requestBody.get("dismountData");
             String bioinformaticsAnalysis = (String) requestBody.get("bioinformaticsAnalysis");
             String remarks = (String) requestBody.get("remarks");
+            String projectDesc = (String) requestBody.get("projectDesc");
 
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
 
             processTaskService.createProcessTask(user,projectName,dataType,principal,emails,sampleMsg,sampleInput,
-                    samplePreparation,libraryPreparation,dismountData,bioinformaticsAnalysis,remarks);
+                    samplePreparation,libraryPreparation,dismountData,bioinformaticsAnalysis,remarks,projectDesc,request);
 
             ret.setCode("200");
         }catch (Exception e) {
@@ -448,6 +448,26 @@ public class TaskController {
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
             taskService.importOrderTask(user,file);
+        } catch (Exception e) {
+            response.setStatus(500);
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/task/deleteTask")
+    public String deleteTask(HttpServletRequest request,
+                              HttpServletResponse response,
+                             @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String taskId = (String) requestBody.get("taskId");
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            taskService.deleteTask(taskId,user);
+            ret.setCode("200");
         } catch (Exception e) {
             response.setStatus(500);
             ret.setCode("E500");

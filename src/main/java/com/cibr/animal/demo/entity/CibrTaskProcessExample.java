@@ -1534,6 +1534,76 @@ public class CibrTaskProcessExample {
             addCriterion("remarks not between", value1, value2, "remarks");
             return (Criteria) this;
         }
+
+        public Criteria andProjectdescIsNull() {
+            addCriterion("projectDesc is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectdescIsNotNull() {
+            addCriterion("projectDesc is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectdescEqualTo(String value) {
+            addCriterion("projectDesc =", value, "projectdesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectdescNotEqualTo(String value) {
+            addCriterion("projectDesc <>", value, "projectdesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectdescGreaterThan(String value) {
+            addCriterion("projectDesc >", value, "projectdesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectdescGreaterThanOrEqualTo(String value) {
+            addCriterion("projectDesc >=", value, "projectdesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectdescLessThan(String value) {
+            addCriterion("projectDesc <", value, "projectdesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectdescLessThanOrEqualTo(String value) {
+            addCriterion("projectDesc <=", value, "projectdesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectdescLike(String value) {
+            addCriterion("projectDesc like", value, "projectdesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectdescNotLike(String value) {
+            addCriterion("projectDesc not like", value, "projectdesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectdescIn(List<String> values) {
+            addCriterion("projectDesc in", values, "projectdesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectdescNotIn(List<String> values) {
+            addCriterion("projectDesc not in", values, "projectdesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectdescBetween(String value1, String value2) {
+            addCriterion("projectDesc between", value1, value2, "projectdesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectdescNotBetween(String value1, String value2) {
+            addCriterion("projectDesc not between", value1, value2, "projectdesc");
+            return (Criteria) this;
+        }
     }
 
     /**

@@ -471,7 +471,7 @@
                                         left join cibr_animal_drosophila droso on stock.drosophila_id = droso.id
                                         left join cibr_sys_environment env on stock.environment = env.id
     where stock.statu != '09'
-    order by droso.selfIndex,stock.contanerNmuber
+    order by stock.createTime desc,droso.selfIndex,stock.contanerNmuber
   </select>
 
   <resultMap id="stock_animal" type="com.cibr.animal.demo.entity.CibrStockDrosophila">

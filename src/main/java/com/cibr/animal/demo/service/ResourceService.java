@@ -40,7 +40,7 @@ public class ResourceService {
 
     public Map<String,Object> getAllResource(){
         Map<String,Object> retMap = new HashMap<>();
-        List<CibrSysUser> feeds = userService.getUsersByRole("02");
+        List<CibrSysUser> feeds = userService.getUsersByRole("03");
         List<CibrSysMaterial> materials = meterialService.getAllMerialOnly();
         retMap.put("feeds",feeds);
         retMap.put("meterials",materials);

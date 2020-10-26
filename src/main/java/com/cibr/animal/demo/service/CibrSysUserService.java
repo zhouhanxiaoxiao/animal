@@ -117,4 +117,12 @@ public class CibrSysUserService {
         }
         return retMap;
     }
+
+    public CibrSysUser getGroupAdmin(String userId){
+        CibrSysUser user = userMapper.selectByPrimaryKey(userId);
+        CibrSysUserGroup group = groupMapper.selectByPrimaryKey(user.getRoleid());
+        return userMapper.selectByPrimaryKey(group.getGroupadmin());
+    }
+
+    
 }

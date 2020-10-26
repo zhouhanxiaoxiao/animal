@@ -54,9 +54,10 @@ public class SuggestController {
         try {
             Map<String, Object> result = new HashMap<String, Object>();
             String comment = String.valueOf(requestBody.get("comment"));
+            String replayId = String.valueOf(requestBody.get("replayId"));
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
-            suggestService.createComment(comment,user);
+            suggestService.createComment(comment,replayId,user);
             ret.setCode("200");
             ret.setRetMap(result);
         } catch (Exception e) {

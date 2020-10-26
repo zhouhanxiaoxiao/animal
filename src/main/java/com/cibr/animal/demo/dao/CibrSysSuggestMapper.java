@@ -94,4 +94,6 @@ public interface CibrSysSuggestMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(CibrSysSuggest record);
+
+    List<CibrSysSuggest> selectAllReply();
 }

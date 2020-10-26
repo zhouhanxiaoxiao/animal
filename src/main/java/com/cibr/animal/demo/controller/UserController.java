@@ -52,7 +52,8 @@ public class UserController {
     ) {
         ReturnData ret = new ReturnData();
         try {
-            List<CibrSysUser> allUsers = loginService.findAllUsers();
+//            List<CibrSysUser> allUsers = loginService.findAllUsers();
+            List<CibrSysUser> allUsers = userService.selectAllUserWithDesc();
             Map<String, Object> retMap = new HashMap<>();
             retMap.put("users", allUsers);
             ret.setRetMap(retMap);

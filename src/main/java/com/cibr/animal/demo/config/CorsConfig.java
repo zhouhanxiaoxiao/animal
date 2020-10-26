@@ -33,6 +33,7 @@ public class CorsConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/")
                 .excludePathPatterns("/wechat/**")
                 .excludePathPatterns("/static/**")
+                .excludePathPatterns("/emailTmp/**")
                 .excludePathPatterns("/js/**")
                 .excludePathPatterns("/**.html")
                 .excludePathPatterns("**/**.ico")

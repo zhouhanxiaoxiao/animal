@@ -36,7 +36,7 @@ public class EmailService{
             //1.检测邮件
             checkMail(mailVo);
             //2.发送邮件
-            sendMimeMail(mailVo);
+            sendMimeMail(mailVo,false);
             //3.保存邮件
             return saveMail(mailVo);
         } catch (Exception e) {
@@ -47,8 +47,27 @@ public class EmailService{
             return saveMail(mailVo);
         }
     }
+
+    @Async
+    public CibrSysEmail sendHtmlMail(CibrSysEmail mailVo) {
+        try {
+            //1.检测邮件
+            checkMail(mailVo);
+            //2.发送邮件
+            sendMimeMail(mailVo,true);
+            //3.保存邮件
+            return saveMail(mailVo);
+        } catch (Exception e) {
+            mailVo.setEmailStatus("fail");
+            if (e instanceof EmailException){
+                mailVo.setEmailError("邮箱地址不存在！");
+            }
+            return saveMail(mailVo);
+        }
+    }
+
     //构建复杂邮件信息类
-    private void sendMimeMail(CibrSysEmail mailVo) {
+    private void sendMimeMail(CibrSysEmail mailVo,boolean html) {
         try {
             //true表示支持复杂类型
             MimeMessageHelper messageHelper = new MimeMessageHelper(mailSender.createMimeMessage(), true);
@@ -61,7 +80,7 @@ public class EmailService{
             //邮件主题
             messageHelper.setSubject(mailVo.getEmailSubject());
             //邮件内容
-            messageHelper.setText(mailVo.getEmailText());
+            messageHelper.setText(mailVo.getEmailText(),html);
             //抄送
             if (!StringUtils.isEmpty(mailVo.getEmailCc())) {
                 messageHelper.setCc(mailVo.getEmailCc().split(","));
@@ -131,5 +150,10 @@ public class EmailService{
             CibrSysEmail cibrSysEmail = createCibrSysEmail(addr, context, sub);
             sendMail(cibrSysEmail);
         }
+    }
+
+    public void simpleSendHtmlEmail(String context,String addr,String sub){
+        CibrSysEmail cibrSysEmail = createCibrSysEmail(addr, context, sub);
+        sendHtmlMail(cibrSysEmail);
     }
 }

@@ -27,6 +27,8 @@ public class TaskUtil {
     public static final String TASK_STATU_SUCCESS = "02";
     /**任务状态：失败*/
     public static final String TASK_STATU_FAIL = "03";
+    /**任务状态：删除*/
+    public static final String TASK_STATU_DELETE = "09";
 
     /*申请任务状态*/
     /**任务状态：待确认*/
@@ -52,6 +54,11 @@ public class TaskUtil {
     public static final String PROCESS_TASK_STATU_SP = "10";
     /**任务状态：样品制备*/
     public static final String PROCESS_TASK_STATU_SPWAIT = "20";
+    /**任务状态：PI确认*/
+    public static final String PROCESS_TASK_STATU_PICONFIRM = "21";
+    /**任务状态：管理员确认*/
+    public static final String PROCESS_TASK_STATU_ADMINCONFIRM = "22";
+
     /**任务状态：文库制备*/
     public static final String PROCESS_TASK_STATU_LIB = "30";
     /**任务状态：测序分析*/
@@ -62,6 +69,9 @@ public class TaskUtil {
     public static final String PROCESS_TASK_STATU_READY = "60";
     /**任务状态：待创建者确认*/
     public static final String PROCESS_TASK_STATU_COMPLETE = "70";
+    public static final String PROCESS_TASK_STATU_ADMINREFUSE = "71";
+    public static final String PROCESS_TASK_STATU_PIREFUSE = "72";
+
 
     /**任务状态：待处理*/
     public static final String PARTNER_TASK_UNDO = "00";

@@ -103,4 +103,10 @@ public interface CibrSysTaskMapper {
     int selectCount(@Param("condition") Map condition);
 
     int batchUpdate(List<CibrSysTask> list);
+
+    List<CibrSysTask> selectAskTask(@Param("userId") String userId,@Param("flag") String pageLocation);
+
+    List<CibrSysTask> selectPartnerTask(@Param("userId")String userId,@Param("flag") String pageLocation);
+
+    List<CibrSysTask> selectProcessTask(@Param("userId")String userId);
 }

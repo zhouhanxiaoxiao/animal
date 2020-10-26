@@ -36,9 +36,17 @@ public class HomeController {
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
             int allStrainNumber = animalService.getAllStrainNumber();
+            int stockNumber = animalService.getallstockNumber();
+            int oneMonthStockNumber = animalService.getOneMonthStockNumber();
+            int oneMonthStrainNumber = animalService.getOneMonthStrainNumber();
             int selfTaskNumber = taskService.findSelfTaskNumber(user.getId());
             Map<String,Object> retMap = new HashMap<>();
             retMap.put("allStrainNumber",allStrainNumber);
+
+            retMap.put("stockNumber",stockNumber);
+            retMap.put("oneMonthStockNumber",oneMonthStockNumber);
+            retMap.put("oneMonthStrainNumber",oneMonthStrainNumber);
+
             retMap.put("selfTaskNumber",selfTaskNumber);
             ret.setRetMap(retMap);
             ret.setCode("200");

@@ -1,6 +1,7 @@
 package com.cibr.animal.demo.entity;
 
 import java.util.Date;
+import java.util.List;
 
 public class CibrSysSuggest {
     /**
@@ -43,7 +44,17 @@ public class CibrSysSuggest {
      */
     private String replyto;
 
+    private List<CibrSysSuggest> replys;
+
     private CibrSysUser user;
+
+    public List<CibrSysSuggest> getReplys() {
+        return replys;
+    }
+
+    public void setReplys(List<CibrSysSuggest> replys) {
+        this.replys = replys;
+    }
 
     public CibrSysUser getUser() {
         return user;
