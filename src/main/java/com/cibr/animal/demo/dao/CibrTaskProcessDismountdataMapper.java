@@ -5,6 +5,7 @@ import com.cibr.animal.demo.entity.CibrTaskProcessDismountdataExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CibrTaskProcessDismountdataMapper {
     /**
@@ -98,4 +99,8 @@ public interface CibrTaskProcessDismountdataMapper {
     int batchInsert(List<CibrTaskProcessDismountdata> list);
 
     void batchUpdate(List<CibrTaskProcessDismountdata> list);
+
+    List<CibrTaskProcessDismountdata> selectWithCommitNumber(@Param("processId")String processId, @Param("currentStatu")String currentStatu);
+
+    List<Map<String,Object>> selectMake(@Param("list")List<String> list);
 }

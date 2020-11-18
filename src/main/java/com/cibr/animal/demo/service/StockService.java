@@ -10,6 +10,7 @@ import com.cibr.animal.demo.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -176,6 +177,9 @@ public class StockService {
                 CibrStockDrosophila stock = new CibrStockDrosophila();
                 stock.setId(Util.getUUID());
                 String selfNum = row.get(0);
+                if (StringUtils.isEmpty(selfNum)){
+                    continue;
+                }
                 stock.setDrosophilaId(Util.nullToStr(selfNum_uuid.get(selfNum)));
                 int index = 1;
                 stock.setContanertype(row.get(index++));

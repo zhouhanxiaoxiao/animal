@@ -11,6 +11,21 @@ import java.util.UUID;
 
 public class Util {
 
+    /** 审核人 */
+    public static final String ROLE_TYPE_REVIEWER = "40";
+
+    /** 实验协助 */
+    public static final String ROLE_TYPE_SUPPORTER = "03";
+
+    /** 其他 */
+    public static final String ROLE_TYPE_OTHER = "09";
+
+    /** 其他 */
+    public static final String ROLE_TYPE_ADMIN = "999999";
+
+    /** 实验员 */
+    public static final String ROLE_TYPE_EXPER = "01";
+
     public static final String EMAIL_SUB_VERCODE = "验证码";
 
     public static final String EMAIL_SUB_ASKTASK = "使用申请";
@@ -188,6 +203,9 @@ public class Util {
         switch (sampletype){
             case "01":
                 switch (databaseType){
+                    case "05":
+                    case "06":
+                    case "07":
                     case "21":
                     case "22":
                     case "23":
@@ -197,6 +215,10 @@ public class Util {
                     case "32":
                     case "33":
                         return "ZNR";
+                    case "01":
+                    case "02":
+                    case "03":
+                    case "04":
                     case "26":
                     case "27":
                     case "28":

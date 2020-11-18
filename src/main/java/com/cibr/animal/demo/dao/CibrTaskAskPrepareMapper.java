@@ -94,4 +94,8 @@ public interface CibrTaskAskPrepareMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(CibrTaskAskPrepare record);
+
+    List<CibrTaskAskPrepare> getAllPrepare(@Param("askId") String askId);
+
+    void batchUpdate(@Param("list") List<CibrTaskAskPrepare> list);
 }

@@ -2524,6 +2524,286 @@ public class CibrTaskProcessSamplemakeExample {
             addCriterion("transform not between", value1, value2, "transform");
             return (Criteria) this;
         }
+
+        public Criteria andM260280IsNull() {
+            addCriterion("m260280 is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260280IsNotNull() {
+            addCriterion("m260280 is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260280EqualTo(String value) {
+            addCriterion("m260280 =", value, "m260280");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260280NotEqualTo(String value) {
+            addCriterion("m260280 <>", value, "m260280");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260280GreaterThan(String value) {
+            addCriterion("m260280 >", value, "m260280");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260280GreaterThanOrEqualTo(String value) {
+            addCriterion("m260280 >=", value, "m260280");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260280LessThan(String value) {
+            addCriterion("m260280 <", value, "m260280");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260280LessThanOrEqualTo(String value) {
+            addCriterion("m260280 <=", value, "m260280");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260280Like(String value) {
+            addCriterion("m260280 like", value, "m260280");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260280NotLike(String value) {
+            addCriterion("m260280 not like", value, "m260280");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260280In(List<String> values) {
+            addCriterion("m260280 in", values, "m260280");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260280NotIn(List<String> values) {
+            addCriterion("m260280 not in", values, "m260280");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260280Between(String value1, String value2) {
+            addCriterion("m260280 between", value1, value2, "m260280");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260280NotBetween(String value1, String value2) {
+            addCriterion("m260280 not between", value1, value2, "m260280");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260230IsNull() {
+            addCriterion("m260230 is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260230IsNotNull() {
+            addCriterion("m260230 is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260230EqualTo(String value) {
+            addCriterion("m260230 =", value, "m260230");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260230NotEqualTo(String value) {
+            addCriterion("m260230 <>", value, "m260230");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260230GreaterThan(String value) {
+            addCriterion("m260230 >", value, "m260230");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260230GreaterThanOrEqualTo(String value) {
+            addCriterion("m260230 >=", value, "m260230");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260230LessThan(String value) {
+            addCriterion("m260230 <", value, "m260230");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260230LessThanOrEqualTo(String value) {
+            addCriterion("m260230 <=", value, "m260230");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260230Like(String value) {
+            addCriterion("m260230 like", value, "m260230");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260230NotLike(String value) {
+            addCriterion("m260230 not like", value, "m260230");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260230In(List<String> values) {
+            addCriterion("m260230 in", values, "m260230");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260230NotIn(List<String> values) {
+            addCriterion("m260230 not in", values, "m260230");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260230Between(String value1, String value2) {
+            addCriterion("m260230 between", value1, value2, "m260230");
+            return (Criteria) this;
+        }
+
+        public Criteria andM260230NotBetween(String value1, String value2) {
+            addCriterion("m260230 not between", value1, value2, "m260230");
+            return (Criteria) this;
+        }
+
+        public Criteria andRqnIsNull() {
+            addCriterion("rqn is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRqnIsNotNull() {
+            addCriterion("rqn is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRqnEqualTo(String value) {
+            addCriterion("rqn =", value, "rqn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRqnNotEqualTo(String value) {
+            addCriterion("rqn <>", value, "rqn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRqnGreaterThan(String value) {
+            addCriterion("rqn >", value, "rqn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRqnGreaterThanOrEqualTo(String value) {
+            addCriterion("rqn >=", value, "rqn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRqnLessThan(String value) {
+            addCriterion("rqn <", value, "rqn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRqnLessThanOrEqualTo(String value) {
+            addCriterion("rqn <=", value, "rqn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRqnLike(String value) {
+            addCriterion("rqn like", value, "rqn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRqnNotLike(String value) {
+            addCriterion("rqn not like", value, "rqn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRqnIn(List<String> values) {
+            addCriterion("rqn in", values, "rqn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRqnNotIn(List<String> values) {
+            addCriterion("rqn not in", values, "rqn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRqnBetween(String value1, String value2) {
+            addCriterion("rqn between", value1, value2, "rqn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRqnNotBetween(String value1, String value2) {
+            addCriterion("rqn not between", value1, value2, "rqn");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitIsNull() {
+            addCriterion("concentrationunit is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitIsNotNull() {
+            addCriterion("concentrationunit is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitEqualTo(String value) {
+            addCriterion("concentrationunit =", value, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitNotEqualTo(String value) {
+            addCriterion("concentrationunit <>", value, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitGreaterThan(String value) {
+            addCriterion("concentrationunit >", value, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitGreaterThanOrEqualTo(String value) {
+            addCriterion("concentrationunit >=", value, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitLessThan(String value) {
+            addCriterion("concentrationunit <", value, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitLessThanOrEqualTo(String value) {
+            addCriterion("concentrationunit <=", value, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitLike(String value) {
+            addCriterion("concentrationunit like", value, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitNotLike(String value) {
+            addCriterion("concentrationunit not like", value, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitIn(List<String> values) {
+            addCriterion("concentrationunit in", values, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitNotIn(List<String> values) {
+            addCriterion("concentrationunit not in", values, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitBetween(String value1, String value2) {
+            addCriterion("concentrationunit between", value1, value2, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitNotBetween(String value1, String value2) {
+            addCriterion("concentrationunit not between", value1, value2, "concentrationunit");
+            return (Criteria) this;
+        }
     }
 
     /**

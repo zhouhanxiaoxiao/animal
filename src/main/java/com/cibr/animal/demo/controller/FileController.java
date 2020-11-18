@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -300,6 +301,35 @@ public class FileController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
+    @RequestMapping("/file/import/confirmsImport")
+    public String confirmsImport(HttpServletRequest request,
+                                 HttpServletResponse response) {
+        ReturnData ret = new ReturnData();
+        try {
+            String token = request.getHeader("token");
+            String processId = request.getHeader("processId");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            Map<String, Object> result = new HashMap<String, Object>();
+            List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
+            File dist = fileService.saveFile(files,processId,user);
+            if (dist == null){
+                response.setStatus(500);
+                ret.setCode("E500");
+            }else {
+                List<List<String>> rows = FileUtil.getRows(dist);
+                processTaskService.confirmsImport(rows,user,processId);
+                ret.setCode("200");
+                ret.setRetMap(result);
+            }
+        } catch (Exception e) {
+            response.setStatus(500);
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
     @RequestMapping("/file/import/analysisImport")
     public String analysisImport(HttpServletRequest request,
                                  HttpServletResponse response) {
@@ -355,5 +385,24 @@ public class FileController {
             e.printStackTrace();
         }
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/fileTmp/{fileId}")
+    public void fileTmpDown(@PathVariable String fileId,HttpServletResponse response) throws IOException {
+        File file = fileService.getFileById(fileId);
+        response.setHeader("Content-disposition", "attachment; filename=" + file.getName());
+        response.setContentType("application/txt");
+        OutputStream outputStream = response.getOutputStream();
+        InputStream input=new FileInputStream(file);
+        //3、 写出文件--输出流
+        byte[] buff =new byte[1024];
+        int index=0;
+        //4、执行 写出操作
+        while((index= input.read(buff))!= -1){
+            outputStream.write(buff, 0, index);
+            outputStream.flush();
+        }
+        outputStream.close();
+        input.close();
     }
 }

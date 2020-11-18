@@ -1354,6 +1354,276 @@ public class CibrTaskProcessDismountdataExample {
             addCriterion("updateUser not between", value1, value2, "updateuser");
             return (Criteria) this;
         }
+
+        public Criteria andSuperaccountIsNull() {
+            addCriterion("superAccount is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperaccountIsNotNull() {
+            addCriterion("superAccount is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperaccountEqualTo(String value) {
+            addCriterion("superAccount =", value, "superaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperaccountNotEqualTo(String value) {
+            addCriterion("superAccount <>", value, "superaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperaccountGreaterThan(String value) {
+            addCriterion("superAccount >", value, "superaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperaccountGreaterThanOrEqualTo(String value) {
+            addCriterion("superAccount >=", value, "superaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperaccountLessThan(String value) {
+            addCriterion("superAccount <", value, "superaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperaccountLessThanOrEqualTo(String value) {
+            addCriterion("superAccount <=", value, "superaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperaccountLike(String value) {
+            addCriterion("superAccount like", value, "superaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperaccountNotLike(String value) {
+            addCriterion("superAccount not like", value, "superaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperaccountIn(List<String> values) {
+            addCriterion("superAccount in", values, "superaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperaccountNotIn(List<String> values) {
+            addCriterion("superAccount not in", values, "superaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperaccountBetween(String value1, String value2) {
+            addCriterion("superAccount between", value1, value2, "superaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperaccountNotBetween(String value1, String value2) {
+            addCriterion("superAccount not between", value1, value2, "superaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpwdIsNull() {
+            addCriterion("superPwd is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpwdIsNotNull() {
+            addCriterion("superPwd is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpwdEqualTo(String value) {
+            addCriterion("superPwd =", value, "superpwd");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpwdNotEqualTo(String value) {
+            addCriterion("superPwd <>", value, "superpwd");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpwdGreaterThan(String value) {
+            addCriterion("superPwd >", value, "superpwd");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpwdGreaterThanOrEqualTo(String value) {
+            addCriterion("superPwd >=", value, "superpwd");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpwdLessThan(String value) {
+            addCriterion("superPwd <", value, "superpwd");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpwdLessThanOrEqualTo(String value) {
+            addCriterion("superPwd <=", value, "superpwd");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpwdLike(String value) {
+            addCriterion("superPwd like", value, "superpwd");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpwdNotLike(String value) {
+            addCriterion("superPwd not like", value, "superpwd");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpwdIn(List<String> values) {
+            addCriterion("superPwd in", values, "superpwd");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpwdNotIn(List<String> values) {
+            addCriterion("superPwd not in", values, "superpwd");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpwdBetween(String value1, String value2) {
+            addCriterion("superPwd between", value1, value2, "superpwd");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpwdNotBetween(String value1, String value2) {
+            addCriterion("superPwd not between", value1, value2, "superpwd");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpathIsNull() {
+            addCriterion("superPath is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpathIsNotNull() {
+            addCriterion("superPath is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpathEqualTo(String value) {
+            addCriterion("superPath =", value, "superpath");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpathNotEqualTo(String value) {
+            addCriterion("superPath <>", value, "superpath");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpathGreaterThan(String value) {
+            addCriterion("superPath >", value, "superpath");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpathGreaterThanOrEqualTo(String value) {
+            addCriterion("superPath >=", value, "superpath");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpathLessThan(String value) {
+            addCriterion("superPath <", value, "superpath");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpathLessThanOrEqualTo(String value) {
+            addCriterion("superPath <=", value, "superpath");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpathLike(String value) {
+            addCriterion("superPath like", value, "superpath");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpathNotLike(String value) {
+            addCriterion("superPath not like", value, "superpath");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpathIn(List<String> values) {
+            addCriterion("superPath in", values, "superpath");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpathNotIn(List<String> values) {
+            addCriterion("superPath not in", values, "superpath");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpathBetween(String value1, String value2) {
+            addCriterion("superPath between", value1, value2, "superpath");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperpathNotBetween(String value1, String value2) {
+            addCriterion("superPath not between", value1, value2, "superpath");
+            return (Criteria) this;
+        }
+
+        public Criteria andLasttimeIsNull() {
+            addCriterion("lastTime is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLasttimeIsNotNull() {
+            addCriterion("lastTime is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLasttimeEqualTo(Date value) {
+            addCriterion("lastTime =", value, "lasttime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLasttimeNotEqualTo(Date value) {
+            addCriterion("lastTime <>", value, "lasttime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLasttimeGreaterThan(Date value) {
+            addCriterion("lastTime >", value, "lasttime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLasttimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("lastTime >=", value, "lasttime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLasttimeLessThan(Date value) {
+            addCriterion("lastTime <", value, "lasttime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLasttimeLessThanOrEqualTo(Date value) {
+            addCriterion("lastTime <=", value, "lasttime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLasttimeIn(List<Date> values) {
+            addCriterion("lastTime in", values, "lasttime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLasttimeNotIn(List<Date> values) {
+            addCriterion("lastTime not in", values, "lasttime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLasttimeBetween(Date value1, Date value2) {
+            addCriterion("lastTime between", value1, value2, "lasttime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLasttimeNotBetween(Date value1, Date value2) {
+            addCriterion("lastTime not between", value1, value2, "lasttime");
+            return (Criteria) this;
+        }
     }
 
     /**

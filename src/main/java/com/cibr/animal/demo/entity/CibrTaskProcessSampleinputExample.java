@@ -1924,6 +1924,76 @@ public class CibrTaskProcessSampleinputExample {
             addCriterion("rowIndex not between", value1, value2, "rowindex");
             return (Criteria) this;
         }
+
+        public Criteria andConcentrationunitIsNull() {
+            addCriterion("concentrationunit is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitIsNotNull() {
+            addCriterion("concentrationunit is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitEqualTo(String value) {
+            addCriterion("concentrationunit =", value, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitNotEqualTo(String value) {
+            addCriterion("concentrationunit <>", value, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitGreaterThan(String value) {
+            addCriterion("concentrationunit >", value, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitGreaterThanOrEqualTo(String value) {
+            addCriterion("concentrationunit >=", value, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitLessThan(String value) {
+            addCriterion("concentrationunit <", value, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitLessThanOrEqualTo(String value) {
+            addCriterion("concentrationunit <=", value, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitLike(String value) {
+            addCriterion("concentrationunit like", value, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitNotLike(String value) {
+            addCriterion("concentrationunit not like", value, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitIn(List<String> values) {
+            addCriterion("concentrationunit in", values, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitNotIn(List<String> values) {
+            addCriterion("concentrationunit not in", values, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitBetween(String value1, String value2) {
+            addCriterion("concentrationunit between", value1, value2, "concentrationunit");
+            return (Criteria) this;
+        }
+
+        public Criteria andConcentrationunitNotBetween(String value1, String value2) {
+            addCriterion("concentrationunit not between", value1, value2, "concentrationunit");
+            return (Criteria) this;
+        }
     }
 
     /**

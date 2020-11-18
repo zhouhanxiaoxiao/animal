@@ -437,63 +437,63 @@
 
     <select id="selectAskTask" resultMap="BaseResultMapask">
         select distinct
-               task.id             as task_id,
-               task.tasktype       as task_tasktype,
-               task.createtime     as task_createtime,
-               task.createuser     as task_createuser,
-               task.taskstatu      as task_taskstatu,
-               task.currentuser    as task_currentuser,
-               task.handletime     as task_handletime,
-               task.taskdesc       as task_taskdesc,
-               ctad.id             as ctad_id,
-               ctad.creater        as ctad_creater,
-               ctad.createtime     as ctad_createtime,
-               ctad.remarks        as ctad_remarks,
-               ctad.urgent         as ctad_urgent,
-               ctad.taskid         as ctad_taskid,
-               ctad.currentStatu   as ctad_currentStatu,
-               ctad.currentHandler as ctad_currentHandler
+        task.id as task_id,
+        task.tasktype as task_tasktype,
+        task.createtime as task_createtime,
+        task.createuser as task_createuser,
+        task.taskstatu as task_taskstatu,
+        task.currentuser as task_currentuser,
+        task.handletime as task_handletime,
+        task.taskdesc as task_taskdesc,
+        ctad.id as ctad_id,
+        ctad.creater as ctad_creater,
+        ctad.createtime as ctad_createtime,
+        ctad.remarks as ctad_remarks,
+        ctad.urgent as ctad_urgent,
+        ctad.taskid as ctad_taskid,
+        ctad.currentStatu as ctad_currentStatu,
+        ctad.currentHandler as ctad_currentHandler
         from cibr_sys_task task
-                 left join cibr_task_ask_drosophila ctad
-                     on task.id = ctad.taskid
-                 left join cibr_sys_user csu on (task.createuser = csu.ID or task.currentuser = csu.ID)
+        left join cibr_task_ask_drosophila ctad
+        on task.id = ctad.taskid
+        left join cibr_sys_user csu on (task.createuser = csu.ID or task.currentuser = csu.ID)
         where 1=1
-          <if test="flag == 'mytask'">
-              and csu.ID = '${userId}'
-          </if>
-          and task.taskstatu != '09'
-          and task.tasktype = '02';
+        <if test="flag == 'mytask'">
+            and csu.ID = '${userId}'
+        </if>
+        and task.taskstatu != '09'
+        and task.tasktype = '02';
 
 
     </select>
 
     <select id="selectPartnerTask" resultMap="BaseResultMappartner">
         select distinct
-               task.id          as task_id,
-               task.tasktype    as task_tasktype,
-               task.createtime  as task_createtime,
-               task.createuser  as task_createuser,
-               task.taskstatu   as task_taskstatu,
-               task.currentuser as task_currentuser,
-               task.handletime  as task_handletime,
-               task.taskdesc    as task_taskdesc,
-               ctp.id           as ctp_id,
-               ctp.taskId       as ctp_taskId,
-               ctp.recordId     as ctp_recordId,
-               ctp.creater      as ctp_creater,
-               ctp.createTime   as ctp_createTime,
-               ctp.remark       as ctp_remark,
-               ctp.taskstatu    as ctp_taskstatu
+        task.id as task_id,
+        task.tasktype as task_tasktype,
+        task.createtime as task_createtime,
+        task.createuser as task_createuser,
+        task.taskstatu as task_taskstatu,
+        task.currentuser as task_currentuser,
+        task.handletime as task_handletime,
+        task.taskdesc as task_taskdesc,
+        ctp.id as ctp_id,
+        ctp.taskId as ctp_taskId,
+        ctp.recordId as ctp_recordId,
+        ctp.creater as ctp_creater,
+        ctp.createTime as ctp_createTime,
+        ctp.remark as ctp_remark,
+        ctp.taskstatu as ctp_taskstatu
         from cibr_sys_task task
-                 left join cibr_task_partner ctp
-                     on task.id = ctp.id
-                 left join cibr_sys_user csu on (task.currentuser = csu.ID or task.createuser = csu.ID)
+        left join cibr_task_partner ctp
+        on task.id = ctp.id
+        left join cibr_sys_user csu on (task.currentuser = csu.ID or task.createuser = csu.ID)
         where 1=1
-          <if test="flag == 'mytask'">
-              and csu.ID = '${userId}'
-          </if>
-          and task.taskstatu != '09'
-          and task.tasktype = '04';
+        <if test="flag == 'mytask'">
+            and csu.ID = '${userId}'
+        </if>
+        and task.taskstatu != '09'
+        and task.tasktype = '04';
     </select>
 
     <select id="selectProcessTask" resultMap="BaseResultMapprocess">
@@ -527,24 +527,42 @@
                ctp.remarks                as ctp_remarks
         from cibr_sys_task task
                  left join cibr_task_process ctp
-                     on task.id = ctp.taskid
+                           on task.id = ctp.taskid
         where task.tasktype = '03'
           and task.taskstatu != '09'
-        and(
-              task.createuser = '${userId}'
-           or task.currentuser = '${userId}'
-           or ctp.sampleInput = '${userId}'
-           or ctp.samplePreparation = '${userId}'
-           or ctp.libraryPreparation = '${userId}'
-           or ctp.dismountData = '${userId}'
-           or ctp.bioinformaticsAnalysis = '${userId}'
-           or exists(
-                select 1
-                from cibr_sys_user_group gro,
-                     cibr_sys_user usr
-                where usr.ID = task.createuser
-                  and usr.ROLEID = gro.id
-                  and gro.groupadmin = '${userId}'
-            ));
+          and (
+                task.createuser = '${userId}'
+                or task.currentuser = '${userId}'
+                or ctp.sampleInput = '${userId}'
+                or ctp.samplePreparation = '${userId}'
+                or ctp.libraryPreparation = '${userId}'
+                or ctp.dismountData = '${userId}'
+                or ctp.bioinformaticsAnalysis = '${userId}'
+                or exists(
+                        select 1
+                        from cibr_sys_user subuser
+                                 left join cibr_sys_user_role ur on subuser.id = ur.userid
+                                 left join cibr_sys_role subrole on ur.roleid = subrole.id
+                        where subrole.roleType = '999999' and subuser.ID = '${userId}'
+                    )
+                or exists(
+                        select 1
+                        from cibr_sys_user_group gro,
+                             cibr_sys_user usr
+                        where usr.ID = task.createuser
+                          and usr.ROLEID = gro.id
+                          and gro.groupadmin = '${userId}'
+                    )
+                or exists(
+                    select 1 from cibr_sys_user userCre,cibr_sys_user userNow,
+                                  cibr_sys_user_role userRole,cibr_sys_role role
+                    where userCre.ID = task.createuser
+                        and userNow.ID = '${userId}'
+                        and userCre.ROLEID = userNow.ROLEID
+                        and userNow.ID = userRole.userid
+                        and userRole.roleid = role.id
+                        and role.roleType='40'
+                    )
+              );
     </select>
 </mapper>

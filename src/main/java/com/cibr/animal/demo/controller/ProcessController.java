@@ -62,9 +62,11 @@ public class ProcessController {
             CibrTaskProcess process = processTaskService.getProcessByTaskId(taskId);
 //            processTaskService.getProcessBySubTaskId(subId);
             CibrTaskFail error = processTaskService.findError(process.getId());
+            CibrSysUserGroup group = userService.getGroupByName("基因组学中心");
             Map<String,Object> retMap = new HashMap<>();
             retMap.put("process",process);
             retMap.put("fail",error);
+            retMap.put("group",group);
             ret.setRetMap(retMap);
             ret.setCode("200");
         }catch (Exception e) {
@@ -93,7 +95,7 @@ public class ProcessController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/task/process/sampleInput")
+    @RequestMapping("task/process/sampleInput")
     public String sampleInputInit(HttpServletRequest request,
                              HttpServletResponse response,
                              @RequestBody Map requestBody){
@@ -105,8 +107,10 @@ public class ProcessController {
             Map<String,Object> retMap = new HashMap<>();
             List<CibrTaskProcessSampleinput> sampleInputs = processTaskService.getSampleInputs(processId,curFlag,subId);
             List<CibrTaskProcessSubtask> allSubTask = processTaskService.getAllSubTask(processId, TaskUtil.PROCESS_TASK_STATU_SP);
+            Map<String, Object> operators = processTaskService.getOperators(processId);
             retMap.put("subs",allSubTask);
             retMap.put("sampleInputs",sampleInputs);
+            retMap.put("operators",operators);
             ret.setRetMap(retMap);
             ret.setCode("200");
         }catch (Exception e) {
@@ -203,8 +207,10 @@ public class ProcessController {
             List<CibrTaskProcessSubtask> allSubTask = processTaskService.getAllSubTask(processId,TaskUtil.PROCESS_TASK_STATU_SPWAIT);
             List<CibrSysUser> allUsers = loginService.findAllUsers();
             Map<String,Object> retMap = new HashMap<>();
+            Map<String, Object> operators = processTaskService.getOperators(processId);
             retMap.put("makes",allTodoMakes);
             retMap.put("allUsers",allUsers);
+            retMap.put("operators",operators);
             retMap.put("subs",allSubTask);
             ret.setRetMap(retMap);
             ret.setCode("200");
@@ -281,7 +287,9 @@ public class ProcessController {
             List<CibrTaskProcessSubtask> allSubTask = processTaskService.getAllSubTask(processId, TaskUtil.PROCESS_TASK_STATU_LIB);
             List<CibrSysUser> allUsers = loginService.findAllUsers();
             Map<String,Object> retMap = new HashMap<>();
+            Map<String, Object> operators = processTaskService.getOperators(processId);
             retMap.put("libs",libs);
+            retMap.put("operators",operators);
             retMap.put("subs",allSubTask);
             retMap.put("allUsers",allUsers);
             ret.setRetMap(retMap);
@@ -319,6 +327,35 @@ public class ProcessController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
+    @RequestMapping("/task/process/unPassLibs")
+    public String unPassLibs(HttpServletRequest request,
+                              HttpServletResponse response,
+                              @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String processId = (String) requestBody.get("processId");
+            String subId = (String) requestBody.get("subId");
+            String datas = (String) requestBody.get("datas");
+            String type = (String) requestBody.get("type");
+            String subProcessName = (String) requestBody.get("subProcessName");
+            String remarks = (String) requestBody.get("remarks");
+            String reason = (String) requestBody.get("reason");
+            String remark = (String) requestBody.get("remark");
+            List<CibrTaskProcessLibrary> libs = JSON.parseArray(datas, CibrTaskProcessLibrary.class);
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            processTaskService.tempSaveLibs(processId,libs,type,user,subId,subProcessName,remarks);
+            List<String> ids = libs.stream().map(lib -> lib.getId()).collect(Collectors.toList());
+            processTaskService.batchInsertFails(ids,reason,remark,user);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
     @RequestMapping("/task/process/dismountInit")
     public String dismountInit(HttpServletRequest request,
                           HttpServletResponse response,
@@ -330,10 +367,14 @@ public class ProcessController {
             List<CibrTaskProcessDismountdata> list = processTaskService.selectAllDismountDatas(processId,subId);
             List<CibrTaskProcessSubtask> allSubTask = processTaskService.getAllSubTask(processId, TaskUtil.PROCESS_TASK_STATU_DIS);
             List<CibrSysUser> allUsers = loginService.findAllUsers();
+            CibrSysUser bioAnalysis = processTaskService.getBioAnalysis(processId);
             Map<String,Object> retMap = new HashMap<>();
+            Map<String, Object> operators = processTaskService.getOperators(processId);
             retMap.put("allUsers",allUsers);
+            retMap.put("operators",operators);
             retMap.put("datas",list);
             retMap.put("subs",allSubTask);
+            retMap.put("bioAnalysis",bioAnalysis);
             ret.setRetMap(retMap);
             ret.setCode("200");
         }catch (Exception e) {
@@ -369,6 +410,88 @@ public class ProcessController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
+    @RequestMapping("/task/process/saveConfirms")
+    public String saveConfirms(HttpServletRequest request,
+                                   HttpServletResponse response,
+                                   @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String processId = (String) requestBody.get("processId");
+            String datas = (String) requestBody.get("datas");
+            String type = (String) requestBody.get("type");
+            String subProcessName = (String) requestBody.get("subProcessName");
+            String remarks = (String) requestBody.get("remarks");
+            List<CibrTaskProcessConfirm> confirms = JSON.parseArray(datas, CibrTaskProcessConfirm.class);
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            processTaskService.saveConfirms(processId,null,confirms,type,user,subProcessName,remarks);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+
+    @RequestMapping("/task/process/unPassConfirms")
+    public String unPassConfirms(HttpServletRequest request,
+                               HttpServletResponse response,
+                               @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String processId = (String) requestBody.get("processId");
+            String datas = (String) requestBody.get("datas");
+            String type = (String) requestBody.get("type");
+            String subProcessName = (String) requestBody.get("subProcessName");
+            String remarks = (String) requestBody.get("remarks");
+            String reason = (String) requestBody.get("reason");
+            String remark = (String) requestBody.get("remark");
+            List<CibrTaskProcessConfirm> confirms = JSON.parseArray(datas, CibrTaskProcessConfirm.class);
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            processTaskService.saveConfirms(processId,null,confirms,type,user,subProcessName,remarks);
+            List<String> ids = confirms.stream().map(confirm -> confirm.getId()).collect(Collectors.toList());
+            processTaskService.batchInsertFails(ids,reason,remark,user);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+
+    @RequestMapping("/task/process/refuseDis")
+    public String refuseDis(HttpServletRequest request,
+                                   HttpServletResponse response,
+                                   @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String processId = (String) requestBody.get("processId");
+            String datas = (String) requestBody.get("datas");
+            String type = (String) requestBody.get("type");
+            String reason = (String) requestBody.get("reason");
+            String remark = (String) requestBody.get("remark");
+            String subProcessName = (String) requestBody.get("subProcessName");
+            String remarks = (String) requestBody.get("remarks");
+            List<CibrTaskProcessDismountdata> dismountdata = JSON.parseArray(datas, CibrTaskProcessDismountdata.class);
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            processTaskService.saveDismountData(processId,null,dismountdata,type,user,subProcessName,remarks);
+            List<String> ids = dismountdata.stream().map(dis -> dis.getId()).collect(Collectors.toList());
+            processTaskService.batchInsertFails(ids,reason,remark,user);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
     @RequestMapping("/task/process/analyseInit")
     public String analyseInit(HttpServletRequest request,
                                HttpServletResponse response,
@@ -381,8 +504,37 @@ public class ProcessController {
             List<CibrTaskProcessAnalysis> analyses = processTaskService.selectAllAnalyses(processId,subId);
             List<CibrTaskProcessSubtask> allSubTask = processTaskService.getAllSubTask(processId, TaskUtil.PROCESS_TASK_STATU_BA);
             Map<String,Object> retMap = new HashMap<>();
+            Map<String, Object> operators = processTaskService.getOperators(processId);
             retMap.put("allUsers",allUsers);
+            retMap.put("operators",operators);
             retMap.put("datas",analyses);
+            retMap.put("subs",allSubTask);
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/task/process/initConfirm")
+    public String initConfirm(HttpServletRequest request,
+                              HttpServletResponse response,
+                              @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String processId = (String) requestBody.get("processId");
+            String subId = (String) requestBody.get("subId");
+            List<CibrSysUser> allUsers = loginService.findAllUsers();
+            List<CibrTaskProcessConfirm> confirms = processTaskService.selectAllConfirms(processId, subId);
+            List<CibrTaskProcessSubtask> allSubTask = processTaskService.getAllSubTask(processId, TaskUtil.PROCESS_TASK_STATU_CONFIRM);
+            Map<String,Object> retMap = new HashMap<>();
+            Map<String, Object> operators = processTaskService.getOperators(processId);
+            retMap.put("operators",operators);
+            retMap.put("allUsers",allUsers);
+            retMap.put("datas",confirms);
             retMap.put("subs",allSubTask);
             ret.setRetMap(retMap);
             ret.setCode("200");
@@ -418,6 +570,36 @@ public class ProcessController {
         }
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
+
+    @RequestMapping("/task/process/refuseAnalysis")
+    public String refuseAnalysis(HttpServletRequest request,
+                              HttpServletResponse response,
+                              @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String processId = (String) requestBody.get("processId");
+            String subId = (String) requestBody.get("subId");
+            String datas = (String) requestBody.get("datas");
+            String type = (String) requestBody.get("type");
+            String subProcessName = (String) requestBody.get("subProcessName");
+            String remarks = (String) requestBody.get("remarks");
+            String reason = (String) requestBody.get("reason");
+            String remark = (String) requestBody.get("remark");
+            List<CibrTaskProcessAnalysis> analyses = JSON.parseArray(datas, CibrTaskProcessAnalysis.class);
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            processTaskService.saveAnalyses(processId,subId,analyses,type,user,subProcessName,remarks);
+            List<String> ids = analyses.stream().map(an -> an.getId()).collect(Collectors.toList());
+            processTaskService.batchInsertFails(ids,reason,remark,user);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
     @RequestMapping("/task/process/downloadSampleInput")
     public void downloadSampleInput(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -556,6 +738,24 @@ public class ProcessController {
         outputStream.close();
     }
 
+    @RequestMapping("/task/process/downloadConfirms")
+    public void downloadConfirms(HttpServletRequest request,
+                             HttpServletResponse response,
+                             @RequestBody Map requestBody) throws IOException {
+        String token = request.getHeader("token");
+        CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+        String processId = (String) requestBody.get("processId");
+        String confirmIds = (String) requestBody.get("confirmIds");
+        List<String> ids = JSON.parseArray(confirmIds, String.class);
+        HSSFWorkbook sheets = processTaskService.downloadConfirms(processId, user, ids);
+        OutputStream outputStream = response.getOutputStream();
+        response.setHeader("Content-disposition", "attachment; filename=Info.xls");
+        response.setContentType("application/msexcel");
+        sheets.write(outputStream);
+        outputStream.flush();
+        outputStream.close();
+    }
+
     @RequestMapping("/task/process/downloadDismount")
     public void downloadDismount(HttpServletRequest request,
                              HttpServletResponse response,
@@ -630,6 +830,30 @@ public class ProcessController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
+    @RequestMapping("/task/process/initAllConfirm")
+    public String initAllConfirm(HttpServletRequest request,
+                                  HttpServletResponse response,
+                                  @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String processId = (String) requestBody.get("processId");
+            String flag = (String) requestBody.get("flag");
+            String stat = (String) requestBody.get("stat");
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            Map<String, Object> map = processTaskService.initAllConfirm(processId, flag, stat);
+            Map retMap = new HashMap();
+            retMap.putAll(map);
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
     @RequestMapping("/task/process/baseInfo")
     public String processBaseInfo(HttpServletRequest request,
                               HttpServletResponse response,
@@ -646,11 +870,13 @@ public class ProcessController {
             CibrSysUser groupAdmin = userService.getGroupAdmin(process.getCreater());
             CibrSysTask task = processTaskService.selectTask(process.getTaskid());
             CibrTaskFail error = processTaskService.findError(processId);
+            List<CibrSysUser> groupReviewer = userService.findGroupReviewer(process.getCreater());
             retMap.put("processEmails",processEmails);
             retMap.put("jyzxzx",jyzxzx);
             retMap.put("task",task);
             retMap.put("groupAdmin",groupAdmin);
             retMap.put("fail",error);
+            retMap.put("groupReviewer",groupReviewer);
 
             ret.setRetMap(retMap);
             ret.setCode("200");
@@ -699,6 +925,68 @@ public class ProcessController {
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
             processTaskService.updateProcess(reason,remark,flag,process,user,true);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/task/process/passItem")
+    public String passItem(HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String item = (String) requestBody.get("item");
+            String flag = (String) requestBody.get("flag");
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            processTaskService.passItem(item,flag,user);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/task/process/unPassItem")
+    public String unPassItem(HttpServletRequest request,
+                           HttpServletResponse response,
+                           @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String item = (String) requestBody.get("item");
+            String flag = (String) requestBody.get("flag");
+            String reason = (String) requestBody.get("reason");
+            String remark = (String) requestBody.get("remark");
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            processTaskService.unPassItem(item,flag,reason,remark,user);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/task/process/nextStep")
+    public String nextStep(HttpServletRequest request,
+                             HttpServletResponse response,
+                             @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String item = (String) requestBody.get("item");
+            String flag = (String) requestBody.get("flag");
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            processTaskService.nextStep(item,flag,user);
             ret.setCode("200");
         }catch (Exception e) {
             ret.setCode("E500");

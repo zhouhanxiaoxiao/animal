@@ -5,6 +5,7 @@ import com.cibr.animal.demo.dao.CibrSysUserGroupMapper;
 import com.cibr.animal.demo.dao.CibrSysUserMapper;
 import com.cibr.animal.demo.dao.CibrSysUserRoleMapper;
 import com.cibr.animal.demo.entity.*;
+import com.cibr.animal.demo.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class CibrSysUserService {
+
+    public static final String GROUP_NAME_JYZXZX = "基因组学中心";
 
     @Autowired
     private CibrSysUserMapper userMapper;
@@ -124,5 +128,19 @@ public class CibrSysUserService {
         return userMapper.selectByPrimaryKey(group.getGroupadmin());
     }
 
-    
+
+    public List<CibrSysUser> findUserByRoleAndGroup(String roleTypeReviewer, String groupName) {
+        CibrSysUserGroupExample groupExample =  new CibrSysUserGroupExample();
+        groupExample.createCriteria().andGroupnameEqualTo(groupName);
+        List<CibrSysUserGroup> groups = groupMapper.selectByExample(groupExample);
+
+        List<CibrSysUser> userByRole = findUserByRole(roleTypeReviewer);
+        return userByRole.stream().filter(user -> groups.get(0).getId().equals(user.getRoleid())).collect(Collectors.toList());
+    }
+
+    public List<CibrSysUser> findGroupReviewer(String id) {
+        CibrSysUser user = userMapper.selectByPrimaryKey(id);
+        List<CibrSysUser> userByRole = findUserByRole(Util.ROLE_TYPE_REVIEWER);
+        return userByRole.stream().filter(user1 -> user.getRoleid().equals(user1.getRoleid())).collect(Collectors.toList());
+    }
 }

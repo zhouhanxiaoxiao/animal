@@ -1,14 +1,14 @@
 package com.cibr.animal.demo.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.cibr.animal.demo.entity.CibrAnimalDrosophila;
-import com.cibr.animal.demo.entity.CibrSysMaterial;
-import com.cibr.animal.demo.entity.CibrSysTask;
-import com.cibr.animal.demo.entity.CibrSysUser;
+import com.cibr.animal.demo.entity.*;
 import com.cibr.animal.demo.service.*;
 import com.cibr.animal.demo.util.RedisUtil;
 import com.cibr.animal.demo.util.ReturnData;
+import com.cibr.animal.demo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -126,15 +126,26 @@ public class TaskController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/task/askTaskDetail")
+    @RequestMapping("/task/askTaskDetailNew")
     public String askTaskDetail(HttpServletRequest request,
                                 HttpServletResponse response,
                                 @RequestBody Map requestBody) {
         ReturnData ret = new ReturnData();
         try {
             String taskId = (String) requestBody.get("taskId");
-            Map<String, Object> taskDetail = taskService.findTaskDetail(taskId);
-            ret.setRetMap(taskDetail);
+//            Map<String, Object> taskDetail = taskService.findTaskDetail(taskId);
+            List<CibrTaskDetailDrosophila> details = taskService.selectAskTaskDetail(taskId);
+            CibrTaskAskDrosophila ask = taskService.findaskTask(taskId);
+            List<CibrAnimalDrosophila> allDrosophila = taskService.findAllDrosophila();
+            List<CibrSysUser> allUsers = userService.getAllUsers();
+            CibrSysTask task = taskService.findTask(taskId);
+            Map retMap = new HashMap();
+            retMap.put("details",details);
+            retMap.put("ask",ask);
+            retMap.put("task",task);
+            retMap.put("animals",allDrosophila);
+            retMap.put("users",allUsers);
+            ret.setRetMap(retMap);
             ret.setCode("200");
         } catch (Exception e) {
             ret.setCode("E500");
@@ -155,7 +166,10 @@ public class TaskController {
             String detailId = (String) requestBody.get("detailId");
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
-            taskService.refuseAskTask(taskId,reason,detailId,user);
+            List<String> detailIds = JSONObject.parseArray(detailId, String.class);
+            for (String id : detailIds){
+                taskService.refuseAskTask(taskId,reason,id,user);
+            }
             ret.setCode("200");
         }catch (Exception e) {
             ret.setCode("E500");
@@ -178,7 +192,73 @@ public class TaskController {
             String detailId = (String) requestBody.get("detailId");
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
-            taskService.confirmTask(taskid,detailId,isNeedMore,startDate,endDate,remarks,user);
+            List<String> list = JSONObject.parseArray(detailId, String.class);
+            for (String id : list){
+                taskService.confirmTask(taskid,id,isNeedMore,startDate,endDate,remarks,user);
+            }
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("task/ask/updateDetails")
+    public String updateDetails(HttpServletRequest request,
+                             HttpServletResponse response,
+                             @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String details = (String) requestBody.get("details");
+            String token = request.getHeader("token");
+            List<CibrTaskDetailDrosophila> detailList = JSONObject.parseArray(details, CibrTaskDetailDrosophila.class);
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            taskService.updateDetails(detailList,user);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/task/ask/getAllPrepares")
+    public String getAllPrepares(HttpServletRequest request,
+                           HttpServletResponse response,
+                           @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String taskId = (String) requestBody.get("taskId");
+//            Map<String, Object> prepare = taskService.getPrepare(askId);
+            List<CibrTaskAskPrepare> allPrepares = taskService.getAllPrepares(taskId);
+            CibrSysTask task = taskService.findTask(taskId);
+            CibrTaskAskDrosophila ask = taskService.findaskTask(taskId);
+            Map retMap = new HashMap();
+            retMap.put("prepares",allPrepares);
+            retMap.put("task",task);
+            retMap.put("ask",ask);
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/task/ask/updatePrepares")
+    public String updatePrepares(HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String prepares = (String) requestBody.get("prepares");
+            List<CibrTaskAskPrepare> prepareList = JSONObject.parseArray(prepares, CibrTaskAskPrepare.class);
+            taskService.updatePrepares(prepareList);
             ret.setCode("200");
         }catch (Exception e) {
             ret.setCode("E500");
@@ -212,25 +292,38 @@ public class TaskController {
                            @RequestBody Map requestBody){
         ReturnData ret = new ReturnData();
         try {
-            String prepId = (String) requestBody.get("id");
-            String readyTime = (String) requestBody.get("readyTime");
-            String allowTime = (String) requestBody.get("allowTime");
-            String remarks = (String) requestBody.get("remarks");
-            Integer realAge = 0;
-            Integer realNumber = 0;
-            try {
-                realAge = Integer.parseInt((String) requestBody.get("realAge"));
-            }catch (ClassCastException exception){
-                realAge = (Integer) requestBody.get("realAge");
-            }
-            try {
-                realNumber = (Integer) requestBody.get("realNumber");
-            }catch (ClassCastException exception){
-                realNumber =  Integer.parseInt((String) requestBody.get("realNumber"));
-            }
+            String prepares = (String) requestBody.get("prepares");
+            List<CibrTaskAskPrepare> prepareList = JSONObject.parseArray(prepares, CibrTaskAskPrepare.class);
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
-            taskService.confrimPrepare(prepId,readyTime,allowTime,remarks,realAge,realNumber,user);
+            for (CibrTaskAskPrepare prepare :prepareList){
+                taskService.confrimPrepare(prepare.getId(), TimeUtil.date2str(prepare.getCompletetime(),"yyyy-MM-dd")
+                        ,TimeUtil.date2str(prepare.getRealexptime(),"yyyy-MM-dd"),
+                        prepare.getReamrks2(),Integer.parseInt(prepare.getRealage()),
+                        Integer.parseInt(prepare.getRealnumber()),user);
+            }
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/task/ask/refusePrepare")
+    public String refusePrepare(HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String prepares = (String) requestBody.get("prepares");
+            String reason = (String) requestBody.get("reason");
+            String remark = (String) requestBody.get("remark");
+            List<String> ids = JSONObject.parseArray(prepares, String.class);
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            taskService.refusePrepare(ids,reason,remark,user);
             ret.setCode("200");
         }catch (Exception e) {
             ret.setCode("E500");

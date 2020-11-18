@@ -31,6 +31,37 @@
     <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
     <result column="currentStatu" property="currentstatu" jdbcType="VARCHAR" />
     <result column="rowIndex" property="rowindex" jdbcType="INTEGER" />
+    <result column="concentrationunit" property="concentrationunit" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapWithNumber" type="com.cibr.animal.demo.entity.CibrTaskProcessSampleinput" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="processId" property="processid" jdbcType="VARCHAR" />
+    <result column="subId" property="subid" jdbcType="VARCHAR" />
+    <result column="arrIndex" property="arrindex" jdbcType="VARCHAR" />
+    <result column="sampleName" property="samplename" jdbcType="VARCHAR" />
+    <result column="initSample" property="initsample" jdbcType="VARCHAR" />
+    <result column="sampleIndex" property="sampleindex" jdbcType="VARCHAR" />
+    <result column="species" property="species" jdbcType="VARCHAR" />
+    <result column="tissue" property="tissue" jdbcType="VARCHAR" />
+    <result column="sampleMsg" property="samplemsg" jdbcType="VARCHAR" />
+    <result column="sampleStatu" property="samplestatu" jdbcType="VARCHAR" />
+    <result column="tissueNumber" property="tissuenumber" jdbcType="VARCHAR" />
+    <result column="bloodVolume" property="bloodvolume" jdbcType="VARCHAR" />
+    <result column="concentration" property="concentration" jdbcType="VARCHAR" />
+    <result column="sampleVolume" property="samplevolume" jdbcType="VARCHAR" />
+    <result column="totalNumber" property="totalnumber" jdbcType="VARCHAR" />
+    <result column="cellLife" property="celllife" jdbcType="VARCHAR" />
+    <result column="cellSort" property="cellsort" jdbcType="VARCHAR" />
+    <result column="databaseType" property="databasetype" jdbcType="VARCHAR" />
+    <result column="SequencingPlatform" property="sequencingplatform" jdbcType="VARCHAR" />
+    <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+    <result column="creater" property="creater" jdbcType="VARCHAR" />
+    <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="currentStatu" property="currentstatu" jdbcType="VARCHAR" />
+    <result column="rowIndex" property="rowindex" jdbcType="INTEGER" />
+    <result column="concentrationunit" property="concentrationunit" jdbcType="VARCHAR" />
+    <result column="makeNum" property="makeNum" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <!--
@@ -106,7 +137,7 @@
     id, processId, subId, arrIndex, sampleName, initSample, sampleIndex, species, tissue, 
     sampleMsg, sampleStatu, tissueNumber, bloodVolume, concentration, sampleVolume, totalNumber, 
     cellLife, cellSort, databaseType, SequencingPlatform, remarks, creater, createTime, 
-    currentStatu, rowIndex
+    currentStatu, rowIndex, concentrationunit
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.cibr.animal.demo.entity.CibrTaskProcessSampleinputExample" >
     <!--
@@ -167,7 +198,7 @@
       totalNumber, cellLife, cellSort, 
       databaseType, SequencingPlatform, remarks, 
       creater, createTime, currentStatu, 
-      rowIndex)
+      rowIndex, concentrationunit)
     values (#{id,jdbcType=VARCHAR}, #{processid,jdbcType=VARCHAR}, #{subid,jdbcType=VARCHAR}, 
       #{arrindex,jdbcType=VARCHAR}, #{samplename,jdbcType=VARCHAR}, #{initsample,jdbcType=VARCHAR}, 
       #{sampleindex,jdbcType=VARCHAR}, #{species,jdbcType=VARCHAR}, #{tissue,jdbcType=VARCHAR}, 
@@ -176,7 +207,7 @@
       #{totalnumber,jdbcType=VARCHAR}, #{celllife,jdbcType=VARCHAR}, #{cellsort,jdbcType=VARCHAR}, 
       #{databasetype,jdbcType=VARCHAR}, #{sequencingplatform,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR}, 
       #{creater,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{currentstatu,jdbcType=VARCHAR}, 
-      #{rowindex,jdbcType=INTEGER})
+      #{rowindex,jdbcType=INTEGER}, #{concentrationunit,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.cibr.animal.demo.entity.CibrTaskProcessSampleinput" >
     <!--
@@ -260,6 +291,9 @@
       <if test="rowindex != null" >
         rowIndex,
       </if>
+      <if test="concentrationunit != null" >
+        concentrationunit,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -336,6 +370,9 @@
       </if>
       <if test="rowindex != null" >
         #{rowindex,jdbcType=INTEGER},
+      </if>
+      <if test="concentrationunit != null" >
+        #{concentrationunit,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -431,6 +468,9 @@
       <if test="record.rowindex != null" >
         rowIndex = #{record.rowindex,jdbcType=INTEGER},
       </if>
+      <if test="record.concentrationunit != null" >
+        concentrationunit = #{record.concentrationunit,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -466,7 +506,8 @@
       creater = #{record.creater,jdbcType=VARCHAR},
       createTime = #{record.createtime,jdbcType=TIMESTAMP},
       currentStatu = #{record.currentstatu,jdbcType=VARCHAR},
-      rowIndex = #{record.rowindex,jdbcType=INTEGER}
+      rowIndex = #{record.rowindex,jdbcType=INTEGER},
+      concentrationunit = #{record.concentrationunit,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -550,6 +591,9 @@
       <if test="rowindex != null" >
         rowIndex = #{rowindex,jdbcType=INTEGER},
       </if>
+      <if test="concentrationunit != null" >
+        concentrationunit = #{concentrationunit,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -582,7 +626,8 @@
       creater = #{creater,jdbcType=VARCHAR},
       createTime = #{createtime,jdbcType=TIMESTAMP},
       currentStatu = #{currentstatu,jdbcType=VARCHAR},
-      rowIndex = #{rowindex,jdbcType=INTEGER}
+      rowIndex = #{rowindex,jdbcType=INTEGER},
+      concentrationunit = #{concentrationunit,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 
@@ -612,7 +657,8 @@
       creater = #{record.creater,jdbcType=VARCHAR},
       createTime = #{record.createtime,jdbcType=TIMESTAMP},
       currentStatu = #{record.currentstatu,jdbcType=VARCHAR},
-      rowIndex = #{record.rowindex,jdbcType=INTEGER}
+      rowIndex = #{record.rowindex,jdbcType=INTEGER},
+      concentrationunit = #{record.concentrationunit,jdbcType=VARCHAR}
       where id = #{record.id,jdbcType=VARCHAR}
     </foreach>
   </update>
@@ -622,7 +668,7 @@
     id, processId,sampleName,species,tissue,sampleMsg,sampleStatu,tissueNumber,bloodVolume,
     concentration,sampleVolume,totalNumber,cellLife,cellSort,databaseType,SequencingPlatform,
     remarks,creater,createTime,currentStatu,rowIndex,
-    sampleIndex,arrIndex,initSample,subId
+    sampleIndex,arrIndex,initSample,subId,concentrationunit
     )
     values
     <foreach collection="list" item="record" separator=",">
@@ -651,8 +697,20 @@
       #{record.sampleindex,jdbcType=VARCHAR},
       #{record.arrindex,jdbcType=VARCHAR},
       #{record.initsample,jdbcType=VARCHAR},
-      #{record.subid,jdbcType=VARCHAR}
+      #{record.subid,jdbcType=VARCHAR},
+      #{record.concentrationunit,jdbcType=VARCHAR}
       )
     </foreach>
   </insert>
+
+  <select id="selectWithCommitNumber" resultMap="BaseResultMapWithNumber">
+    select id, processId,sampleName,species,tissue,sampleMsg,sampleStatu,tissueNumber,bloodVolume,
+           concentration,sampleVolume,totalNumber,cellLife,cellSort,databaseType,SequencingPlatform,
+           remarks,creater,createTime,currentStatu,rowIndex,
+           sampleIndex,arrIndex,initSample,subId,concentrationunit,
+           (select count(1) from cibr_task_process_samplemake make where inputId = input.id) as makeNum
+    from cibr_task_process_sampleinput input
+    where processId = '${processId}' and currentStatu = '${currentStatu}'
+    order by currentStatu asc,makeNum desc
+  </select>
 </mapper>

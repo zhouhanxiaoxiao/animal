@@ -43,7 +43,51 @@
     <result column="updateTime" property="updatetime" jdbcType="TIMESTAMP" />
     <result column="updateUser" property="updateuser" jdbcType="VARCHAR" />
     <result column="initSample" property="initsample" jdbcType="VARCHAR" />
+    <result column="concentrationunit" property="concentrationunit" jdbcType="VARCHAR" />
   </resultMap>
+
+  <resultMap id="BaseResultMapWithNum" type="com.cibr.animal.demo.entity.CibrTaskProcessLibrary" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="processId" property="processid" jdbcType="VARCHAR" />
+    <result column="subId" property="subid" jdbcType="VARCHAR" />
+    <result column="makeId" property="makeid" jdbcType="VARCHAR" />
+    <result column="createdbtime" property="createdbtime" jdbcType="TIMESTAMP" />
+    <result column="selfnumber" property="selfnumber" jdbcType="VARCHAR" />
+    <result column="middleIndex" property="middleindex" jdbcType="VARCHAR" />
+    <result column="samplename" property="samplename" jdbcType="VARCHAR" />
+    <result column="species" property="species" jdbcType="VARCHAR" />
+    <result column="concentration" property="concentration" jdbcType="VARCHAR" />
+    <result column="totalNumber" property="totalnumber" jdbcType="VARCHAR" />
+    <result column="cellLife" property="celllife" jdbcType="VARCHAR" />
+    <result column="useNumber" property="usenumber" jdbcType="VARCHAR" />
+    <result column="partSize" property="partsize" jdbcType="VARCHAR" />
+    <result column="libindex" property="libindex" jdbcType="VARCHAR" />
+    <result column="libbarcode" property="libbarcode" jdbcType="VARCHAR" />
+    <result column="cycleNumber" property="cyclenumber" jdbcType="VARCHAR" />
+    <result column="databaseType" property="databasetype" jdbcType="VARCHAR" />
+    <result column="databaseIndex" property="databaseindex" jdbcType="VARCHAR" />
+    <result column="createdbuser" property="createdbuser" jdbcType="VARCHAR" />
+    <result column="reviewer" property="reviewer" jdbcType="VARCHAR" />
+    <result column="qbit" property="qbit" jdbcType="VARCHAR" />
+    <result column="libsize" property="libsize" jdbcType="VARCHAR" />
+    <result column="seqmethods" property="seqmethods" jdbcType="VARCHAR" />
+    <result column="uploadsize" property="uploadsize" jdbcType="VARCHAR" />
+    <result column="databaseUnit" property="databaseunit" jdbcType="VARCHAR" />
+    <result column="libRemark" property="libremark" jdbcType="VARCHAR" />
+    <result column="uploadRemark" property="uploadremark" jdbcType="VARCHAR" />
+    <result column="checkResult" property="checkresult" jdbcType="VARCHAR" />
+    <result column="checkRemarks" property="checkremarks" jdbcType="VARCHAR" />
+    <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="createUser" property="createuser" jdbcType="VARCHAR" />
+    <result column="rowIndex" property="rowindex" jdbcType="INTEGER" />
+    <result column="currentStatu" property="currentstatu" jdbcType="VARCHAR" />
+    <result column="updateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="updateUser" property="updateuser" jdbcType="VARCHAR" />
+    <result column="initSample" property="initsample" jdbcType="VARCHAR" />
+    <result column="concentrationunit" property="concentrationunit" jdbcType="VARCHAR" />
+    <result column="libNum" property="libNum" jdbcType="INTEGER" />
+  </resultMap>
+
   <sql id="Example_Where_Clause" >
     <!--
       WARNING - @mbggenerated
@@ -119,7 +163,8 @@
     species, concentration, totalNumber, cellLife, useNumber, partSize, libindex, libbarcode, 
     cycleNumber, databaseType, databaseIndex, createdbuser, reviewer, qbit, libsize, 
     seqmethods, uploadsize, databaseUnit, libRemark, uploadRemark, checkResult, checkRemarks, 
-    createTime, createUser, rowIndex, currentStatu, updateTime, updateUser, initSample
+    createTime, createUser, rowIndex, currentStatu, updateTime, updateUser, initSample, 
+    concentrationunit
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.cibr.animal.demo.entity.CibrTaskProcessLibraryExample" >
     <!--
@@ -184,7 +229,7 @@
       uploadRemark, checkResult, checkRemarks, 
       createTime, createUser, rowIndex, 
       currentStatu, updateTime, updateUser, 
-      initSample)
+      initSample, concentrationunit)
     values (#{id,jdbcType=VARCHAR}, #{processid,jdbcType=VARCHAR}, #{subid,jdbcType=VARCHAR}, 
       #{makeid,jdbcType=VARCHAR}, #{createdbtime,jdbcType=TIMESTAMP}, #{selfnumber,jdbcType=VARCHAR}, 
       #{middleindex,jdbcType=VARCHAR}, #{samplename,jdbcType=VARCHAR}, #{species,jdbcType=VARCHAR}, 
@@ -197,7 +242,7 @@
       #{uploadremark,jdbcType=VARCHAR}, #{checkresult,jdbcType=VARCHAR}, #{checkremarks,jdbcType=VARCHAR}, 
       #{createtime,jdbcType=TIMESTAMP}, #{createuser,jdbcType=VARCHAR}, #{rowindex,jdbcType=INTEGER}, 
       #{currentstatu,jdbcType=VARCHAR}, #{updatetime,jdbcType=TIMESTAMP}, #{updateuser,jdbcType=VARCHAR}, 
-      #{initsample,jdbcType=VARCHAR})
+      #{initsample,jdbcType=VARCHAR}, #{concentrationunit,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.cibr.animal.demo.entity.CibrTaskProcessLibrary" >
     <!--
@@ -317,6 +362,9 @@
       <if test="initsample != null" >
         initSample,
       </if>
+      <if test="concentrationunit != null" >
+        concentrationunit,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -429,6 +477,9 @@
       </if>
       <if test="initsample != null" >
         #{initsample,jdbcType=VARCHAR},
+      </if>
+      <if test="concentrationunit != null" >
+        #{concentrationunit,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -560,6 +611,9 @@
       <if test="record.initsample != null" >
         initSample = #{record.initsample,jdbcType=VARCHAR},
       </if>
+      <if test="record.concentrationunit != null" >
+        concentrationunit = #{record.concentrationunit,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -607,7 +661,8 @@
       currentStatu = #{record.currentstatu,jdbcType=VARCHAR},
       updateTime = #{record.updatetime,jdbcType=TIMESTAMP},
       updateUser = #{record.updateuser,jdbcType=VARCHAR},
-      initSample = #{record.initsample,jdbcType=VARCHAR}
+      initSample = #{record.initsample,jdbcType=VARCHAR},
+      concentrationunit = #{record.concentrationunit,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -727,6 +782,9 @@
       <if test="initsample != null" >
         initSample = #{initsample,jdbcType=VARCHAR},
       </if>
+      <if test="concentrationunit != null" >
+        concentrationunit = #{concentrationunit,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -771,7 +829,8 @@
       currentStatu = #{currentstatu,jdbcType=VARCHAR},
       updateTime = #{updatetime,jdbcType=TIMESTAMP},
       updateUser = #{updateuser,jdbcType=VARCHAR},
-      initSample = #{initsample,jdbcType=VARCHAR}
+      initSample = #{initsample,jdbcType=VARCHAR},
+      concentrationunit = #{concentrationunit,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 
@@ -781,7 +840,7 @@
     concentration, totalNumber, cellLife, useNumber, partSize, libindex, libbarcode,
     cycleNumber, databaseType, databaseIndex, createdbuser, reviewer, qbit, libsize,
     seqmethods, uploadsize, databaseUnit, libRemark, uploadRemark, checkResult, checkRemarks,
-    createTime, createUser, rowIndex, currentStatu,updateTime,updateUser,initSample)
+    createTime, createUser, rowIndex, currentStatu,updateTime,updateUser,initSample,concentrationunit)
     values
     <foreach collection="list" item="record" separator=",">
       (#{record.id,jdbcType=VARCHAR},
@@ -820,7 +879,8 @@
       #{record.currentstatu,jdbcType=VARCHAR},
       #{record.updatetime,jdbcType=TIMESTAMP},
       #{record.updateuser,jdbcType=VARCHAR},
-      #{record.initsample,jdbcType=VARCHAR}
+      #{record.initsample,jdbcType=VARCHAR},
+      #{record.concentrationunit,jdbcType=VARCHAR}
       )
     </foreach>
   </insert>
@@ -862,8 +922,29 @@
       currentStatu=#{record.currentstatu,jdbcType=VARCHAR},
       updateTime = #{record.updatetime,jdbcType=TIMESTAMP},
       updateUser = #{record.updateuser,jdbcType=VARCHAR},
-      initSample = #{record.initsample,jdbcType=VARCHAR}
+      initSample = #{record.initsample,jdbcType=VARCHAR},
+      concentrationunit = #{record.concentrationunit,jdbcType=VARCHAR}
       where id=#{record.id,jdbcType=VARCHAR}
     </foreach>
   </update>
+
+  <select id="selectWithCommitNumber" resultMap="BaseResultMapWithNum">
+    select id, processId, subId,
+           makeId, createdbtime, selfnumber,
+           middleIndex, samplename, species,
+           concentration, totalNumber, cellLife,
+           useNumber, partSize, libindex,
+           libbarcode, cycleNumber, databaseType,
+           databaseIndex, createdbuser, reviewer,
+           qbit, libsize, seqmethods,
+           uploadsize, databaseUnit, libRemark,
+           uploadRemark, checkResult, checkRemarks,
+           createTime, createUser, rowIndex,
+           currentStatu, updateTime, updateUser,
+           initSample,concentrationunit,
+           (select count(1) from cibr_task_process_confirm conf where conf.libId = lib.id) as libNum
+    from cibr_task_process_library lib
+    where lib.processId = '${processId}' and lib.currentStatu = '${currentStatu}'
+    order by libNum desc ;
+  </select>
 </mapper>

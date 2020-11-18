@@ -98,4 +98,6 @@ public interface CibrTaskProcessLibraryMapper {
     int batchInsert(List<CibrTaskProcessLibrary> list);
 
     int batchUpdate(List<CibrTaskProcessLibrary> list);
+
+    List<CibrTaskProcessLibrary> selectWithCommitNumber(@Param("processId")String processId, @Param("currentStatu")String currentStatu);
 }

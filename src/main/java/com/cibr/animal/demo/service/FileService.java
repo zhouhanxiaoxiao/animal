@@ -16,10 +16,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
+import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -195,7 +197,7 @@ public class FileService {
         List<CibrAnimalDrosophila> allDrosos = animalService.getAllDrosos();
         Map<String,CibrAnimalDrosophila> geno_droso = new HashMap<>();
         for (CibrAnimalDrosophila drosophila : allDrosos){
-            geno_droso.put(drosophila.getGenotype(),drosophila);
+            geno_droso.put(drosophila.getSelfindex(),drosophila);
         }
         List<CibrAnimalDrosophila> newDrosos = new ArrayList<CibrAnimalDrosophila>();
         List<CibrStockDrosophila> newStock = new ArrayList<CibrStockDrosophila>();
@@ -225,7 +227,7 @@ public class FileService {
                     logger.info("======" + Arrays.toString(list.toArray()));
                     if (hasData && bzFlag){
                         CibrAnimalDrosophila drosophila = null;
-                        if (geno_droso.get(list.get(2)) == null){
+                        if (geno_droso.get(list.get(0)) == null){
                             drosophila = new CibrAnimalDrosophila();
                             String animalId = Util.getUUID();
                             drosophila.setId(animalId);
@@ -237,7 +239,7 @@ public class FileService {
                             drosophila.setGenotype(list.get(2));
                             drosophila.setSelfindex(list.get(0));
                             newDrosos.add(drosophila);
-                            geno_droso.put(drosophila.getGenotype(),drosophila);
+                            geno_droso.put(drosophila.getSelfindex(),drosophila);
                         }else {
                             drosophila = geno_droso.get(list.get(2));
                         }
@@ -286,10 +288,16 @@ public class FileService {
         userService.updateUserById(user);
     }
 
-    public File getUserHead(String userId) {
+    public File getUserHead(String userId) throws FileNotFoundException {
         CibrSysUser user = userService.getUserById(userId.substring(0,userId.indexOf(".")));
-        File img = new File(user.getUserdesc());
-        return img;
+        try {
+            File img = new File(user.getUserdesc());
+            return img;
+        }catch (Exception e){
+            int i = new Random().nextInt(4) + 1;
+            File file = ResourceUtils.getFile("classpath:templates/" + i + ".png");
+            return file;
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -312,6 +320,10 @@ public class FileService {
             file.setMd5("");
         }
         return cibrSysFiles;
+    }
+
+    public CibrSysFile getFileObject(String id){
+        return fileMapper.selectByPrimaryKey(id);
     }
 
     public File getFileById(String fileId) {

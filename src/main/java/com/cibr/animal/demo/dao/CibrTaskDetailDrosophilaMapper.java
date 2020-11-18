@@ -96,4 +96,8 @@ public interface CibrTaskDetailDrosophilaMapper {
     int updateByPrimaryKey(CibrTaskDetailDrosophila record);
 
     int batchInsert(List<CibrTaskDetailDrosophila> list);
+
+    List<CibrTaskDetailDrosophila> selectAllDetailByTaskId(@Param("askId") String askId);
+
+    void batchUpdate(@Param("list") List<CibrTaskDetailDrosophila> list);
 }
