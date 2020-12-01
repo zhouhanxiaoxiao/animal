@@ -1,12 +1,15 @@
 package com.cibr.animal.demo.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cibr.animal.demo.entity.CibrAnimalDrosophila;
 import com.cibr.animal.demo.entity.CibrSysEnvironment;
 import com.cibr.animal.demo.entity.CibrSysUser;
+import com.cibr.animal.demo.entity.CibrSysUserGroup;
 import com.cibr.animal.demo.service.EnviromentService;
 import com.cibr.animal.demo.service.PersonalService;
+import com.cibr.animal.demo.service.UserService;
 import com.cibr.animal.demo.util.RedisUtil;
 import com.cibr.animal.demo.util.ReturnData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,9 @@ public class PersonalController {
 
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private UserService userService;
 
     @RequestMapping("/personal/environment")
     public String getEnviroment(){
@@ -118,6 +124,48 @@ public class PersonalController {
             }else {
                 retMap.put("hasExist",false);
             }
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        }catch (Exception e){
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+    @RequestMapping("/personal/groups/init")
+    public String groupsInit(HttpServletRequest request,
+                                    HttpServletResponse response
+    ){
+        ReturnData ret = new ReturnData();
+        try {
+            Map retMap = new HashMap();
+            List<CibrSysUserGroup> findallgroups = personalService.findallgroups();
+            List<CibrSysUser> cibrSysUsers = userService.selectAllUserWithDesc();
+            retMap.put("groups",findallgroups);
+            retMap.put("allUsers",cibrSysUsers);
+
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        }catch (Exception e){
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/personal/groups/updateDepartment")
+    public String updateDepartment(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    @RequestBody Map requestBody
+    ){
+        ReturnData ret = new ReturnData();
+        try {
+            Map retMap = new HashMap();
+            String list = (String) requestBody.get("list");
+            List<CibrSysUserGroup> groups = JSONObject.parseArray(list, CibrSysUserGroup.class);
+            personalService.updateDepartment(groups);
             ret.setRetMap(retMap);
             ret.setCode("200");
         }catch (Exception e){

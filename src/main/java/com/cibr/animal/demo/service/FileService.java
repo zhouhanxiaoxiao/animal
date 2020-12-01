@@ -37,6 +37,9 @@ public class FileService {
 
     private Logger logger = LoggerFactory.getLogger(FileService.class);
 
+    @Value("${img.path}")
+    private String imgPath;
+
     @Autowired
     private ProcessTaskService processTaskService;
 
@@ -337,5 +340,10 @@ public class FileService {
         List<MultipartFile> files = new ArrayList<>();
         files.add(file);
         saveFile(files,detailId,user);
+    }
+
+    public File getTalk() {
+        File img = new File(imgPath + "talk.jpg");
+        return img;
     }
 }

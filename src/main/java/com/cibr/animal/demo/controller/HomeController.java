@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cibr.animal.demo.entity.CibrSysUser;
 import com.cibr.animal.demo.service.AnimalService;
+import com.cibr.animal.demo.service.FileService;
+import com.cibr.animal.demo.service.ProcessTaskService;
 import com.cibr.animal.demo.service.TaskService;
 import com.cibr.animal.demo.util.RedisUtil;
 import com.cibr.animal.demo.util.ReturnData;
@@ -11,8 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +34,12 @@ public class HomeController {
     @Autowired
     private RedisUtil redisUtil;
 
+    @Autowired
+    private ProcessTaskService processTaskService;
+
+    @Autowired
+    private FileService fileService;
+
     @RequestMapping("/home/preview")
     public String getProcess(HttpServletRequest request,
                              HttpServletResponse response){
@@ -40,13 +52,13 @@ public class HomeController {
             int oneMonthStockNumber = animalService.getOneMonthStockNumber();
             int oneMonthStrainNumber = animalService.getOneMonthStrainNumber();
             int selfTaskNumber = taskService.findSelfTaskNumber(user.getId());
+            Map<String, Object> map = processTaskService.countTaskNum("all", user);
             Map<String,Object> retMap = new HashMap<>();
+            retMap.putAll(map);
             retMap.put("allStrainNumber",allStrainNumber);
-
             retMap.put("stockNumber",stockNumber);
             retMap.put("oneMonthStockNumber",oneMonthStockNumber);
             retMap.put("oneMonthStrainNumber",oneMonthStrainNumber);
-
             retMap.put("selfTaskNumber",selfTaskNumber);
             ret.setRetMap(retMap);
             ret.setCode("200");
@@ -75,5 +87,24 @@ public class HomeController {
             e.printStackTrace();
         }
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/img/talk")
+    public void getTalkImg(HttpServletResponse response) throws Exception {
+        File img = fileService.getTalk();
+        FileInputStream fileInputStream = new FileInputStream(img);
+        ServletOutputStream outputStream = response.getOutputStream();
+        //创建存放文件内容的数组
+        byte[] buff = new byte[1024];
+        //所读取的内容使用n来接收
+        int n;
+        //当没有读取完时,继续读取,循环
+        while ((n = fileInputStream.read(buff)) != -1) {
+            //将字节数组的数据全部写入到输出流中
+            outputStream.write(buff, 0, n);
+        }
+        outputStream.flush();
+        outputStream.close();
+        fileInputStream.close();
     }
 }

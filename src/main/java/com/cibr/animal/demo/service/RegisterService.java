@@ -16,25 +16,28 @@ import java.util.Map;
 public class RegisterService {
 
     @Autowired
-    CibrSysUserMapper userMapper;
+    private CibrSysUserMapper userMapper;
 
     @Autowired
-    CibrSysVerificationMapper verificationMapper;
+    private CibrSysVerificationMapper verificationMapper;
 
     @Autowired
-    EmailService emailService;
+    private EmailService emailService;
 
     @Autowired
-    CibrSysTaskMapper taskMapper;
+    private CibrSysTaskMapper taskMapper;
 
     @Autowired
-    CibrSysRoleMapper roleMapper;
+    private CibrSysRoleMapper roleMapper;
 
     @Autowired
-    CibrSysUserRoleMapper userRoleMapper;
+    private CibrSysUserRoleMapper userRoleMapper;
 
     @Autowired
-    CibrSysUserGroupMapper groupMapper;
+    private CibrSysUserGroupMapper groupMapper;
+
+    @Autowired
+    private CibrSysUserService userService;
     /**
      * 发送验证码邮件
      * @param registerEmail
@@ -43,7 +46,7 @@ public class RegisterService {
         Map<String,String> ret = new HashMap<String,String>();
         String code = String.valueOf(Util.getVerificationCode());
         String emailMsg = Util.getVerificationTemplate(code);
-        CibrSysEmail email = emailService.createCibrSysEmail(registerEmail,emailMsg, Util.EMAIL_SUB_VERCODE);
+        CibrSysEmail email = emailService.createCibrSysEmail(registerEmail,emailMsg, Util.EMAIL_SUB_VERCODE,null);
         CibrSysEmail email1 = emailService.sendMail(email);
         if (email1.getEmailError() != null && email.getEmailError().contains("邮箱地址不存在")){
             ret.put("succ","f");
@@ -110,19 +113,23 @@ public class RegisterService {
         CibrSysUserGroup group = groupMapper.selectByPrimaryKey(usergroup);
         CibrSysUser admin = userMapper.selectByPrimaryKey(group.getGroupadmin());
 
+        List<CibrSysUser> reviewers = userService.findUserByRoleAndGroup(Util.ROLE_TYPE_REVIEWER, group.getGroupname());
+
         task.setCurrentuser(admin.getId());
         task.setTaskstatu(TaskUtil.ASK_TASK_STATU_TODO);
         task.setTasktype(TaskUtil.REGISTER_TASK);
         taskMapper.insert(task);
         /*给管理员发送邮件提醒*/
-        String emailMsg = Util.EMAIL_PREFIX +
-                "您有一个用户注册审批任务，请及时处理。申请人【" + registerName + "】，邮箱【" + registerEmail + "】"
-                + Util.EMAIL_SUFFIX;
-        CibrSysEmail adminEmail = emailService.createCibrSysEmail(admin.getEmail(), emailMsg, Util.USER_CREATE);
-        emailService.sendMail(adminEmail);
+        for (CibrSysUser review : reviewers){
+            String emailMsg = Util.EMAIL_PREFIX +
+                    "您有一个用户注册审批任务，请及时处理。申请人【" + registerName + "】，邮箱【" + registerEmail + "】"
+                    + Util.EMAIL_SUFFIX;
+            CibrSysEmail adminEmail = emailService.createCibrSysEmail(review.getEmail(), emailMsg, Util.USER_CREATE,null);
+            emailService.sendMail(adminEmail);
+        }
         /*给申请者发送邮件提醒*/
-        emailMsg = "非常感谢，您的注册申请已收到。请耐心等待管理员审核，稍后将给您发送审核结果邮件，请注意查收。";
-        CibrSysEmail userEmail = emailService.createCibrSysEmail(registerEmail, emailMsg, Util.USER_CREATE);
+        String emailMsg = "非常感谢，您的注册申请已收到。请耐心等待管理员审核，稍后将给您发送审核结果邮件，请注意查收。";
+        CibrSysEmail userEmail = emailService.createCibrSysEmail(registerEmail, emailMsg, Util.USER_CREATE,null);
         emailService.sendMail(userEmail);
         userMapper.insert(user);
     }

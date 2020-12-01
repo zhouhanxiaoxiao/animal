@@ -1,9 +1,6 @@
 package com.cibr.animal.demo.service;
 
-import com.cibr.animal.demo.dao.CibrAnimalDrosophilaMapper;
-import com.cibr.animal.demo.dao.CibrStockDrosophilaMapper;
-import com.cibr.animal.demo.dao.CibrSysEnvironmentMapper;
-import com.cibr.animal.demo.dao.CibrSysSampleindexMapper;
+import com.cibr.animal.demo.dao.*;
 import com.cibr.animal.demo.entity.*;
 import com.cibr.animal.demo.util.TimeUtil;
 import com.cibr.animal.demo.util.Util;
@@ -28,6 +25,12 @@ public class PersonalService {
 
     @Autowired
     CibrSysSampleindexMapper sampleindexMapper;
+
+    @Autowired
+    CibrSysUserGroupMapper groupMapper;
+
+    @Autowired
+    CibrSysUserMapper userMapper;
 
     public Map<String, Object> stockTable(int currentPage,int pageSize){
         Map<String, Object> retMap = new HashMap<String, Object>();
@@ -145,5 +148,22 @@ public class PersonalService {
         }else {
             sampleindexMapper.updateByPrimaryKey(droInd);
         }
+    }
+
+    public List<CibrSysUserGroup> findallgroups() {
+        List<CibrSysUserGroup> groups = groupMapper.findallgroupsWithUsers();
+        return groups;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateDepartment(List<CibrSysUserGroup> groups) {
+        groupMapper.batchUpdate(groups);
+        List<CibrSysUser> list = new ArrayList<>();
+        for (CibrSysUserGroup group : groups){
+            CibrSysUser user = userMapper.selectByPrimaryKey(group.getGroupadmin());
+            user.setRoleid(group.getId());
+            list.add(user);
+        }
+        userMapper.batchUpdate(list);
     }
 }

@@ -395,76 +395,6 @@ public class CibrSysSuggestExample {
             return (Criteria) this;
         }
 
-        public Criteria andCommentsIsNull() {
-            addCriterion("comments is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentsIsNotNull() {
-            addCriterion("comments is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentsEqualTo(String value) {
-            addCriterion("comments =", value, "comments");
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentsNotEqualTo(String value) {
-            addCriterion("comments <>", value, "comments");
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentsGreaterThan(String value) {
-            addCriterion("comments >", value, "comments");
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentsGreaterThanOrEqualTo(String value) {
-            addCriterion("comments >=", value, "comments");
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentsLessThan(String value) {
-            addCriterion("comments <", value, "comments");
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentsLessThanOrEqualTo(String value) {
-            addCriterion("comments <=", value, "comments");
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentsLike(String value) {
-            addCriterion("comments like", value, "comments");
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentsNotLike(String value) {
-            addCriterion("comments not like", value, "comments");
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentsIn(List<String> values) {
-            addCriterion("comments in", values, "comments");
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentsNotIn(List<String> values) {
-            addCriterion("comments not in", values, "comments");
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentsBetween(String value1, String value2) {
-            addCriterion("comments between", value1, value2, "comments");
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentsNotBetween(String value1, String value2) {
-            addCriterion("comments not between", value1, value2, "comments");
-            return (Criteria) this;
-        }
-
         public Criteria andReplytoIsNull() {
             addCriterion("replyto is null");
             return (Criteria) this;
@@ -532,6 +462,76 @@ public class CibrSysSuggestExample {
 
         public Criteria andReplytoNotBetween(String value1, String value2) {
             addCriterion("replyto not between", value1, value2, "replyto");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagIsNull() {
+            addCriterion("flag is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagIsNotNull() {
+            addCriterion("flag is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagEqualTo(String value) {
+            addCriterion("flag =", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagNotEqualTo(String value) {
+            addCriterion("flag <>", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagGreaterThan(String value) {
+            addCriterion("flag >", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagGreaterThanOrEqualTo(String value) {
+            addCriterion("flag >=", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagLessThan(String value) {
+            addCriterion("flag <", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagLessThanOrEqualTo(String value) {
+            addCriterion("flag <=", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagLike(String value) {
+            addCriterion("flag like", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagNotLike(String value) {
+            addCriterion("flag not like", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagIn(List<String> values) {
+            addCriterion("flag in", values, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagNotIn(List<String> values) {
+            addCriterion("flag not in", values, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagBetween(String value1, String value2) {
+            addCriterion("flag between", value1, value2, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagNotBetween(String value1, String value2) {
+            addCriterion("flag not between", value1, value2, "flag");
             return (Criteria) this;
         }
     }

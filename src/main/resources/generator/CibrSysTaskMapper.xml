@@ -35,6 +35,16 @@
             <result column="ctad_currentStatu" property="currentstatu" jdbcType="VARCHAR"/>
             <result column="ctad_currentHandler" property="currenthandler" jdbcType="VARCHAR"/>
         </association>
+        <collection property="handler" ofType="com.cibr.animal.demo.entity.CibrSysUser">
+            <id column="usr_ID" property="id" jdbcType="VARCHAR"/>
+            <result column="usr_NAME" property="name" jdbcType="VARCHAR"/>
+            <result column="usr_PASSWORD" property="password" jdbcType="VARCHAR"/>
+            <result column="usr_EMAIL" property="email" jdbcType="VARCHAR"/>
+            <result column="usr_ROLEID" property="roleid" jdbcType="VARCHAR"/>
+            <result column="usr_USERDESC" property="userdesc" jdbcType="VARCHAR"/>
+            <result column="usr_USERSTATU" property="userstatu" jdbcType="VARCHAR"/>
+            <result column="usr_createtime" property="createtime" jdbcType="TIMESTAMP"/>
+        </collection>
     </resultMap>
 
     <resultMap id="BaseResultMappartner" type="com.cibr.animal.demo.entity.CibrSysTask">
@@ -55,6 +65,16 @@
             <result column="ctp_remark" property="remark" jdbcType="VARCHAR"/>
             <result column="ctp_taskstatu" property="taskstatu" jdbcType="VARCHAR"/>
         </association>
+        <collection property="handler" ofType="com.cibr.animal.demo.entity.CibrSysUser">
+            <id column="usr_ID" property="id" jdbcType="VARCHAR"/>
+            <result column="usr_NAME" property="name" jdbcType="VARCHAR"/>
+            <result column="usr_PASSWORD" property="password" jdbcType="VARCHAR"/>
+            <result column="usr_EMAIL" property="email" jdbcType="VARCHAR"/>
+            <result column="usr_ROLEID" property="roleid" jdbcType="VARCHAR"/>
+            <result column="usr_USERDESC" property="userdesc" jdbcType="VARCHAR"/>
+            <result column="usr_USERSTATU" property="userstatu" jdbcType="VARCHAR"/>
+            <result column="usr_createtime" property="createtime" jdbcType="TIMESTAMP"/>
+        </collection>
     </resultMap>
 
     <resultMap id="BaseResultMapprocess" type="com.cibr.animal.demo.entity.CibrSysTask">
@@ -88,6 +108,16 @@
             <result column="ctp_baupdateTime" property="baupdatetime" jdbcType="TIMESTAMP"/>
             <result column="ctp_remarks" property="remarks" jdbcType="VARCHAR"/>
         </association>
+        <collection property="handler" ofType="com.cibr.animal.demo.entity.CibrSysUser">
+            <id column="usr_ID" property="id" jdbcType="VARCHAR"/>
+            <result column="usr_NAME" property="name" jdbcType="VARCHAR"/>
+            <result column="usr_PASSWORD" property="password" jdbcType="VARCHAR"/>
+            <result column="usr_EMAIL" property="email" jdbcType="VARCHAR"/>
+            <result column="usr_ROLEID" property="roleid" jdbcType="VARCHAR"/>
+            <result column="usr_USERDESC" property="userdesc" jdbcType="VARCHAR"/>
+            <result column="usr_USERSTATU" property="userstatu" jdbcType="VARCHAR"/>
+            <result column="usr_createtime" property="createtime" jdbcType="TIMESTAMP"/>
+        </collection>
     </resultMap>
 
     <sql id="Example_Where_Clause">
@@ -452,19 +482,25 @@
         ctad.urgent as ctad_urgent,
         ctad.taskid as ctad_taskid,
         ctad.currentStatu as ctad_currentStatu,
-        ctad.currentHandler as ctad_currentHandler
+        ctad.currentHandler as ctad_currentHandler,
+        usr.ID as usr_ID,
+        usr.NAME as usr_NAME,
+        usr.PASSWORD as usr_PASSWORD,
+        usr.EMAIL as usr_EMAIL,
+        usr.ROLEID as usr_ROLEID,
+        usr.USERDESC as usr_USERDESC,
+        usr.USERSTATU as usr_USERSTATU,
+        usr.createtime as usr_createtime
         from cibr_sys_task task
-        left join cibr_task_ask_drosophila ctad
-        on task.id = ctad.taskid
+        left join cibr_task_ask_drosophila ctad on task.id = ctad.taskid
         left join cibr_sys_user csu on (task.createuser = csu.ID or task.currentuser = csu.ID)
+        left join cibr_sys_user usr on task.currentuser = usr.ID
         where 1=1
         <if test="flag == 'mytask'">
             and csu.ID = '${userId}'
         </if>
         and task.taskstatu != '09'
         and task.tasktype = '02';
-
-
     </select>
 
     <select id="selectPartnerTask" resultMap="BaseResultMappartner">
@@ -483,11 +519,20 @@
         ctp.creater as ctp_creater,
         ctp.createTime as ctp_createTime,
         ctp.remark as ctp_remark,
-        ctp.taskstatu as ctp_taskstatu
+        ctp.taskstatu as ctp_taskstatu,
+        usr.ID as usr_ID,
+        usr.NAME as usr_NAME,
+        usr.PASSWORD as usr_PASSWORD,
+        usr.EMAIL as usr_EMAIL,
+        usr.ROLEID as usr_ROLEID,
+        usr.USERDESC as usr_USERDESC,
+        usr.USERSTATU as usr_USERSTATU,
+        usr.createtime as usr_createtime
         from cibr_sys_task task
         left join cibr_task_partner ctp
         on task.id = ctp.id
         left join cibr_sys_user csu on (task.currentuser = csu.ID or task.createuser = csu.ID)
+        left join cibr_sys_user usr on task.currentuser = usr.ID
         where 1=1
         <if test="flag == 'mytask'">
             and csu.ID = '${userId}'
@@ -524,10 +569,20 @@
                ctp.ddupdateTime           as ctp_ddupdateTime,
                ctp.bioinformaticsAnalysis as ctp_bioinformaticsAnalysis,
                ctp.baupdateTime           as ctp_baupdateTime,
-               ctp.remarks                as ctp_remarks
+               ctp.remarks                as ctp_remarks,
+               usr.ID                     as usr_ID,
+               usr.NAME                   as usr_NAME,
+               usr.PASSWORD               as usr_PASSWORD,
+               usr.EMAIL                  as usr_EMAIL,
+               usr.ROLEID                 as usr_ROLEID,
+               usr.USERDESC               as usr_USERDESC,
+               usr.USERSTATU              as usr_USERSTATU,
+               usr.createtime             as usr_createtime
         from cibr_sys_task task
-                 left join cibr_task_process ctp
-                           on task.id = ctp.taskid
+                 left join cibr_task_process ctp on task.id = ctp.taskid
+                 left join cibr_sys_user usr on usr.ID in
+                                                (ctp.sampleInput, ctp.samplePreparation, ctp.libraryPreparation,
+                                                 ctp.dismountData, ctp.bioinformaticsAnalysis)
         where task.tasktype = '03'
           and task.taskstatu != '09'
           and (
@@ -543,7 +598,8 @@
                         from cibr_sys_user subuser
                                  left join cibr_sys_user_role ur on subuser.id = ur.userid
                                  left join cibr_sys_role subrole on ur.roleid = subrole.id
-                        where subrole.roleType = '999999' and subuser.ID = '${userId}'
+                        where subrole.roleType = '999999'
+                          and subuser.ID = '${userId}'
                     )
                 or exists(
                         select 1
@@ -554,15 +610,18 @@
                           and gro.groupadmin = '${userId}'
                     )
                 or exists(
-                    select 1 from cibr_sys_user userCre,cibr_sys_user userNow,
-                                  cibr_sys_user_role userRole,cibr_sys_role role
-                    where userCre.ID = task.createuser
-                        and userNow.ID = '${userId}'
-                        and userCre.ROLEID = userNow.ROLEID
-                        and userNow.ID = userRole.userid
-                        and userRole.roleid = role.id
-                        and role.roleType='40'
+                        select 1
+                        from cibr_sys_user userCre,
+                             cibr_sys_user userNow,
+                             cibr_sys_user_role userRole,
+                             cibr_sys_role role
+                        where userCre.ID = task.createuser
+                          and userNow.ID = '${userId}'
+                          and userCre.ROLEID = userNow.ROLEID
+                          and userNow.ID = userRole.userid
+                          and userRole.roleid = role.id
+                          and role.roleType = '40'
                     )
-              );
+            );
     </select>
 </mapper>

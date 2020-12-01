@@ -94,4 +94,8 @@ public interface CibrSysUserGroupMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(CibrSysUserGroup record);
+
+    List<CibrSysUserGroup> findallgroupsWithUsers();
+
+    void batchUpdate(List<CibrSysUserGroup> groups);
 }

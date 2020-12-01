@@ -8,10 +8,10 @@
             <td>项目名称:</td>
             <td>${projectName}</td>
         </tr>
-        <tr>
-            <td>数据类型:</td>
-            <td>${dateType}</td>
-        </tr>
+<#--        <tr>-->
+<#--            <td>数据类型:</td>-->
+<#--            <td>${dateType}</td>-->
+<#--        </tr>-->
         <tr>
             <td>负责人:</td>
             <td>${preMan}</td>
@@ -24,10 +24,10 @@
                 </#list>
             </td>
         </tr>
-        <tr>
-            <td>样本类型:</td>
-            <td>${sampleTypes}</td>
-        </tr>
+<#--        <tr>-->
+<#--            <td>样本类型:</td>-->
+<#--            <td>${sampleTypes}</td>-->
+<#--        </tr>-->
         <tr>
             <td>项目描述:</td>
             <td>${projectDesc}</td>

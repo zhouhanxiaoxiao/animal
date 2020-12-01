@@ -37,8 +37,8 @@ public class SuggestService {
     @Value("${animal.authorEmail}")
     private String projectEmail;
 
-    public List<CibrSysSuggest> getAllSuggest(){
-        List<CibrSysSuggest> suggests = suggestMapper.selectAllReply();
+    public List<CibrSysSuggest> getAllSuggest(String flag){
+        List<CibrSysSuggest> suggests = suggestMapper.selectAllReply(flag);
         Map<String,CibrSysUser> uuid_user = new HashMap<String,CibrSysUser>();
         List<CibrSysUser> allUsers = loginService.findAllUsers();
         for (CibrSysUser user : allUsers){
@@ -55,26 +55,29 @@ public class SuggestService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void createComment(String comment,String replayId, CibrSysUser user) {
+    public void createComment(String comment,String replayId,String flag, CibrSysUser user) {
         CibrSysSuggest suggest = new CibrSysSuggest();
         suggest.setId(Util.getUUID());
         suggest.setCreater(user.getId());
         suggest.setComments(comment);
         suggest.setCreatetime(new Date());
         suggest.setReplyto(replayId);
+        suggest.setFlag(flag);
         suggestMapper.insert(suggest);
         String email = Util.EMAIL_PREFIX;
         email += comment;
         email += Util.EMAIL_SUFFIX;
-        if (StringUtils.isEmpty(replayId)){
-            emailService.simpleSendEmail(email,projectEmail,Util.EMAIL_SUB_SUGGEST);
-        }else {
-            CibrSysSuggest old = suggestMapper.selectByPrimaryKey(replayId);
-            if (!user.getId().equals(old.getCreater())){
-                String contxt = Util.EMAIL_PREFIX + "您于【" + TimeUtil.date2str(old.getCreatetime(),"yyyy-MM-dd HH:mm:ss")
-                        + "】提出的建议已有新的回复：【" + comment + "】" + Util.EMAIL_SUFFIX;
-                CibrSysUser creater = userMapper.selectByPrimaryKey(old.getCreater());
-                emailService.simpleSendEmail(contxt,creater.getEmail(),"建议回复");
+        if ("system".equals(flag)){
+            if (StringUtils.isEmpty(replayId)){
+                emailService.simpleSendEmail(email,projectEmail,Util.EMAIL_SUB_SUGGEST);
+            }else {
+                CibrSysSuggest old = suggestMapper.selectByPrimaryKey(replayId);
+                if (!user.getId().equals(old.getCreater())){
+                    String contxt = Util.EMAIL_PREFIX + "您于【" + TimeUtil.date2str(old.getCreatetime(),"yyyy-MM-dd HH:mm:ss")
+                            + "】提出的建议已有新的回复：【" + comment + "】" + Util.EMAIL_SUFFIX;
+                    CibrSysUser creater = userMapper.selectByPrimaryKey(old.getCreater());
+                    emailService.simpleSendEmail(contxt,creater.getEmail(),"建议回复");
+                }
             }
         }
     }

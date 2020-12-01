@@ -123,7 +123,7 @@ public class EmailService{
         }
     }
 
-    public CibrSysEmail createCibrSysEmail(String emailTo, String emailText,String emailSubject) {
+    public CibrSysEmail createCibrSysEmail(String emailTo, String emailText,String emailSubject,String cc) {
         CibrSysEmail email = new CibrSysEmail();
         email.setEmailId(Util.getUUID());
         email.setEmailFrom(from);
@@ -131,6 +131,7 @@ public class EmailService{
         email.setEmailText(emailText);
         email.setEmailSubject(emailSubject);
         email.setEmailSentdate(new Date());
+        email.setEmailCc(cc);
         return email;
     }
 
@@ -141,19 +142,24 @@ public class EmailService{
     }
 
     public void simpleSendEmail(String context,String addr,String sub){
-        CibrSysEmail cibrSysEmail = createCibrSysEmail(addr, context, sub);
+        CibrSysEmail cibrSysEmail = createCibrSysEmail(addr, context, sub,null);
+        sendMail(cibrSysEmail);
+    }
+
+    public void simpleSendEmail(String context,String addr,String sub,String emailCc){
+        CibrSysEmail cibrSysEmail = createCibrSysEmail(addr, context, sub,emailCc);
         sendMail(cibrSysEmail);
     }
 
     public void simpleSendEmail(String context, List<String> addrs, String sub){
         for (String addr : addrs){
-            CibrSysEmail cibrSysEmail = createCibrSysEmail(addr, context, sub);
+            CibrSysEmail cibrSysEmail = createCibrSysEmail(addr, context, sub,null);
             sendMail(cibrSysEmail);
         }
     }
 
     public void simpleSendHtmlEmail(String context,String addr,String sub){
-        CibrSysEmail cibrSysEmail = createCibrSysEmail(addr, context, sub);
+        CibrSysEmail cibrSysEmail = createCibrSysEmail(addr, context, sub,null);
         sendHtmlMail(cibrSysEmail);
     }
 }

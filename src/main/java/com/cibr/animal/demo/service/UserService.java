@@ -9,6 +9,7 @@ import com.cibr.animal.demo.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -90,7 +91,7 @@ public class UserService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public String addNewDepartment(String name, String groupAdmin, CibrSysUser user) {
+    public String addNewDepartment(String name, String groupAdmin,String userName,String userEmail,String userPwd, CibrSysUser user) {
         CibrSysUserGroupExample groupExample = new CibrSysUserGroupExample();
         groupExample.createCriteria().andGroupnameEqualTo(name);
         List<CibrSysUserGroup> groups = groupMapper.selectByExample(groupExample);
@@ -100,9 +101,31 @@ public class UserService {
         CibrSysUserGroup newGroup = new CibrSysUserGroup();
         newGroup.setId(Util.getUUID());
         newGroup.setGroupname(name);
-        newGroup.setGroupadmin(groupAdmin);
         newGroup.setGroupstatu("01");
         newGroup.setGrouptype("1");
+        if (!StringUtils.isEmpty(groupAdmin)){
+            CibrSysUser user1 = userMapper.selectByPrimaryKey(groupAdmin);
+            user1.setRoleid(newGroup.getId());
+            userMapper.updateByPrimaryKey(user1);
+        }else {
+            CibrSysUser admin = new CibrSysUser();
+            admin.setId(Util.getUUID());
+            admin.setName(userName);
+            admin.setRoleid(newGroup.getId());
+            admin.setPassword(userPwd);
+            admin.setEmail(userEmail);
+            admin.setUserstatu("2");
+            groupAdmin = admin.getId();
+            CibrSysUserRole userRole = new CibrSysUserRole();
+            userRole.setUserid(admin.getId());
+            CibrSysRoleExample roleExample = new CibrSysRoleExample();
+            roleExample.createCriteria().andRoletypeEqualTo(Util.ROLE_TYPE_REVIEWER);
+            List<CibrSysRole> roles = roleMapper.selectByExample(roleExample);
+            userRole.setRoleid(roles.get(0).getId());
+            userMapper.insert(admin);
+            userRoleMapper.insert(userRole);
+        }
+        newGroup.setGroupadmin(groupAdmin);
         groupMapper.insert(newGroup);
         return "200";
     }

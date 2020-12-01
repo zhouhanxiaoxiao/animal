@@ -3,6 +3,7 @@ package com.cibr.animal.demo.scheduled;
 import com.cibr.animal.demo.dao.*;
 import com.cibr.animal.demo.entity.*;
 import com.cibr.animal.demo.service.EmailService;
+import com.cibr.animal.demo.service.UserService;
 import com.cibr.animal.demo.util.TaskUtil;
 import com.cibr.animal.demo.util.TimeUtil;
 import com.cibr.animal.demo.util.Util;
@@ -37,6 +38,12 @@ public class ScheduleHandle {
     @Autowired
     private CibrStockDrosophilaMapper stockDrosophilaMapper;
 
+    @Autowired
+    private UserService userService;
+
+    /**
+     * 查看协助申请，是否有超过一个小时未确定的。
+     */
     @Transactional(rollbackFor = Exception.class)
     public void checkPartnerTask() {
         CibrTaskPartnerExample partnerExample = new CibrTaskPartnerExample();
@@ -122,6 +129,9 @@ public class ScheduleHandle {
         }
     }
 
+    /**
+     * 超过3周的果蝇将自动清除
+     */
     @Transactional(rollbackFor = Exception.class)
     public void checkThreeWeekStock() {
         CibrStockDrosophilaExample stockDrosophilaExample = new CibrStockDrosophilaExample();
@@ -151,6 +161,28 @@ public class ScheduleHandle {
                     addrs.add(user.getEmail());
                 }
                 emailService.simpleSendEmail(cont,addrs,"库存自动清理");
+            }
+        }
+    }
+
+    /**
+     * 如果库存数量小于6，则自动提醒饲养员果蝇库存不足。
+     * */
+    public void chceckStockIsLow5() {
+        CibrStockDrosophilaExample example = new CibrStockDrosophilaExample();
+        example.createCriteria().andStatuEqualTo("01");
+        int stockCount = stockDrosophilaMapper.countByExample(example);
+        if (stockCount < 6){
+            List<CibrSysUser> users = userService.getUsersByRole("02");
+            List<CibrSysUser> usersByRole = userService.getUsersByRole("999999");
+            String cc = "";
+            for (CibrSysUser admin : usersByRole){
+                cc += admin.getEmail() + ",";
+            }
+            String content = Util.EMAIL_PREFIX + "扩繁品系还剩【" + stockCount + "】条，请及时更新！";
+            content += Util.EMAIL_SUFFIX;
+            for (CibrSysUser user : users){
+                emailService.simpleSendEmail(content,user.getEmail(), Util.EMAIL_SUB_LOWTIP,cc);
             }
         }
     }

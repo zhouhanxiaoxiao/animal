@@ -5,6 +5,7 @@ import com.cibr.animal.demo.entity.CibrTaskProcessSampleinputExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CibrTaskProcessSampleinputMapper {
     /**
@@ -100,4 +101,6 @@ public interface CibrTaskProcessSampleinputMapper {
     int batchUpdate(List<CibrTaskProcessSampleinput> list);
 
     List<CibrTaskProcessSampleinput> selectWithCommitNumber(@Param("processId")String processId,@Param("currentStatu")String currentStatu);
+
+    List<Map<String,String>> selectCount(@Param("processId") String processId,@Param("userId") String userId,@Param("flag") String flag);
 }

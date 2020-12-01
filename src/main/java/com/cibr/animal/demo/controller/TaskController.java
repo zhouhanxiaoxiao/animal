@@ -311,6 +311,51 @@ public class TaskController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
+    @RequestMapping("/task/ask/finalInit")
+    public String finalInit(HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String taskId = (String) requestBody.get("taskId");
+            CibrTaskAskDrosophila askDrosophila = taskService.findaskTask(taskId);
+            CibrTaskAskConfirm findconfirm = taskService.findconfirm(askDrosophila.getId());
+            Map<String,Object> retMap = new HashMap<>();
+            retMap.put("ask",askDrosophila);
+            retMap.put("confirm",findconfirm);
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/task/ask/finalConfirm")
+    public String finalConfirm(HttpServletRequest request,
+                            HttpServletResponse response,
+                            @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String askId = (String) requestBody.get("askId");
+            String flag = (String) requestBody.get("flag");
+            String remark = (String) requestBody.get("remark");
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            taskService.finalConfirm(askId,flag,remark,user);
+            Map<String,Object> retMap = new HashMap<>();
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
     @RequestMapping("/task/ask/refusePrepare")
     public String refusePrepare(HttpServletRequest request,
                                  HttpServletResponse response,

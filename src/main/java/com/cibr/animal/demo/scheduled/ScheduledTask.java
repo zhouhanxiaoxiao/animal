@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Component
 public class ScheduledTask {
 
-    public static final int ONE_HOUR = 1000 * 60 * 60;
+    public static final int SIX_HOUR = 1000 * 60 * 60 * 6;
 
     public static final int HALF_HOUR = 1000 * 60 * 60;
 
@@ -18,11 +18,11 @@ public class ScheduledTask {
     /**
      * 半个个小时执行一次
      */
-    @Scheduled(fixedRate = ONE_HOUR)
+    @Scheduled(fixedRate = SIX_HOUR)
     public void scheduledTask() {
         System.out.println("任务执行时间：" + LocalDateTime.now());
-        /*查看协助申请，是否有超过一个小时未确定的。*/
-        handle.checkPartnerTask();
+//        handle.checkPartnerTask();
+        handle.chceckStockIsLow5();
     }
 
     /**
@@ -30,6 +30,9 @@ public class ScheduledTask {
      */
     @Scheduled(cron = "0 0 1 * * ?")
     public void time1(){
+        System.out.println("任务执行时间：" + LocalDateTime.now());
         handle.checkThreeWeekStock();
+        /*查看协助申请，是否有超过一个小时未确定的。*/
+        handle.checkPartnerTask();
     }
 }

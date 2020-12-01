@@ -361,6 +361,9 @@ public class ProcessTaskService {
             /*创建样本制备信息*/
             List<CibrTaskProcessSamplemake> makes = createMakes(list);
             makeMapper.batchInsert(makes);
+            CibrSysUser makeUser = userMapper.selectByPrimaryKey(process.getSamplepreparation());
+            List<List<String>> makeLists = getMakeLists(processId, makes);
+            sendPassEmail(makeUser, makeLists,"样本制备有新提交条目，请及时确认！",user);
         }
         if (insertList.size()>0){
             sampleinputMapper.batchInsert(insertList);
@@ -374,8 +377,19 @@ public class ProcessTaskService {
         if("complete".equals(type)){
             List<List<String>> inputList = getInputList(processId, list);
             CibrSysUser inputer = userMapper.selectByPrimaryKey(process.getSamplepreparation());
-            sendPassEmail(inputer, inputList,"样品录入已完成，请及时确认！");
+            sendPassEmail(inputer, inputList,"样本录入已完成，请及时确认！",user);
         }
+        if ("pass".equals(type)){
+            List<List<String>> inputList = getInputList(processId, list);
+            CibrSysUser creater = userMapper.selectByPrimaryKey(process.getCreater());
+            sendPassEmail(creater, inputList,"样本录入已审核，请及时处理！", user);
+        }
+        if ("unPass".equals(type)){
+            List<List<String>> inputList = getInputList(processId, list);
+            CibrSysUser inputer = userMapper.selectByPrimaryKey(process.getCreater());
+            sendPassEmail(inputer, inputList,"样本录入审核不通过，请及时查看原因！",user);
+        }
+
         retMap.put("retCode", "200");
         return retMap;
     }
@@ -408,10 +422,10 @@ public class ProcessTaskService {
         return sameList;
     }
 
-    public void sendPassEmail(CibrSysUser user, List<List<String>> inputList,String title) throws IOException, TemplateException {
+    public void sendPassEmail(CibrSysUser user, List<List<String>> inputList,String title,CibrSysUser handler) throws IOException, TemplateException {
         Map map = new HashMap();
         map.put("list", inputList);
-        map.put("userEmail", user.getEmail());
+        map.put("userEmail", handler.getEmail());
         map.put("title",title);
         Configuration configuration = freeMarkerConfigurationFactory.createConfiguration();
         configuration.setClassForTemplateLoading(this.getClass(),"/templates/");
@@ -539,6 +553,16 @@ public class ProcessTaskService {
         }
         updateSampleIndex(currentIndexs);
         makeMapper.batchUpdate(list);
+
+        List<List<String>> makeLists = getMakeLists(processId, list);
+        CibrSysUser creater = userMapper.selectByPrimaryKey(process.getCreater());
+        if ("complete".equals(flag)){
+            this.sendPassEmail(creater,makeLists,"样品制备已完成，请及时确认！",user);
+        }
+        if ("unPass".equals(flag)){
+            CibrSysUser maker = userMapper.selectByPrimaryKey(process.getSamplepreparation());
+            this.sendPassEmail(maker,makeLists,"样品制备审核不通过，请及时查看原因！",user);
+        }
         if ("real".equals(flag)){
 //            CibrTaskProcessSubtask subtask = subtaskMapper.selectByPrimaryKey(subId);
 //            subtask.setCurrentstatu(TaskUtil.PROCESS_TASK_STATU_LIB);
@@ -550,11 +574,9 @@ public class ProcessTaskService {
 //            processMapper.updateByPrimaryKey(process);
             /*创建文库信息*/
             libraryMapper.batchInsert(libs);
-        }
-        if ("complete".equals(flag)){
-            List<List<String>> makeLists = getMakeLists(processId, list);
-            CibrSysUser creater = userMapper.selectByPrimaryKey(process.getCreater());
-            this.sendPassEmail(creater,makeLists,"样品制备已完成，请及时确认！");
+            List<List<String>> libLists = getLibLists(processId, libs);
+            CibrSysUser liber = userMapper.selectByPrimaryKey(process.getLibrarypreparation());
+            this.sendPassEmail(liber,libLists,"文库制备新提交条目，请及时确认！",user);
         }
     }
 
@@ -578,7 +600,7 @@ public class ProcessTaskService {
         lib.setProcessid(make.getProcessid());
         lib.setRowindex(make.getRowindex());
         lib.setCelllife(make.getCelllife());
-//        lib.setSeqmethods(make.getSequencingplatform());
+        lib.setSeqmethods(make.getSequencingplatform());
         lib.setSpecies(make.getSpecies());
         lib.setSamplename(make.getSamplename());
         lib.setConcentration(make.getConcentration());
@@ -638,13 +660,20 @@ public class ProcessTaskService {
         }
 
         libraryMapper.batchUpdate(libs);
+        CibrSysUser creater = userMapper.selectByPrimaryKey(process.getCreater());
+        List<List<String>> libLists = getLibLists(processId, libs);
+        if ("complete".equals(type)){
+            sendPassEmail(creater,libLists,"文库制备已完成，请及时确认！",user);
+        }
+        if ("unPass".equals(type)){
+            CibrSysUser liber = userMapper.selectByPrimaryKey(process.getLibrarypreparation());
+            this.sendPassEmail(liber,libLists,"文库制备审核不通过，请及时查看原因！",user);
+        }
         if ("real".equals(type)){
             confirmMapper.batchInsert(list);
-        }
-        if ("complete".equals(type)){
-            List<List<String>> libLists = getLibLists(processId, libs);
-            CibrSysUser creater = userMapper.selectByPrimaryKey(process.getCreater());
-            sendPassEmail(creater,libLists,"文库制备已完成，请及时确认！");
+            CibrSysUser confirmer = userMapper.selectByPrimaryKey(process.getLibrarypreparation());
+            List<List<String>> confirms = getConfirms(processId, list);
+            sendPassEmail(confirmer,confirms,"上机确认新提交条目，请及时确认！",user);
         }
     }
 
@@ -678,7 +707,7 @@ public class ProcessTaskService {
         dismountdata.setMakeid(confirm.getId());
         dismountdata.setCreater(user.getId());
         dismountdata.setCreatetime(new Date());
-        dismountdata.setCurrentstatu("00");
+        dismountdata.setCurrentstatu("01");
         dismountdata.setRowindex(confirm.getRowindex());
         dismountdata.setSampleindex(confirm.getSampleindex());
         dismountdata.setSamplename(confirm.getSamplename());
@@ -728,10 +757,19 @@ public class ProcessTaskService {
                 dismountdata.setCurrentstatu("07");
             }else if ("real".equals(type)){
                 dismountdata.setCurrentstatu("03");
-                analyses.add(createAnalyse(dismountdata,processId,user));
+                analyses.add(createAnalyse(dismountdata,processId,user,process));
             }
         }
         dismountdataMapper.batchUpdate(dismountdatas);
+        CibrSysUser creater = userMapper.selectByPrimaryKey(process.getCreater());
+        List<List<String>> disDataLists = getDisDataLists(processId, dismountdatas);
+        if ("complete".equals(type)){
+            sendPassEmail(creater,disDataLists,"数据交付已完成，请及时确认！",user);
+        }
+        if ("unPass".equals(type)){
+            CibrSysUser dismounter = userMapper.selectByPrimaryKey(process.getDismountdata());
+            this.sendPassEmail(dismounter,disDataLists,"数据交付审核不通过，请及时查看原因！",user);
+        }
         if ("real".equals(type)){
 //            CibrTaskProcessSubtask subtask = subtaskMapper.selectByPrimaryKey(subId);
 //            subtask.setCurrentstatu(TaskUtil.PROCESS_TASK_STATU_BA);
@@ -742,15 +780,15 @@ public class ProcessTaskService {
 //            process.setTaskstatu(TaskUtil.PROCESS_TASK_STATU_BA);
 //            processMapper.updateByPrimaryKey(process);
             analysisMapper.batchInsert(analyses);
+            List<List<String>> bioLists = getBioLists(processId, analyses);
+            CibrSysUser biouser = userMapper.selectByPrimaryKey(process.getBioinformaticsanalysis());
+            sendPassEmail(biouser,bioLists,"生信分析有新条目提交，请及时确认！",user);
         }
-        if ("complete".equals(type)){
-            CibrSysUser creater = userMapper.selectByPrimaryKey(process.getCreater());
-            List<List<String>> disDataLists = getDisDataLists(processId, dismountdatas);
-            sendPassEmail(creater,disDataLists,"数据交付已完成，请及时确认！");
-        }
+        
     }
 
-    private CibrTaskProcessAnalysis createAnalyse(CibrTaskProcessDismountdata dismountdata, String processId, CibrSysUser user) {
+    private CibrTaskProcessAnalysis createAnalyse(CibrTaskProcessDismountdata dismountdata, String processId,
+                                                  CibrSysUser user,CibrTaskProcess process) {
         CibrTaskProcessAnalysis analysis = new CibrTaskProcessAnalysis();
         analysis.setId(Util.getUUID());
         analysis.setCreater(user.getId());
@@ -759,6 +797,7 @@ public class ProcessTaskService {
         analysis.setDismountid(dismountdata.getId());
         analysis.setSamplename(dismountdata.getSamplename());
         analysis.setSampleindex(dismountdata.getSampleindex());
+        analysis.setAnalyst(process.getBioinformaticsanalysis());
         analysis.setCurrentstatu("01");
         return analysis;
     }
@@ -797,10 +836,14 @@ public class ProcessTaskService {
             }
         }
         analysisMapper.batchUpdate(analyses);
+        List<List<String>> bioLists = getBioLists(processId, analyses);
         if ("complete".equals(type)){
-            List<List<String>> bioLists = getBioLists(processId, analyses);
             CibrSysUser creater = userMapper.selectByPrimaryKey(process.getCreater());
-            sendPassEmail(creater,bioLists,"生信分析已完成，请及时确认！");
+            sendPassEmail(creater,bioLists,"生信分析已完成，请及时确认！",user);
+        }
+        if ("unPass".equals(type)){
+            CibrSysUser bioUser = userMapper.selectByPrimaryKey(process.getBioinformaticsanalysis());
+            this.sendPassEmail(bioUser,bioLists,"生信分析审核不通过，请及时查看原因！",user);
         }
     }
 
@@ -993,7 +1036,7 @@ public class ProcessTaskService {
 
         List<List<String>> excleRows = new ArrayList<>();
         List<String> heads = new ArrayList<>();
-        heads.add("批次");
+//        heads.add("批次");
         heads.add("初始样本(必填)");
         heads.add("样本名称");
         heads.add("样本编号");
@@ -1003,7 +1046,7 @@ public class ProcessTaskService {
         heads.add("样本状态");
         heads.add("组织量（g）");
         heads.add("血液体积(ml)");
-        heads.add("浓度(细胞个数/μl)");
+        heads.add("浓度(ng/ul)/（细胞个数/μl)");
         heads.add("样本体积(ul)");
         heads.add("细胞总量(细胞个数)");
         heads.add("细胞活性");
@@ -1011,12 +1054,13 @@ public class ProcessTaskService {
         heads.add("建库类型");
         heads.add("测序平台");
         heads.add("备注");
-        heads.add("子任务名称");
-        heads.add("状态");
+        heads.add("样本录入编号（此列不允许修改！）");
+//        heads.add("子任务名称");
+//        heads.add("状态");
         excleRows.add(heads);
         for (CibrTaskProcessSampleinput input : list){
             List<String> row = new ArrayList<>();
-            row.add(Util.nullToStr(input.getArrindex()));
+//            row.add(Util.nullToStr(input.getArrindex()));
             row.add(Util.nullToStr(FileUtil.getInitSampleFlag(input.getInitsample())));
             row.add(Util.nullToStr(input.getSamplename()));
             row.add(Util.nullToStr(input.getSampleindex()));
@@ -1034,8 +1078,9 @@ public class ProcessTaskService {
             row.add(Util.nullToStr(FileUtil.getDatabaseFlag(input.getDatabasetype())));
             row.add(Util.nullToStr(FileUtil.getSeqFlag(input.getSequencingplatform())));
             row.add(Util.nullToStr(input.getRemarks()));
-            row.add(Util.nullToStr(uuid_subname.get(input.getSubid())));
-            row.add(Util.nullToStr(Util.statuFlag(input.getCurrentstatu())));
+            row.add(Util.nullToStr(input.getId()));
+//            row.add(Util.nullToStr(uuid_subname.get(input.getSubid())));
+//            row.add(Util.nullToStr(Util.statuFlag(input.getCurrentstatu())));
             excleRows.add(row);
         }
         return excleRows;
@@ -1134,8 +1179,9 @@ public class ProcessTaskService {
         heads.add("测序平台");
         heads.add("剩余量");
         heads.add("备注");
-        heads.add("子任务名称");
-        heads.add("状态");
+//        heads.add("子任务名称");
+//        heads.add("状态");
+        heads.add("样本制备编号（此列不可修改！）");
         excleRows.add(heads);
         for (CibrTaskProcessSamplemake make : samplemakes){
             List<String> row = new ArrayList<>();
@@ -1161,8 +1207,9 @@ public class ProcessTaskService {
             row.add(Util.nullToStr(FileUtil.getSeqFlag(make.getSequencingplatform())));
             row.add(Util.nullToStr(make.getRemaining()));
             row.add(Util.nullToStr(make.getRemarks()));
-            row.add(Util.nullToStr(uuid_subName.get(make.getSubid())));
-            row.add(Util.nullToStr(Util.statuFlag(make.getCurrentstatu())));
+            row.add(Util.nullToStr(make.getId()));
+//            row.add(Util.nullToStr(uuid_subName.get(make.getSubid())));
+//            row.add(Util.nullToStr(Util.statuFlag(make.getCurrentstatu())));
             excleRows.add(row);
         }
         return excleRows;
@@ -1179,26 +1226,26 @@ public class ProcessTaskService {
         List<CibrTaskProcessSamplemake> samplemakes = makeMapper.selectByExample(samplemakeExample);
         Map<String,CibrTaskProcessSamplemake> index_make = new HashMap<>();
         for (CibrTaskProcessSamplemake make : samplemakes){
-            index_make.put(make.getSelfnumber(),make);
+            index_make.put(make.getId(),make);
         }
 
         Map<String, String> name_id = userService.getname_id();
         Map<String, CibrSysSampleindex> currentIndexs = getCurrentIndex();
 
         for (List<String> row : rows){
-            CibrTaskProcessSamplemake importMake = index_make.get(row.get(3));
+            CibrTaskProcessSamplemake importMake = index_make.get(row.get(row.size()-1));
             if (importMake == null){
                 continue;
             }
-            if ("02".equals(importMake.getCurrentstatu()) ||
-                    "09".equals(importMake.getCurrentstatu())
+            if (!"01".equals(importMake.getCurrentstatu())
             ){
                 continue;
             }
             int rowIndex = 0;
             rowIndex++;
 //            importMake.setInitsample(Util.nullToStr(FileUtil.getInitSampleType(row.get(rowIndex++))));
-            if ("02".equals(importMake.getInitsample()) && StringUtils.isEmpty(importMake.getTransform())){
+            if ("02".equals(importMake.getInitsample())
+                    && StringUtils.isEmpty(importMake.getTransform())){
                 importMake.setTransform(Util.nullToStr(FileUtil.getInitSampleType(row.get(rowIndex++))));
             }else {
                 rowIndex++;
@@ -1222,6 +1269,8 @@ public class ProcessTaskService {
             importMake.setReviewer(Util.nullToStr(name_id.get(row.get(rowIndex++))));
             importMake.setDatabasetype(FileUtil.getDatabaseType(row.get(rowIndex++),row.get(0)));
             importMake.setSequencingplatform(FileUtil.getSeqCode(row.get(rowIndex++)));
+            importMake.setRemaining(Util.nullToStr(row.get(rowIndex++)));
+            importMake.setRemarks(Util.nullToStr(row.get(rowIndex++)));
             importMake.setUpdatetime(new Date());
             importMake.setUpdateuser(user.getId());
             /*生成转化衍生编号*/
@@ -1299,8 +1348,9 @@ public class ProcessTaskService {
         heads.add("数据量单位");
         heads.add("建库备注");
         heads.add("上机备注");
-        heads.add("子任务名称");
-        heads.add("状态");
+        heads.add("文库制备编号（此列不可修改！）");
+//        heads.add("子任务名称");
+//        heads.add("状态");
         excleRows.add(heads);
 
         for (CibrTaskProcessLibrary lib : libs){
@@ -1333,8 +1383,9 @@ public class ProcessTaskService {
             row.add(Util.nullToStr(lib.getDatabaseunit()));
             row.add(Util.nullToStr(lib.getLibremark()));
             row.add(Util.nullToStr(lib.getUploadremark()));
-            row.add(Util.nullToStr(uuid_subName.get(lib.getSubid())));
-            row.add(Util.nullToStr(Util.statuFlag(lib.getCurrentstatu())));
+            row.add(Util.nullToStr(lib.getId()));
+//            row.add(Util.nullToStr(uuid_subName.get(lib.getSubid())));
+//            row.add(Util.nullToStr(Util.statuFlag(lib.getCurrentstatu())));
             excleRows.add(row);
         }
         return excleRows;
@@ -1367,8 +1418,9 @@ public class ProcessTaskService {
         heads.add("数据目录");
         heads.add("测序平台");
         heads.add("备注");
-        heads.add("子任务名称");
-        heads.add("状态");
+        heads.add("数据交付编号（此列不可修改！）");
+//        heads.add("子任务名称");
+//        heads.add("状态");
         excleRows.add(heads);
         for (CibrTaskProcessDismountdata dismountdata : dismountdataList){
             List<String> row = new ArrayList<>();
@@ -1379,8 +1431,9 @@ public class ProcessTaskService {
             row.add(Util.nullToStr(dismountdata.getDatepath()));
             row.add(Util.nullToStr(FileUtil.getSeqFlag(dismountdata.getSequencingplatform())));
             row.add(Util.nullToStr(dismountdata.getRemarks()));
-            row.add(Util.nullToStr(uuid_subName.get(dismountdata.getSubid())));
-            row.add(Util.statuFlag(dismountdata.getCurrentstatu()));
+            row.add(Util.nullToStr(dismountdata.getId()));
+//            row.add(Util.nullToStr(uuid_subName.get(dismountdata.getSubid())));
+//            row.add(Util.statuFlag(dismountdata.getCurrentstatu()));
             excleRows.add(row);
         }
         return excleRows;
@@ -1393,14 +1446,16 @@ public class ProcessTaskService {
 
         Map<String,CibrTaskProcessDismountdata> index_dis = new HashMap<>();
         for (CibrTaskProcessDismountdata dismountdata : list){
-            index_dis.put(dismountdata.getSampleindex(),dismountdata);
+            index_dis.put(dismountdata.getId(),dismountdata);
         }
 
         for (List<String> row : rows){
             int index = 2;
-            CibrTaskProcessDismountdata dismountdata = index_dis.get(Util.nullToStr(row.get(0)));
+            CibrTaskProcessDismountdata dismountdata = index_dis.get(Util.nullToStr(row.get(row.size()-1)));
             if (dismountdata == null
-                    || "02".equals(dismountdata.getCurrentstatu())
+                    ||
+                    (!"01".equals(dismountdata.getCurrentstatu()) && !"00".equals(dismountdata.getCurrentstatu())
+            )
             ){
                 continue;
             }
@@ -1422,7 +1477,7 @@ public class ProcessTaskService {
             uuid_confirm.put(confirm.getId(),confirm);
         }
         for (List<String> row : rows){
-            CibrTaskProcessConfirm confirm = uuid_confirm.get(row.get(13));
+            CibrTaskProcessConfirm confirm = uuid_confirm.get(row.get(row.size()-1));
             if (confirm == null){
                 continue;
             }
@@ -1460,8 +1515,9 @@ public class ProcessTaskService {
         heads.add("分析流程/参数");
         heads.add("分析人");
         heads.add("备注");
-        heads.add("子任务名称");
-        heads.add("状态");
+        heads.add("生信分析编号（此列不可修改！）");
+//        heads.add("子任务名称");
+//        heads.add("状态");
         excleRows.add(heads);
 
         Map<String, String> uuid_user = userService.getid_user();
@@ -1475,8 +1531,9 @@ public class ProcessTaskService {
             row.add(Util.nullToStr(analysis.getArgs()));
             row.add(Util.nullToStr(uuid_user.get(analysis.getAnalyst())));
             row.add(Util.nullToStr(analysis.getRemarks()));
-            row.add(Util.nullToStr(uuid_subName.get(analysis.getSubid())));
-            row.add(Util.nullToStr(Util.statuFlag(analysis.getCurrentstatu())));
+            row.add(Util.nullToStr(analysis.getId()));
+//            row.add(Util.nullToStr(uuid_subName.get(analysis.getSubid())));
+//            row.add(Util.nullToStr(Util.statuFlag(analysis.getCurrentstatu())));
             excleRows.add(row);
         }
         return excleRows;
@@ -1489,14 +1546,14 @@ public class ProcessTaskService {
         List<CibrTaskProcessAnalysis> analyses = analysisMapper.selectByExample(analysisExample);
         Map<String,CibrTaskProcessAnalysis> index_analysis = new HashMap<>();
         for (CibrTaskProcessAnalysis analysis : analyses){
-            index_analysis.put(analysis.getSampleindex(),analysis);
+            index_analysis.put(analysis.getId(),analysis);
         }
         Map<String, String> name_id = userService.getname_id();
         for (List<String> row : rows){
             int index = 2;
-            CibrTaskProcessAnalysis analysis = index_analysis.get(Util.nullToStr(row.get(0)));
+            CibrTaskProcessAnalysis analysis = index_analysis.get(Util.nullToStr(row.get(row.size()-1)));
             if (analysis == null
-                    || "02".equals(analysis.getCurrentstatu())
+                    || !"01".equals(analysis.getCurrentstatu())
             ){
                 continue;
             }
@@ -1523,7 +1580,7 @@ public class ProcessTaskService {
         Map<String, CibrTaskProcessSampleinput> index_input = new HashMap<>();
         if (dblist != null && dblist.size()>0){
             for (CibrTaskProcessSampleinput input : dblist){
-                index_input.put(input.getSampleindex(),input);
+                index_input.put(input.getId(),input);
             }
         }
 //        if (
@@ -1538,10 +1595,12 @@ public class ProcessTaskService {
         for (List<String> row : rows){
             boolean hasAlreadyExist = false;
             CibrTaskProcessSampleinput input = new CibrTaskProcessSampleinput();
-            if (!StringUtils.isEmpty(row.get(3)) && index_input.get(row.get(3)) != null){
+            if (!StringUtils.isEmpty(row.get(row.size()-1)) && index_input.get(row.get(row.size()-1)) != null){
                 hasAlreadyExist = true;
-                input = index_input.get(row.get(3));
-                if ("02".equals(input.getCurrentstatu())){
+                input = index_input.get(row.get(row.size()-1));
+                if (!"01".equals(input.getCurrentstatu())
+                        && !"00".equals(input.getCurrentstatu())
+                ){
                     continue;
                 }
             }else {
@@ -1554,7 +1613,7 @@ public class ProcessTaskService {
                 input.setCurrentstatu("01");
             }
             int index = 0;
-            input.setArrindex(row.get(index++));
+//            input.setArrindex(row.get(index++));
             String initSample = row.get(index++);
             input.setInitsample(FileUtil.getInitSampleType(initSample));
             input.setSamplename(row.get(index++));
@@ -1660,15 +1719,13 @@ public class ProcessTaskService {
         List<CibrTaskProcessLibrary> dblibs = libraryMapper.selectByExample(libraryExample);
         Map<String,CibrTaskProcessLibrary> index_lib = new HashMap<>();
         for (CibrTaskProcessLibrary lib : dblibs){
-            index_lib.put(lib.getSelfnumber(),lib);
+            index_lib.put(lib.getId(),lib);
         }
         Map<String, String> name_id = userService.getname_id();
         for (List<String> row : rows){
             int index = 0;
-            CibrTaskProcessLibrary dblib = index_lib.get(row.get(1));
-            if (dblib == null
-                    || "02".equals(dblib.getCurrentstatu())
-                    || "09".equals(dblib.getCurrentstatu())
+            CibrTaskProcessLibrary dblib = index_lib.get(row.get(row.size()-1));
+            if (dblib == null || !"01".equals(dblib.getCurrentstatu())
             ){
                 continue;
             }
@@ -1861,28 +1918,28 @@ public class ProcessTaskService {
         Map<String, CibrSysUser> uuid_user = userService.getuuid_userObject();
         String emailEnd = "\n如有疑问，请联系【" + user.getEmail() + "】" + Util.EMAIL_SUFFIX;
         String inputEmail = Util.EMAIL_PREFIX + "您有一个【测序流程】任务，项目名称【" + process.getProjectname()
-                + "】，您被指定为【样品录入负责人】，请及时处理！" + emailEnd;
+                + "】，您被指定为【样本录入负责人】，请及时处理！" + emailEnd;
         CibrSysUser sampleInput = uuid_user.get(process.getSampleinput());
         emailService.simpleSendEmail(inputEmail,sampleInput.getEmail(),TaskUtil.TASK_PROCESS);
 
         String makeEmail = Util.EMAIL_PREFIX + "您有一个【测序流程】任务，项目名称【" + process.getProjectname()
-                + "】，您被指定为【样品制备负责人】，请及时处理！" + emailEnd;
+                + "】，您被指定为【样本制备负责人】，请及时处理！" + emailEnd;
         CibrSysUser make = uuid_user.get(process.getSamplepreparation());
         emailService.simpleSendEmail(makeEmail,make.getEmail(),TaskUtil.TASK_PROCESS);
 
         String libEmail = Util.EMAIL_PREFIX + "您有一个【测序流程】任务，项目名称【" + process.getProjectname()
                 + "】，您被指定为【文库制备负责人】，请及时处理！" + emailEnd;
-        CibrSysUser lib = uuid_user.get(process.getSamplepreparation());
+        CibrSysUser lib = uuid_user.get(process.getLibrarypreparation());
         emailService.simpleSendEmail(libEmail,lib.getEmail(),TaskUtil.TASK_PROCESS);
 
         String disEmail = Util.EMAIL_PREFIX + "您有一个【测序流程】任务，项目名称【" + process.getProjectname()
                 + "】，您被指定为【数据交付负责人】，请及时处理！" + emailEnd;
-        CibrSysUser dis = uuid_user.get(process.getSamplepreparation());
+        CibrSysUser dis = uuid_user.get(process.getDismountdata());
         emailService.simpleSendEmail(disEmail,dis.getEmail(),TaskUtil.TASK_PROCESS);
 
         String bioEmail = Util.EMAIL_PREFIX + "您有一个【测序流程】任务，项目名称【" + process.getProjectname()
                 + "】，您被指定为【生信分析负责人】，请及时处理！" + emailEnd;
-        CibrSysUser bio = uuid_user.get(process.getSamplepreparation());
+        CibrSysUser bio = uuid_user.get(process.getBioinformaticsanalysis());
         emailService.simpleSendEmail(bioEmail,bio.getEmail(),TaskUtil.TASK_PROCESS);
     }
 
@@ -2019,6 +2076,15 @@ public class ProcessTaskService {
             }
         }
         confirmMapper.batchUpdate(confirms);
+        CibrSysUser creater = userMapper.selectByPrimaryKey(process.getCreater());
+        List<List<String>> lists = getConfirms(processId, confirms);
+        if ("complete".equals(type)){
+            sendPassEmail(creater,lists,"上机确认已完成，请及时确认！",user);
+        }
+        if ("unPass".equals(type)){
+            CibrSysUser liber = userMapper.selectByPrimaryKey(process.getLibrarypreparation());
+            sendPassEmail(liber, lists,"上机确认审核不通过，请及时查看原因！",user);
+        }
         if ("real".equals(type)){
             List<String> confirmIds = new ArrayList<>();
             dismountdatas.forEach(dis ->confirmIds.add(dis.getMakeid()));
@@ -2029,11 +2095,9 @@ public class ProcessTaskService {
             }
             dismountdatas.forEach(dis -> dis.setSequencingplatform(uuid_seq.get(dis.getMakeid())));
             dismountdataMapper.batchInsert(dismountdatas);
-        }
-        if ("complete".equals(type)){
-            CibrSysUser creater = userMapper.selectByPrimaryKey(process.getCreater());
-            List<List<String>> disDataLists = getConfirms(processId,confirms);
-            sendPassEmail(creater,disDataLists,"上机确认已完成，请及时确认！");
+            CibrSysUser dismounter = userMapper.selectByPrimaryKey(process.getDismountdata());
+            List<List<String>> disDataLists = getDisDataLists(processId, dismountdatas);
+            sendPassEmail(dismounter,disDataLists,"数据交付新提交条目，请及时确认！",user);
         }
     }
 
@@ -2218,6 +2282,15 @@ public class ProcessTaskService {
         }else {
             throw new RuntimeException("未识别的类型编号！");
         }
+    }
+
+    public Map<String,Object> countTaskNum(String processId,CibrSysUser user){
+        Map<String,Object> retMap = new HashMap<>();
+        List<Map<String, String>> maps = sampleinputMapper.selectCount(processId, user.getId(), "00");
+        List<Map<String, String>> maps1 = sampleinputMapper.selectCount(processId, user.getId(), "02");
+        retMap.put("todoNum",maps.get(0));
+        retMap.put("checkNum",maps1.get(0));
+        return retMap;
     }
 }
 

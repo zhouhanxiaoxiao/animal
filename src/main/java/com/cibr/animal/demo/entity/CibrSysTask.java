@@ -74,6 +74,15 @@ public class CibrSysTask {
 
     private CibrTaskPartner partner;
 
+    private List<CibrSysUser> handler;
+
+    public List<CibrSysUser> getHandler() {
+        return handler;
+    }
+
+    public void setHandler(List<CibrSysUser> handler) {
+        this.handler = handler;
+    }
 
     public CibrTaskAskDrosophila getAsk() {
         return ask;

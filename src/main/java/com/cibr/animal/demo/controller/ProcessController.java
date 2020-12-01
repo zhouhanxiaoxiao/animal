@@ -63,10 +63,14 @@ public class ProcessController {
 //            processTaskService.getProcessBySubTaskId(subId);
             CibrTaskFail error = processTaskService.findError(process.getId());
             CibrSysUserGroup group = userService.getGroupByName("基因组学中心");
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            Map<String, Object> map = processTaskService.countTaskNum(process.getId(), user);
             Map<String,Object> retMap = new HashMap<>();
             retMap.put("process",process);
             retMap.put("fail",error);
             retMap.put("group",group);
+            retMap.putAll(map);
             ret.setRetMap(retMap);
             ret.setCode("200");
         }catch (Exception e) {
@@ -108,9 +112,35 @@ public class ProcessController {
             List<CibrTaskProcessSampleinput> sampleInputs = processTaskService.getSampleInputs(processId,curFlag,subId);
             List<CibrTaskProcessSubtask> allSubTask = processTaskService.getAllSubTask(processId, TaskUtil.PROCESS_TASK_STATU_SP);
             Map<String, Object> operators = processTaskService.getOperators(processId);
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            Map<String, Object> map = processTaskService.countTaskNum(processId, user);
+            retMap.putAll(map);
             retMap.put("subs",allSubTask);
             retMap.put("sampleInputs",sampleInputs);
             retMap.put("operators",operators);
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("task/process/changeTipNum")
+    public String changeTipNum(HttpServletRequest request,
+                                  HttpServletResponse response,
+                                  @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String processId = (String) requestBody.get("processId");
+            Map<String,Object> retMap = new HashMap<>();
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            Map<String, Object> map = processTaskService.countTaskNum(processId, user);
+            retMap.putAll(map);
             ret.setRetMap(retMap);
             ret.setCode("200");
         }catch (Exception e) {

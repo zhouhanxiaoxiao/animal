@@ -88,7 +88,10 @@ public class TaskService {
     private FileService fileService;
 
     @Autowired
-    private UserService userService;
+    private CibrSysUserService userService;
+
+    @Autowired
+    private CibrSysUserGroupMapper groupMapper;
 
     public List<Map<String, Object>> getTaskStock(List<String> stockIds, List<Map<String, Object>> stockTable) {
         List<Map<String, Object>> retList = new ArrayList<Map<String, Object>>();
@@ -247,32 +250,34 @@ public class TaskService {
         return handler;
     }
 
-    public Map<String, Object> findAllTask(CibrSysUser user,String pageLocation) {
+    public Map<String, Object> findAllTask(CibrSysUser user, String pageLocation) {
         List<CibrSysTask> allTask = new ArrayList<>();
         Map<String, Object> retMap = new HashMap<String, Object>();
         /**果蝇使用申请任务*/
-        List<CibrSysTask> askTasks = taskMapper.selectAskTask(user.getId(),pageLocation);
+        List<CibrSysTask> askTasks = taskMapper.selectAskTask(user.getId(), pageLocation);
         /**协助申请任务*/
-        List<CibrSysTask> partnerTasks = taskMapper.selectPartnerTask(user.getId(),pageLocation);
+        List<CibrSysTask> partnerTasks = taskMapper.selectPartnerTask(user.getId(), pageLocation);
         /**流程管理任务*/
         List<CibrSysTask> processTasks = taskMapper.selectProcessTask(user.getId());
         /**账号申请任务*/
         CibrSysTaskExample taskExample = new CibrSysTaskExample();
-        taskExample.createCriteria().andTasktypeEqualTo("01").andTaskstatuNotEqualTo("09");
+        taskExample.createCriteria()
+                .andTasktypeEqualTo("01")
+                .andTaskstatuNotEqualTo("09");
         List<CibrSysTask> userTasks = taskMapper.selectByExample(taskExample);
 
         List<CibrSysUser> users = userService.selectAllUserWithDesc();
 
-        if (userTasks != null && userTasks.size() > 0){
+        if (userTasks != null && userTasks.size() > 0) {
             allTask.addAll(userTasks);
         }
-        if (askTasks != null && askTasks.size() > 0){
+        if (askTasks != null && askTasks.size() > 0) {
             allTask.addAll(askTasks);
         }
-        if (partnerTasks != null && partnerTasks.size() > 0){
+        if (partnerTasks != null && partnerTasks.size() > 0) {
             allTask.addAll(partnerTasks);
         }
-        if (processTasks != null && processTasks.size() > 0){
+        if (processTasks != null && processTasks.size() > 0) {
             allTask.addAll(processTasks);
         }
 
@@ -281,15 +286,15 @@ public class TaskService {
             @Override
             public int compare(CibrSysTask o1, CibrSysTask o2) {
                 int flag = new BigDecimal(o1.getTaskstatu()).compareTo(new BigDecimal(o2.getTaskstatu()));
-                if (flag == 0){
+                if (flag == 0) {
                     return o2.getCreatetime().compareTo(o1.getCreatetime());
-                }else {
+                } else {
                     return flag;
                 }
             }
         });
-        retMap.put("alltask",allTask);
-        retMap.put("users",users);
+        retMap.put("alltask", allTask);
+        retMap.put("users", users);
         return retMap;
     }
 
@@ -783,8 +788,11 @@ public class TaskService {
             List<CibrTaskFail> cibrTaskFails = failMapper.selectByExample(failExample);
             retMap.put("fail", cibrTaskFails.get(0));
         }
+        CibrSysUserGroup group = groupMapper.selectByPrimaryKey(user.getRoleid());
+        List<CibrSysUser> reviewers = userService.findUserByRoleAndGroup(Util.ROLE_TYPE_REVIEWER, group.getGroupname());
         retMap.put("task", task);
         retMap.put("creater", user);
+        retMap.put("reviewers", reviewers);
         retMap.put("roles", cibrSysRoles);
         return retMap;
     }
@@ -911,7 +919,7 @@ public class TaskService {
         retMap.put("task", task);
 
         CibrSysUser user = userMapper.selectByPrimaryKey(task.getCurrentuser());
-        retMap.put("supporter",user);
+        retMap.put("supporter", user);
         return retMap;
     }
 
@@ -1149,7 +1157,7 @@ public class TaskService {
         example.createCriteria().andTaskidEqualTo(taskId);
         List<CibrTaskAskDrosophila> cibrTaskAskDrosophilas = askDrosophilaMapper.selectByExample(example);
         CibrTaskAskDrosophila ask = null;
-        if (cibrTaskAskDrosophilas != null && cibrTaskAskDrosophilas.size() > 0){
+        if (cibrTaskAskDrosophilas != null && cibrTaskAskDrosophilas.size() > 0) {
             ask = cibrTaskAskDrosophilas.get(0);
         }
         List<CibrTaskDetailDrosophila> details = detailDrosophilaMapper.selectAllDetailByTaskId(ask.getId());
@@ -1157,7 +1165,10 @@ public class TaskService {
         directorExample.createCriteria().andTaskidEqualTo(ask.getId());
         List<CibrTaskAskDirector> directors = askDirectorMapper.selectByExample(directorExample);
         List<String> ids = directors.stream().map(CibrTaskAskDirector::getUserid).collect(Collectors.toList());
-        details.forEach(detail ->{detail.setDirectors(ids);detail.setSupporter(task.getCurrentuser());});
+        details.forEach(detail -> {
+            detail.setDirectors(ids);
+            detail.setSupporter(task.getCurrentuser());
+        });
         return details;
     }
 
@@ -1166,7 +1177,7 @@ public class TaskService {
         example.createCriteria().andTaskidEqualTo(taskId);
         List<CibrTaskAskDrosophila> cibrTaskAskDrosophilas = askDrosophilaMapper.selectByExample(example);
         CibrTaskAskDrosophila ask = null;
-        if (cibrTaskAskDrosophilas != null && cibrTaskAskDrosophilas.size() > 0){
+        if (cibrTaskAskDrosophilas != null && cibrTaskAskDrosophilas.size() > 0) {
             ask = cibrTaskAskDrosophilas.get(0);
         }
         return ask;
@@ -1198,7 +1209,7 @@ public class TaskService {
         prepareList.forEach(pre -> pre.setPrestatu("03"));
         prepareMapper.batchUpdate(prepareList);
         List<CibrTaskFail> list = new ArrayList<>();
-        for (String id : ids){
+        for (String id : ids) {
             CibrTaskFail fail = new CibrTaskFail();
             fail.setId(Util.getUUID());
             fail.setCreatetime(new Date());
@@ -1209,6 +1220,56 @@ public class TaskService {
             list.add(fail);
         }
         failMapper.batchInsert(list);
+        CibrTaskAskPrepareExample prepareExample = new CibrTaskAskPrepareExample();
+        prepareExample.createCriteria().andAskidEqualTo(prepareList.get(0).getAskid());
+        List<CibrTaskAskPrepare> prepareList1 = prepareMapper.selectByExample(prepareExample);
+        boolean hasAllDeal = true;
+        for (CibrTaskAskPrepare prepare : prepareList) {
+            if (ids.contains(prepare.getId())) {
+                continue;
+            }
+            if ("01".equals(prepare.getPrestatu())) {
+                hasAllDeal = false;
+            }
+        }
+        if (hasAllDeal) {
+            CibrTaskAskDrosophila ask = askDrosophilaMapper.selectByPrimaryKey(prepareList.get(0).getAskid());
+            ask.setCurrentstatu(TaskUtil.ASK_TASK_PREPARED);
+            askDrosophilaMapper.updateByPrimaryKey(ask);
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void finalConfirm(String askId, String flag, String remark, CibrSysUser user) {
+        CibrTaskAskDrosophila ask = askDrosophilaMapper.selectByPrimaryKey(askId);
+        CibrSysTask task = taskMapper.selectByPrimaryKey(ask.getTaskid());
+        if ("N".equals(flag)) {
+            ask.setCurrentstatu(TaskUtil.ASK_TASK_ASKER_ALL_REFUSE);
+            task.setTaskstatu(TaskUtil.TASK_STATU_FAIL);
+        } else {
+            ask.setCurrentstatu(TaskUtil.ASK_TASK_ASKER_CONFIRM);
+            task.setTaskstatu(TaskUtil.TASK_STATU_SUCCESS);
+        }
+        CibrTaskAskConfirm confirm = new CibrTaskAskConfirm();
+        confirm.setId(Util.getUUID());
+        confirm.setPrepareid(askId);
+        confirm.setRemarks(remark);
+        confirm.setIscomplete(flag);
+        confirm.setCreatetime(new Date());
+        confirm.setCreater(user.getId());
+        confirmMapper.insert(confirm);
+        taskMapper.updateByPrimaryKey(task);
+        askDrosophilaMapper.updateByPrimaryKey(ask);
+    }
+
+    public CibrTaskAskConfirm findconfirm(String id) {
+        CibrTaskAskConfirmExample example = new CibrTaskAskConfirmExample();
+        example.createCriteria().andPrepareidEqualTo(id);
+        List<CibrTaskAskConfirm> list = confirmMapper.selectByExample(example);
+        if (list != null && list.size() > 0) {
+            return list.get(0);
+        }
+        return null;
     }
 }
 
