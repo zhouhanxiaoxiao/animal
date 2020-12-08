@@ -614,4 +614,26 @@ public class TaskController {
         }
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
+
+    @RequestMapping("/task/submitShare")
+    public String submitShare(HttpServletRequest request,
+                             HttpServletResponse response,
+                             @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String shares = (String) requestBody.get("shares");
+            String taskId = (String) requestBody.get("taskId");
+            List<String> sharesIds = JSONObject.parseArray(shares, String.class);
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            taskService.submitShare(sharesIds,taskId,user);
+            ret.setCode("200");
+        } catch (Exception e) {
+            response.setStatus(500);
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
 }

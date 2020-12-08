@@ -1046,7 +1046,8 @@ public class ProcessTaskService {
         heads.add("样本状态");
         heads.add("组织量（g）");
         heads.add("血液体积(ml)");
-        heads.add("浓度(ng/ul)/（细胞个数/μl)");
+        heads.add("浓度");
+        heads.add("浓度单位(ng/ul)/（细胞个数/μl)");
         heads.add("样本体积(ul)");
         heads.add("细胞总量(细胞个数)");
         heads.add("细胞活性");
@@ -1071,6 +1072,7 @@ public class ProcessTaskService {
             row.add(Util.nullToStr(input.getTissuenumber()));
             row.add(Util.nullToStr(input.getBloodvolume()));
             row.add(Util.nullToStr(input.getConcentration()));
+            row.add(Util.nullToStr(input.getConcentrationunit()));
             row.add(Util.nullToStr(input.getSamplevolume()));
             row.add(Util.nullToStr(input.getTotalnumber()));
             row.add(Util.nullToStr(input.getCelllife()));
@@ -1165,7 +1167,8 @@ public class ProcessTaskService {
         heads.add("物种");
         heads.add("组织来源");
         heads.add("检测日期");
-        heads.add("浓度(细胞个数/μl)");
+        heads.add("浓度");
+        heads.add("浓度单位(ng/ul)/（细胞个数/μl)");
         heads.add("样本体积(ul)");
         heads.add("细胞总量(细胞个数)");
         heads.add("细胞活性");
@@ -1194,6 +1197,7 @@ public class ProcessTaskService {
             row.add(Util.nullToStr(make.getTissue()));
             row.add(Util.nullToStr(TimeUtil.date2str(make.getTestdate(),"yyyy-MM-dd")));
             row.add(Util.nullToStr(make.getConcentration()));
+            row.add(Util.nullToStr(make.getConcentrationunit()));
             row.add(Util.nullToStr(make.getSamplevolume()));
             row.add(Util.nullToStr(make.getTotalnumber()));
             row.add(Util.nullToStr(make.getCelllife()));
@@ -1258,6 +1262,7 @@ public class ProcessTaskService {
             importMake.setTissue(Util.nullToStr(row.get(rowIndex++)));
             importMake.setTestdate(Util.str2date(row.get(rowIndex++),"yyyy-MM-dd"));
             importMake.setConcentration(Util.nullToStr(row.get(rowIndex++)));
+            importMake.setConcentrationunit(Util.nullToStr(row.get(rowIndex++)));
             importMake.setSamplevolume(Util.nullToStr(row.get(rowIndex++)));
             importMake.setTotalnumber(Util.nullToStr(row.get(rowIndex++)));
             importMake.setCelllife(Util.nullToStr(row.get(rowIndex++)));
@@ -1267,7 +1272,12 @@ public class ProcessTaskService {
             importMake.setCheckremarks(Util.nullToStr(row.get(rowIndex++)));
             importMake.setCheckuser(Util.nullToStr(name_id.get(row.get(rowIndex++))));
             importMake.setReviewer(Util.nullToStr(name_id.get(row.get(rowIndex++))));
-            importMake.setDatabasetype(FileUtil.getDatabaseType(row.get(rowIndex++),row.get(0)));
+            String database = row.get(rowIndex++);
+            if (StringUtils.isEmpty(importMake.getTransform())){
+                importMake.setDatabasetype(FileUtil.getDatabaseType(database,row.get(0)));
+            }else {
+                importMake.setDatabasetype(FileUtil.getDatabaseType(database,row.get(1)));
+            }
             importMake.setSequencingplatform(FileUtil.getSeqCode(row.get(rowIndex++)));
             importMake.setRemaining(Util.nullToStr(row.get(rowIndex++)));
             importMake.setRemarks(Util.nullToStr(row.get(rowIndex++)));
@@ -1329,7 +1339,8 @@ public class ProcessTaskService {
         heads.add("中间产物编号");
         heads.add("样本名称");
         heads.add("物种");
-        heads.add("浓度(细胞个数/μl)");
+        heads.add("浓度");
+        heads.add("浓度单位(ng/ul)/（细胞个数/μl)");
         heads.add("细胞总量(细胞个数)");
         heads.add("细胞活性");
         heads.add("样本使用量(ug)/细胞使用量（细胞个数）");
@@ -1365,6 +1376,7 @@ public class ProcessTaskService {
             row.add(Util.nullToStr(lib.getSamplename()));
             row.add(Util.nullToStr(lib.getSpecies()));
             row.add(Util.nullToStr(lib.getConcentration()));
+            row.add(Util.nullToStr(lib.getConcentrationunit()));
             row.add(Util.nullToStr(lib.getTotalnumber()));
             row.add(Util.nullToStr(lib.getCelllife()));
             row.add(Util.nullToStr(lib.getUsenumber()));
@@ -1378,7 +1390,7 @@ public class ProcessTaskService {
             row.add(Util.nullToStr(uuid_user.get(lib.getReviewer())));
             row.add(Util.nullToStr(lib.getQbit()));
             row.add(Util.nullToStr(lib.getLibsize()));
-            row.add(Util.nullToStr(lib.getSeqmethods()));
+            row.add(Util.nullToStr(FileUtil.getSeqFlag(lib.getSeqmethods())));
             row.add(Util.nullToStr(lib.getUploadsize()));
             row.add(Util.nullToStr(lib.getDatabaseunit()));
             row.add(Util.nullToStr(lib.getLibremark()));
@@ -1651,6 +1663,8 @@ public class ProcessTaskService {
                 input.setBloodvolume(bloodvolume);
             }
             String concentration = row.get(index++);
+            String concentrationUnit = row.get(index++);
+            input.setConcentrationunit(concentrationUnit);
             String samplevolume = row.get(index++);
             String totalnumber = row.get(index++);
             if (initSample != null && !initSample.contains(FileUtil.TISSUE_FILENAME)){
@@ -1738,6 +1752,7 @@ public class ProcessTaskService {
             dblib.setSamplename(Util.nullToStr(row.get(index++)));
             dblib.setSpecies(Util.nullToStr(row.get(index++)));
             dblib.setConcentration(Util.nullToStr(row.get(index++)));
+            dblib.setConcentrationunit(Util.nullToStr(row.get(index++)));
             dblib.setTotalnumber(Util.nullToStr(row.get(index++)));
             dblib.setCelllife(Util.nullToStr(row.get(index++)));
             dblib.setUsenumber(Util.nullToStr(row.get(index++)));
@@ -1751,7 +1766,7 @@ public class ProcessTaskService {
             dblib.setReviewer(Util.nullToStr(name_id.get(row.get(index++))));
             dblib.setQbit(Util.nullToStr(row.get(index++)));
             dblib.setLibsize(Util.nullToStr(row.get(index++)));
-            dblib.setSeqmethods(Util.nullToStr(row.get(index++)));
+            dblib.setSeqmethods(FileUtil.getSeqCode(row.get(index++)));
             dblib.setUploadsize(Util.nullToStr(row.get(index++)));
             dblib.setDatabaseunit(Util.nullToStr(row.get(index++)));
             dblib.setLibremark(Util.nullToStr(row.get(index++)));

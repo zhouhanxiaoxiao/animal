@@ -541,6 +541,35 @@
         and task.tasktype = '04';
     </select>
 
+    <select id="selectAllAccountTask" resultType="com.cibr.animal.demo.entity.CibrSysTask">
+        select *
+        from cibr_sys_task task
+        where 1 = 1
+          and task.tasktype = '01'
+          and task.taskstatu = '01'
+          and (
+                exists(
+                        select 1
+                        from cibr_sys_user user
+                        where user.ID = task.createuser
+                          and user.ID = '${userId}'
+                    )
+                or exists(
+                        select 1
+                        from cibr_sys_user user,
+                             cibr_sys_user cur,
+                             cibr_sys_user_role userrole,
+                             cibr_sys_role role
+                        where user.ID = task.createuser
+                          and cur.ID = '${userId}'
+                          and cur.ROLEID = user.ROLEID
+                          and userrole.userid = cur.ID
+                          and userrole.roleid = role.id
+                          and (role.roleType = '40' or role.roleType = '999999')
+                    )
+            )
+    </select>
+
     <select id="selectProcessTask" resultMap="BaseResultMapprocess">
         select task.id                    as task_id,
                task.tasktype              as task_tasktype,
@@ -621,6 +650,12 @@
                           and userNow.ID = userRole.userid
                           and userRole.roleid = role.id
                           and role.roleType = '40'
+                    )
+              or exists(
+                  select 1
+                  from cibr_task_share share
+                  where share.taskid = task.id
+                  and share.shareUser = '${userId}'
                     )
             );
     </select>

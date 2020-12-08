@@ -109,4 +109,6 @@ public interface CibrSysTaskMapper {
     List<CibrSysTask> selectPartnerTask(@Param("userId")String userId,@Param("flag") String pageLocation);
 
     List<CibrSysTask> selectProcessTask(@Param("userId")String userId);
+
+    List<CibrSysTask> selectAllAccountTask(@Param("userId")String userId);
 }

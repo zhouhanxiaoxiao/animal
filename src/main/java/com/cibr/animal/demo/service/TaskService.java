@@ -93,6 +93,9 @@ public class TaskService {
     @Autowired
     private CibrSysUserGroupMapper groupMapper;
 
+    @Autowired
+    private CibrTaskShareMapper shareMapper;
+
     public List<Map<String, Object>> getTaskStock(List<String> stockIds, List<Map<String, Object>> stockTable) {
         List<Map<String, Object>> retList = new ArrayList<Map<String, Object>>();
         for (Map<String, Object> tmp : stockTable) {
@@ -260,25 +263,45 @@ public class TaskService {
         /**流程管理任务*/
         List<CibrSysTask> processTasks = taskMapper.selectProcessTask(user.getId());
         /**账号申请任务*/
-        CibrSysTaskExample taskExample = new CibrSysTaskExample();
-        taskExample.createCriteria()
-                .andTasktypeEqualTo("01")
-                .andTaskstatuNotEqualTo("09");
-        List<CibrSysTask> userTasks = taskMapper.selectByExample(taskExample);
+        List<CibrSysTask> userTasks = taskMapper.selectAllAccountTask(user.getId());
 
         List<CibrSysUser> users = userService.selectAllUserWithDesc();
 
+        List<String> taskIds = new ArrayList<>();
         if (userTasks != null && userTasks.size() > 0) {
             allTask.addAll(userTasks);
+            for (CibrSysTask tmp : userTasks){
+                taskIds.add(tmp.getId());
+            }
         }
         if (askTasks != null && askTasks.size() > 0) {
             allTask.addAll(askTasks);
+            for (CibrSysTask tmp : askTasks){
+                taskIds.add(tmp.getId());
+            }
         }
         if (partnerTasks != null && partnerTasks.size() > 0) {
             allTask.addAll(partnerTasks);
+            for (CibrSysTask tmp : partnerTasks){
+                taskIds.add(tmp.getId());
+            }
         }
         if (processTasks != null && processTasks.size() > 0) {
             allTask.addAll(processTasks);
+            for (CibrSysTask tmp : processTasks){
+                taskIds.add(tmp.getId());
+            }
+        }
+        List<CibrTaskShare> shares = new ArrayList<>();
+        /*项目分享者*/
+        if (taskIds.size() > 0){
+            CibrTaskShareExample shareExample = new CibrTaskShareExample();
+            shareExample.createCriteria().andTaskidIn(taskIds);
+            shareExample.setDistinct(true);
+            List<CibrTaskShare> dblist = shareMapper.selectByExample(shareExample);
+            if (dblist != null){
+                shares.addAll(dblist);
+            }
         }
 
         /**已任务状态，创建时间排序*/
@@ -295,6 +318,7 @@ public class TaskService {
         });
         retMap.put("alltask", allTask);
         retMap.put("users", users);
+        retMap.put("shares", shares);
         return retMap;
     }
 
@@ -1270,6 +1294,33 @@ public class TaskService {
             return list.get(0);
         }
         return null;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void submitShare(List<String> sharesIds, String taskId, CibrSysUser user) {
+        List<CibrTaskShare> shares = new ArrayList<>();
+        CibrTaskShareExample shareExample = new CibrTaskShareExample();
+        shareExample.createCriteria().andTaskidEqualTo(taskId);
+        List<CibrTaskShare> db_shares = shareMapper.selectByExample(shareExample);
+        List<String> userIds = new ArrayList<>();
+        if (db_shares != null && db_shares.size()>0){
+            db_shares.forEach(share -> userIds.add(share.getShareuser()));
+        }
+        for (String userId : sharesIds){
+            if (userIds.contains(userId)){
+                continue;
+            }
+            CibrTaskShare share = new CibrTaskShare();
+            share.setId(Util.getUUID());
+            share.setShareuser(userId);
+            share.setCreater(user.getId());
+            share.setTaskid(taskId);
+            share.setCreatetime(new Date());
+            shares.add(share);
+        }
+        if (shares.size() > 0){
+            shareMapper.batchInsert(shares);
+        }
     }
 }
 

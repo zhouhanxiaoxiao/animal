@@ -34,6 +34,8 @@ public class UserService {
     @Autowired
     private CibrSysUserGroupMapper groupMapper;
 
+    @Autowired
+    private EmailService emailService;
     /**
      *
      * @param roleType
@@ -91,7 +93,8 @@ public class UserService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public String addNewDepartment(String name, String groupAdmin,String userName,String userEmail,String userPwd, CibrSysUser user) {
+    public String addNewDepartment(String name, String groupAdmin,String userName,String userEmail,String userPwd,
+                                   String realPwd, CibrSysUser user) {
         CibrSysUserGroupExample groupExample = new CibrSysUserGroupExample();
         groupExample.createCriteria().andGroupnameEqualTo(name);
         List<CibrSysUserGroup> groups = groupMapper.selectByExample(groupExample);
@@ -124,6 +127,9 @@ public class UserService {
             userRole.setRoleid(roles.get(0).getId());
             userMapper.insert(admin);
             userRoleMapper.insert(userRole);
+            String emailContext = Util.EMAIL_PREFIX + userName + "老师，您好。【" + name + "】已在测序系统平台开通，您的账号为【" +
+                    userEmail +"】,密码为【" + realPwd + "】。" + Util.EMAIL_SUFFIX;
+            emailService.simpleSendEmail(emailContext,userEmail,"测序系统平台开通");
         }
         newGroup.setGroupadmin(groupAdmin);
         groupMapper.insert(newGroup);
@@ -143,7 +149,9 @@ public class UserService {
                 userRole.setUserid(user.getId());
                 roles.add(userRole);
             }
-            userRoleMapper.batchInsert(roles);
+            if (roles.size() >0){
+                userRoleMapper.batchInsert(roles);
+            }
         }
         userMapper.batchUpdate(users);
     }

@@ -1030,6 +1030,7 @@ public class ProcessController {
     public String piConfirm(HttpServletRequest request,
                                  HttpServletResponse response) throws IOException {
         String tmpIdp = (String) request.getParameter("tmpId");
+        logger.info("实验室PI确认！");
         processTaskService.piConfrim(tmpIdp);
         return "操作成功！";
     }
@@ -1038,6 +1039,7 @@ public class ProcessController {
     public String piRefuse(HttpServletRequest request,
                             HttpServletResponse response) throws IOException {
         String tmpIdp = (String) request.getParameter("tmpId");
+        logger.info("实验室PI拒绝！");
         processTaskService.piRefuse(tmpIdp);
         return "操作成功！";
     }

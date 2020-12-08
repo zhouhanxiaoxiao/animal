@@ -163,9 +163,10 @@ public class UserController {
             String userName = String.valueOf(requestBody.get("userName"));
             String userEmail = String.valueOf(requestBody.get("userEmail"));
             String userPwd = String.valueOf(requestBody.get("userPwd"));
+            String realPwd = String.valueOf(requestBody.get("realPwd"));
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
-            String code = userService.addNewDepartment(name, groupAdmin,userName,userEmail,userPwd, user);
+            String code = userService.addNewDepartment(name, groupAdmin,userName,userEmail,userPwd,realPwd, user);
             ret.setCode(code);
         } catch (Exception e) {
             ret.setCode("E500");

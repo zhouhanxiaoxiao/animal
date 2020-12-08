@@ -1,6 +1,8 @@
 package com.cibr.animal.demo.config;
 
 import com.cibr.animal.demo.util.RedisUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -13,6 +15,8 @@ import java.util.Objects;
 public class AuthInterceptor implements HandlerInterceptor {
     @Autowired
     private RedisUtil redisUtil;
+
+    private Logger logger = LoggerFactory.getLogger(AuthInterceptor.class);
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -33,6 +37,8 @@ public class AuthInterceptor implements HandlerInterceptor {
             return false;
         }
         redisUtil.set(token,loginStatus);
+        logger.info(loginStatus.toString());
+        logger.info(request.getRequestURI());
         request.setAttribute("user", loginStatus);
         return true;
     }
