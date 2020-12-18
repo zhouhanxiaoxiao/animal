@@ -60,6 +60,49 @@ public class FileService {
 
 
     @Transactional(rollbackFor = Exception.class)
+    public File saveFiles(List<MultipartFile> files,List<String> detailIds,CibrSysUser user){
+        File dist = null;
+        List<CibrSysFile> list = new ArrayList<>();
+        for (MultipartFile file : files){
+            if (file.isEmpty()){
+                throw new RuntimeException("上传的文件为空！");
+            }
+            String fileName = file.getOriginalFilename();
+            File path = new File(filePath);
+            if (!path.exists()){
+                path.mkdirs();
+            }
+            dist = new File(filePath + File.separator+ Util.getUUID() + fileName);
+            logger.debug(dist.getPath());
+            String md5 = null;
+            try {
+                md5 = DigestUtils.md5DigestAsHex(file.getInputStream());
+                file.transferTo(dist);
+            }catch (Exception e){
+                e.printStackTrace();
+                return null;
+            }
+            for (String detailId : detailIds){
+                CibrSysFile cibrSysFile = new CibrSysFile();
+                cibrSysFile.setId(Util.getUUID());
+                cibrSysFile.setCreater(user.getId());
+                cibrSysFile.setCreatetime(new Date());
+                cibrSysFile.setDetailid(detailId);
+                cibrSysFile.setFilestatu("00");
+                cibrSysFile.setMd5(md5);
+                cibrSysFile.setName(dist.getName());
+                cibrSysFile.setPath(dist.getPath());
+                cibrSysFile.setRealname(fileName);
+                list.add(cibrSysFile);
+            }
+        }
+        if (list.size() > 0){
+            fileMapper.batchInsert(list);
+        }
+        return dist;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public File saveFile(List<MultipartFile> files,String detailId,CibrSysUser user){
         File dist = null;
         for (MultipartFile file : files){
@@ -81,6 +124,7 @@ public class FileService {
                 e.printStackTrace();
                 return null;
             }
+            Util.replaceSpecialChar(dist.getName());
             CibrSysFile cibrSysFile = new CibrSysFile();
             cibrSysFile.setId(Util.getUUID());
             cibrSysFile.setCreater(user.getId());
@@ -88,9 +132,9 @@ public class FileService {
             cibrSysFile.setDetailid(detailId);
             cibrSysFile.setFilestatu("00");
             cibrSysFile.setMd5(md5);
-            cibrSysFile.setName(dist.getName());
-            cibrSysFile.setPath(dist.getPath());
-            cibrSysFile.setRealname(fileName);
+            cibrSysFile.setName(Util.replaceSpecialChar(dist.getName()));
+            cibrSysFile.setPath(Util.replaceSpecialChar(dist.getPath()));
+            cibrSysFile.setRealname(Util.replaceSpecialChar(fileName));
             fileMapper.insert(cibrSysFile);
         }
         return dist;
@@ -241,10 +285,11 @@ public class FileService {
                             drosophila.setName("果蝇");
                             drosophila.setGenotype(list.get(2));
                             drosophila.setSelfindex(list.get(0));
+                            drosophila.setCurstatu("01");
                             newDrosos.add(drosophila);
                             geno_droso.put(drosophila.getSelfindex(),drosophila);
                         }else {
-                            drosophila = geno_droso.get(list.get(2));
+                            drosophila = geno_droso.get(list.get(0));
                         }
                         CibrStockDrosophila stockDrosophila = new CibrStockDrosophila();
                         stockDrosophila.setId(Util.getUUID());
@@ -272,8 +317,12 @@ public class FileService {
                         newStock.add(stockDrosophila);
                     }
                 }
-                stockService.batchInsert(newStock);
-                animalService.batchInsert(newDrosos);
+                if (newStock.size() > 0){
+                    stockService.batchInsert(newStock);
+                }
+                if (newDrosos.size() > 0){
+                    animalService.batchInsert(newDrosos);
+                }
             }
         }
     }
@@ -316,7 +365,8 @@ public class FileService {
 
     public List<CibrSysFile> getfileList(String detailId) {
         CibrSysFileExample fileExample = new CibrSysFileExample();
-        fileExample.createCriteria().andDetailidEqualTo(detailId);
+        fileExample.createCriteria().andDetailidEqualTo(detailId).andFilestatuEqualTo("00");
+        fileExample.setOrderByClause("createTime desc");
         List<CibrSysFile> cibrSysFiles = fileMapper.selectByExample(fileExample);
         for (CibrSysFile file : cibrSysFiles){
             file.setPath("");
@@ -345,5 +395,23 @@ public class FileService {
     public File getTalk() {
         File img = new File(imgPath + "talk.jpg");
         return img;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteFile(String fileId) {
+        CibrSysFile cibrSysFile = fileMapper.selectByPrimaryKey(fileId);
+        cibrSysFile.setFilestatu("09");
+        fileMapper.updateByPrimaryKey(cibrSysFile);
+    }
+
+    public Map<String ,String> getFileCount(List<String> ids) {
+        List<Map<String, String>> maps = fileMapper.selectMapIdWithCount(ids);
+        Map<String ,String > retMap = new HashMap<>();
+        if (maps != null){
+            for (Map<String, String> tmp : maps){
+                retMap.put(tmp.get("detailId"),tmp.get("num"));
+            }
+        }
+        return  retMap;
     }
 }

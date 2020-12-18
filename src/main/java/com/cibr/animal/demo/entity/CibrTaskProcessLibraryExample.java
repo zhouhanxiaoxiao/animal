@@ -2814,6 +2814,76 @@ public class CibrTaskProcessLibraryExample {
             addCriterion("concentrationunit not between", value1, value2, "concentrationunit");
             return (Criteria) this;
         }
+
+        public Criteria andTissueIsNull() {
+            addCriterion("tissue is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueIsNotNull() {
+            addCriterion("tissue is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueEqualTo(String value) {
+            addCriterion("tissue =", value, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueNotEqualTo(String value) {
+            addCriterion("tissue <>", value, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueGreaterThan(String value) {
+            addCriterion("tissue >", value, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueGreaterThanOrEqualTo(String value) {
+            addCriterion("tissue >=", value, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueLessThan(String value) {
+            addCriterion("tissue <", value, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueLessThanOrEqualTo(String value) {
+            addCriterion("tissue <=", value, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueLike(String value) {
+            addCriterion("tissue like", value, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueNotLike(String value) {
+            addCriterion("tissue not like", value, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueIn(List<String> values) {
+            addCriterion("tissue in", values, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueNotIn(List<String> values) {
+            addCriterion("tissue not in", values, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueBetween(String value1, String value2) {
+            addCriterion("tissue between", value1, value2, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueNotBetween(String value1, String value2) {
+            addCriterion("tissue not between", value1, value2, "tissue");
+            return (Criteria) this;
+        }
     }
 
     /**

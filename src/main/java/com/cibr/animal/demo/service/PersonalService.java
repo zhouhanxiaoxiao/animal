@@ -87,7 +87,7 @@ public class PersonalService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void stockAdd(String animalName,String stockID, String genotype, String resource,List<Map> rows, CibrSysUser user) throws ParseException {
+    public void stockAdd(String animalName,String selfnum,String stockID, String genotype, String resource,List<Map> rows, CibrSysUser user) throws ParseException {
         CibrAnimalDrosophila drosophila = new CibrAnimalDrosophila();
         String droId = Util.getUUID();
         drosophila.setId(droId);
@@ -97,6 +97,8 @@ public class PersonalService {
         drosophila.setStockId(stockID);
         drosophila.setName(animalName);
         drosophila.setResource(resource);
+        drosophila.setSelfindex(selfnum);
+        drosophila.setCurstatu("01");
 
         CibrStockDrosophila stockDrosophila = new CibrStockDrosophila();
 

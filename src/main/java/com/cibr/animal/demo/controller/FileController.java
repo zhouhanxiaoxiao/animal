@@ -192,6 +192,46 @@ public class FileController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
+    @RequestMapping("/file/delete")
+    public String deleteFile(HttpServletRequest request,
+                               HttpServletResponse response,
+                               @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String fileId = (String) requestBody.get("fileId");
+            fileService.deleteFile(fileId);
+            ret.setCode("200");
+        } catch (Exception e) {
+            response.setStatus(500);
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/file/getFileCount")
+    public String getFileCount(HttpServletRequest request,
+                             HttpServletResponse response,
+                             @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String idsStr = (String) requestBody.get("idsStr");
+            List<String> ids = JSONObject.parseArray(idsStr, String.class);
+            Map<String, String> fileCount = fileService.getFileCount(ids);
+            Map retMap = new HashMap();
+            retMap.put("fileCounts",fileCount);
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        } catch (Exception e) {
+            response.setStatus(500);
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
     @RequestMapping("/file/download")
     public void downloadSampleInput(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -213,6 +253,8 @@ public class FileController {
         outputStream.close();
         input.close();
     }
+
+
 
     @RequestMapping("/file/import/makeInput")
     public String makeInput(HttpServletRequest request,
@@ -404,5 +446,25 @@ public class FileController {
         }
         outputStream.close();
         input.close();
+    }
+
+    @RequestMapping("/file/import/uploadAll")
+    public String uploadAll(HttpServletRequest request,
+                              HttpServletResponse response) {
+        ReturnData ret = new ReturnData();
+        try {
+            String idsStr = request.getHeader("idsStr");
+            List<String> ids = JSONObject.parseArray(idsStr, String.class);
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
+            fileService.saveFiles(files,ids,user);
+        } catch (Exception e) {
+            response.setStatus(500);
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 }

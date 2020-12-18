@@ -1,11 +1,10 @@
 package com.cibr.animal.demo.util;
 
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +13,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -119,13 +119,22 @@ public class FileUtil {
         List<List<String>> retList = new ArrayList<List<String>>();
         for (int row = 1;row<=lastRowNum;row++){
             Row r = sheet.getRow(row);
+            if (r == null){
+                continue;
+            }
             List rowList = new ArrayList<String>();
             for (int col = 0; col < cols; col++) {
                 String cell = null;
+                Cell excleCell = r.getCell(col);
+                if (excleCell == null){
+                    continue;
+                }
                 try {
-                    cell = r.getCell(col).getStringCellValue();
+                    cell = excleCell.getStringCellValue();
                 }catch (Exception e){
-                    if (r.getCell(col) == null){
+                    if (HSSFDateUtil.isCellDateFormatted(r.getCell(col))){
+                        cell = TimeUtil.date2str(HSSFDateUtil.getJavaDate(r.getCell(col).getNumericCellValue()),"yyyy-MM-dd");
+                    }else if (r.getCell(col) == null){
                         cell = "";
                     }else {
                         cell = String.valueOf(r.getCell(col).getNumericCellValue());

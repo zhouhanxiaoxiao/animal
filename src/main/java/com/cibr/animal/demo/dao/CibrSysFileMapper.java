@@ -5,6 +5,7 @@ import com.cibr.animal.demo.entity.CibrSysFileExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CibrSysFileMapper {
     /**
@@ -94,4 +95,8 @@ public interface CibrSysFileMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(CibrSysFile record);
+
+    List<Map<String,String>> selectMapIdWithCount(@Param("list") List<String> ids);
+
+    void batchInsert(@Param("list") List<CibrSysFile> list);
 }

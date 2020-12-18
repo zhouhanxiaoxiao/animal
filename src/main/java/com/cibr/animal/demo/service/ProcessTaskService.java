@@ -274,7 +274,7 @@ public class ProcessTaskService {
 //        if (!StringUtils.isEmpty(subId) && !"showAll".equals(subId)){
 //            criteria.andSubidEqualTo(subId);
 //        }
-        sampleinputExample.setOrderByClause("currentStatu,rowIndex");
+        sampleinputExample.setOrderByClause("currentStatu,sampleName,rowIndex");
         return sampleinputMapper.selectByExample(sampleinputExample);
     }
 
@@ -468,8 +468,7 @@ public class ProcessTaskService {
         CibrTaskProcessSamplemakeExample.Criteria criteria = samplemakeExample.createCriteria();
         criteria.andProcessidEqualTo(processId).andCurrentstatuNotEqualTo("08");
         if ("00".equals(subId)){
-            criteria.andSubidIsNull().andCurrentstatuNotIn(Arrays.asList("02","03","07","09"))
-            ;
+            criteria.andSubidIsNull().andCurrentstatuNotIn(Arrays.asList("02","03","07","09"));
         }else  if ("02".equals(subId)){
             /*已提交、审核未通过*/
             criteria.andCurrentstatuIn(Arrays.asList("02", "07", "09"));
@@ -477,11 +476,10 @@ public class ProcessTaskService {
             /*审核通过*/
 //            criteria.andCurrentstatuEqualTo("03");
             return makeMapper.selectWithCommitNumber(processId,"03");
-        }
-        else{
+        }else{
             criteria.andSubidEqualTo(subId);
         }
-        samplemakeExample.setOrderByClause("currentStatu,rowIndex");
+        samplemakeExample.setOrderByClause("currentStatu, sampleName, rowIndex");
         return makeMapper.selectByExample(samplemakeExample);
     }
 
@@ -606,6 +604,7 @@ public class ProcessTaskService {
         lib.setConcentration(make.getConcentration());
         lib.setTotalnumber(make.getTotalnumber());
         lib.setConcentrationunit(make.getConcentrationunit());
+        lib.setTissue(make.getTissue());
         lib.setCurrentstatu("01");
         return lib;
     }
@@ -625,7 +624,7 @@ public class ProcessTaskService {
         }else{
             criteria.andSubidEqualTo(subId);
         }
-        example.setOrderByClause("currentstatu,rowIndex");
+        example.setOrderByClause("currentstatu,samplename,rowIndex");
         return libraryMapper.selectByExample(example);
     }
 
@@ -685,6 +684,8 @@ public class ProcessTaskService {
         confirm.setInitsample(lib.getInitsample());
         confirm.setSampleindex(lib.getSelfnumber());
         confirm.setSamplename(lib.getSamplename());
+        confirm.setSpecies(lib.getSpecies());
+        confirm.setTissue(lib.getTissue());
         confirm.setCreatedbtime(lib.getCreatedbtime());
         confirm.setLibindex(lib.getDatabaseindex());
         confirm.setLibtype(lib.getDatabasetype());
@@ -711,6 +712,8 @@ public class ProcessTaskService {
         dismountdata.setRowindex(confirm.getRowindex());
         dismountdata.setSampleindex(confirm.getSampleindex());
         dismountdata.setSamplename(confirm.getSamplename());
+        dismountdata.setSpecies(confirm.getSpecies());
+        dismountdata.setTissue(confirm.getTissue());
         dismountdata.setLasttime(TimeUtil.dateAdd(new Date(),Calendar.MONTH,3));
 
         return dismountdata;
@@ -730,7 +733,7 @@ public class ProcessTaskService {
         }else{
             criteria.andSubidEqualTo(subId);
         }
-        example.setOrderByClause("currentStatu,rowIndex");
+        example.setOrderByClause("currentStatu,sampleName,rowIndex");
         return dismountdataMapper.selectByExample(example);
     }
 
@@ -797,6 +800,8 @@ public class ProcessTaskService {
         analysis.setDismountid(dismountdata.getId());
         analysis.setSamplename(dismountdata.getSamplename());
         analysis.setSampleindex(dismountdata.getSampleindex());
+        analysis.setSpecies(dismountdata.getSpecies());
+        analysis.setTissue(dismountdata.getTissue());
         analysis.setAnalyst(process.getBioinformaticsanalysis());
         analysis.setCurrentstatu("01");
         return analysis;
@@ -815,7 +820,7 @@ public class ProcessTaskService {
         }else {
             criteria.andSubidEqualTo(subId);
         }
-        analysisExample.setOrderByClause("currentStatu,rowIndex");
+        analysisExample.setOrderByClause("currentStatu,sampleName,rowIndex");
         return analysisMapper.selectByExample(analysisExample);
     }
 
@@ -1049,7 +1054,7 @@ public class ProcessTaskService {
         heads.add("浓度");
         heads.add("浓度单位(ng/ul)/（细胞个数/μl)");
         heads.add("样本体积(ul)");
-        heads.add("细胞总量(细胞个数)");
+        heads.add("核酸/细胞总量（ug/细胞个数）");
         heads.add("细胞活性");
         heads.add("细胞分选法");
         heads.add("建库类型");
@@ -1170,7 +1175,10 @@ public class ProcessTaskService {
         heads.add("浓度");
         heads.add("浓度单位(ng/ul)/（细胞个数/μl)");
         heads.add("样本体积(ul)");
-        heads.add("细胞总量(细胞个数)");
+        heads.add("核酸/细胞总量（ug/细胞个数）");
+        heads.add("260/280");
+        heads.add("260/230");
+        heads.add("RQN");
         heads.add("细胞活性");
         heads.add("细胞分选法");
         heads.add("提取方法");
@@ -1200,6 +1208,9 @@ public class ProcessTaskService {
             row.add(Util.nullToStr(make.getConcentrationunit()));
             row.add(Util.nullToStr(make.getSamplevolume()));
             row.add(Util.nullToStr(make.getTotalnumber()));
+            row.add(Util.nullToStr(make.getM260280()));
+            row.add(Util.nullToStr(make.getM260230()));
+            row.add(Util.nullToStr(make.getRqn()));
             row.add(Util.nullToStr(make.getCelllife()));
             row.add(Util.nullToStr(FileUtil.getCellsortFlag(make.getCellsort())));
             row.add(Util.nullToStr(FileUtil.getExtractFlag(make.getExtractmethod())));
@@ -1265,6 +1276,9 @@ public class ProcessTaskService {
             importMake.setConcentrationunit(Util.nullToStr(row.get(rowIndex++)));
             importMake.setSamplevolume(Util.nullToStr(row.get(rowIndex++)));
             importMake.setTotalnumber(Util.nullToStr(row.get(rowIndex++)));
+            importMake.setM260280(Util.nullToStr(row.get(rowIndex++)));
+            importMake.setM260230(Util.nullToStr(row.get(rowIndex++)));
+            importMake.setRqn(Util.nullToStr(row.get(rowIndex++)));
             importMake.setCelllife(Util.nullToStr(row.get(rowIndex++)));
             importMake.setCellsort(FileUtil.getCellSortCode(row.get(rowIndex++)));
             importMake.setExtractmethod(FileUtil.getExtractCode(row.get(rowIndex++)));
@@ -1341,7 +1355,7 @@ public class ProcessTaskService {
         heads.add("物种");
         heads.add("浓度");
         heads.add("浓度单位(ng/ul)/（细胞个数/μl)");
-        heads.add("细胞总量(细胞个数)");
+        heads.add("核酸/细胞总量（ug/细胞个数）");
         heads.add("细胞活性");
         heads.add("样本使用量(ug)/细胞使用量（细胞个数）");
         heads.add("片段大小（bp）");
@@ -1721,7 +1735,9 @@ public class ProcessTaskService {
         updateSampleIndex(currentIndexs);
         if (updateList.size()>0){
             sampleinputMapper.batchUpdate(updateList);
-        }else {
+        }
+        if (saveList.size()>0)
+        {
             sampleinputMapper.batchInsert(saveList);
         }
     }
@@ -2062,7 +2078,7 @@ public class ProcessTaskService {
         }else {
             criteria.andSubidEqualTo(subId);
         }
-        confirmExample.setOrderByClause("currentstatu,rowIndex");
+        confirmExample.setOrderByClause("currentstatu,sampleName,rowIndex");
         return confirmMapper.selectByExample(confirmExample);
     }
 
@@ -2305,6 +2321,17 @@ public class ProcessTaskService {
         List<Map<String, String>> maps1 = sampleinputMapper.selectCount(processId, user.getId(), "02");
         retMap.put("todoNum",maps.get(0));
         retMap.put("checkNum",maps1.get(0));
+        return retMap;
+    }
+
+    public Map<String, Object> allData(String processId,String flag, CibrSysUser user) {
+        Map<String, Object> notSubmitMap = initAllConfirm(processId, flag, "00");
+        Map<String, Object> noPassMap = initAllConfirm(processId, flag, "02");
+        Map<String, Object> passMap = initAllConfirm(processId, flag, "03");
+        Map<String, Object> retMap = new HashMap<>();
+        retMap.putAll(notSubmitMap);
+        retMap.putAll(noPassMap);
+        retMap.putAll(passMap);
         return retMap;
     }
 }

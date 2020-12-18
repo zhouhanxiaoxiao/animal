@@ -738,7 +738,7 @@
         from cibr_task_process_sampleinput input
         where processId = '${processId}'
           and currentStatu = '${currentStatu}'
-        order by currentStatu asc, makeNum desc
+        order by currentStatu asc,sampleName ,makeNum desc
     </select>
 
     <select id="selectCount" resultType="Map">
@@ -747,8 +747,10 @@
         select count(1) from cibr_task_process proce
         left join cibr_task_process_sampleinput input
         on proce.id = input.processId
+        left join cibr_sys_task task on task.id = proce.taskid
         where 1=1
-          and proce.taskstatu = '20'
+        and task.taskstatu = '01'
+        and proce.taskstatu = '20'
         <if test="processId != 'all'.toString()">
             and input.processId = '${processId}'
         </if>
@@ -765,7 +767,9 @@
         select count(1) from cibr_task_process proce
         left join cibr_task_process_samplemake make
         on proce.id = make.processId
+        left join cibr_sys_task task on task.id = proce.taskid
         where 1=1
+        and task.taskstatu = '01'
         and proce.taskstatu = '20'
         <if test="processId != 'all'.toString()">
             and make.processId = '${processId}'
@@ -783,7 +787,9 @@
         select count(1) from cibr_task_process proce
         left join cibr_task_process_library lib
         on proce.id = lib.processId
+        left join cibr_sys_task task on task.id = proce.taskid
         where 1=1
+        and task.taskstatu = '01'
         and proce.taskstatu = '20'
         <if test="processId != 'all'.toString()">
             and lib.processId = '${processId}'
@@ -801,7 +807,9 @@
         select count(1) from cibr_task_process proce
         left join cibr_task_process_confirm confirm
         on proce.id = confirm.processId
+        left join cibr_sys_task task on task.id = proce.taskid
         where 1=1
+        and task.taskstatu = '01'
         and proce.taskstatu = '20'
         <if test="processId != 'all'.toString()">
             and confirm.processId = '${processId}'
@@ -819,7 +827,9 @@
         select count(1) from cibr_task_process proce
         left join cibr_task_process_dismountdata dis
         on proce.id = dis.processId
+        left join cibr_sys_task task on task.id = proce.taskid
         where 1=1
+        and task.taskstatu = '01'
         and proce.taskstatu = '20'
         <if test="processId != 'all'.toString()">
             and dis.processId = '${processId}'
@@ -837,7 +847,9 @@
         select count(1) from cibr_task_process proce
         left join cibr_task_process_analysis bio
         on proce.id = bio.processId
+        left join cibr_sys_task task on task.id = proce.taskid
         where 1=1
+        and task.taskstatu = '01'
         and proce.taskstatu = '20'
         <if test="processId != 'all'.toString()">
             and bio.processId = '${processId}'

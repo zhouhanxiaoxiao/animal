@@ -1026,6 +1026,27 @@ public class ProcessController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
+    @RequestMapping("/task/process/allData")
+    public String allData(HttpServletRequest request,
+                           HttpServletResponse response,
+                           @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String processId = (String) requestBody.get("processId");
+            String flag = (String) requestBody.get("flag");
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            Map<String, Object> stringObjectMap = processTaskService.allData(processId, flag, user);
+            ret.setRetMap(stringObjectMap);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
     @RequestMapping("/emailTmp/piConfirm")
     public String piConfirm(HttpServletRequest request,
                                  HttpServletResponse response) throws IOException {
@@ -1043,4 +1064,5 @@ public class ProcessController {
         processTaskService.piRefuse(tmpIdp);
         return "操作成功！";
     }
+
 }

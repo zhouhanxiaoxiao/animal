@@ -104,6 +104,29 @@ public class TaskController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
+    @RequestMapping("/task/getTodoCount")
+    public String getTodoCount(HttpServletRequest request,
+                             HttpServletResponse response,
+                             @RequestBody Map requestBody) {
+        ReturnData ret = new ReturnData();
+        try {
+            String idsStr = (String) requestBody.get("idsStr");
+            List<String> ids = JSONObject.parseArray(idsStr, String.class);
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            Map<String, String> todoCount = taskService.getTodoCount(ids, user);
+            Map retMap = new HashMap();
+            retMap.put("todoCount",todoCount);
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        } catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
     @RequestMapping("/task/gatAllTask")
     public String getAllTask(HttpServletRequest request,
                              HttpServletResponse response,

@@ -14,6 +14,7 @@ import com.cibr.animal.demo.util.ReturnData;
 import com.cibr.animal.demo.util.Util;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,9 +43,14 @@ public class LoginController {
                         @Param("password") String password,
                         @Param("verification") String verification,
                         @Param("loginFlag") boolean loginFlag,
-                        HttpServletRequest request){
+                        HttpServletRequest request,
+                        @RequestBody Map requestBody){
         ReturnData ret = new ReturnData();
         try {
+            loginEmail = (String) requestBody.get("loginEmail");
+            password = (String) requestBody.get("password");
+            verification = (String) requestBody.get("verification");
+            loginFlag = (boolean) requestBody.get("loginFlag");
             CibrSysUser user = loginService.findUser(loginEmail);
             CibrSysVerification v = registerService.findVerification(loginEmail, verification);
             Map retMap = new HashMap<String,Object>();

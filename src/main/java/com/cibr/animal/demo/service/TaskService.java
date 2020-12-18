@@ -1322,6 +1322,25 @@ public class TaskService {
             shareMapper.batchInsert(shares);
         }
     }
+
+    public Map<String,String> getTodoCount(List<String> ids, CibrSysUser user) {
+        Map<String,String> retMap = new HashMap<>();
+        for (String processId : ids){
+            Map<String, Object> map = processTaskService.countTaskNum(processId, user);
+            Map<String, String> todoNum = (Map<String, String>) map.get("todoNum");
+            int todoAll = 0;
+            for (String key : todoNum.keySet()){
+                todoAll += Integer.parseInt(String.valueOf(todoNum.get(key)));
+            }
+            Map<String, String> checkNum = (Map<String, String>) map.get("checkNum");
+            int checkAll = 0;
+            for (String key : checkNum.keySet()){
+                checkAll += Integer.parseInt(String.valueOf(checkNum.get(key)));
+            }
+            retMap.put(processId,String.valueOf(todoAll + checkAll));
+        }
+        return retMap;
+    }
 }
 
 

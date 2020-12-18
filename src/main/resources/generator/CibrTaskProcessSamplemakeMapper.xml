@@ -982,6 +982,6 @@
         from cibr_task_process_samplemake make
         where processId = '${processId}'
           and currentStatu = '${currentStatu}'
-        order by libNum desc;
+        order by sampleName, libNum desc;
     </select>
 </mapper>

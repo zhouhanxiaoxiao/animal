@@ -615,6 +615,146 @@ public class CibrTaskProcessDismountdataExample {
             return (Criteria) this;
         }
 
+        public Criteria andSpeciesIsNull() {
+            addCriterion("species is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpeciesIsNotNull() {
+            addCriterion("species is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpeciesEqualTo(String value) {
+            addCriterion("species =", value, "species");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpeciesNotEqualTo(String value) {
+            addCriterion("species <>", value, "species");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpeciesGreaterThan(String value) {
+            addCriterion("species >", value, "species");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpeciesGreaterThanOrEqualTo(String value) {
+            addCriterion("species >=", value, "species");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpeciesLessThan(String value) {
+            addCriterion("species <", value, "species");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpeciesLessThanOrEqualTo(String value) {
+            addCriterion("species <=", value, "species");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpeciesLike(String value) {
+            addCriterion("species like", value, "species");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpeciesNotLike(String value) {
+            addCriterion("species not like", value, "species");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpeciesIn(List<String> values) {
+            addCriterion("species in", values, "species");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpeciesNotIn(List<String> values) {
+            addCriterion("species not in", values, "species");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpeciesBetween(String value1, String value2) {
+            addCriterion("species between", value1, value2, "species");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpeciesNotBetween(String value1, String value2) {
+            addCriterion("species not between", value1, value2, "species");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueIsNull() {
+            addCriterion("tissue is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueIsNotNull() {
+            addCriterion("tissue is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueEqualTo(String value) {
+            addCriterion("tissue =", value, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueNotEqualTo(String value) {
+            addCriterion("tissue <>", value, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueGreaterThan(String value) {
+            addCriterion("tissue >", value, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueGreaterThanOrEqualTo(String value) {
+            addCriterion("tissue >=", value, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueLessThan(String value) {
+            addCriterion("tissue <", value, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueLessThanOrEqualTo(String value) {
+            addCriterion("tissue <=", value, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueLike(String value) {
+            addCriterion("tissue like", value, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueNotLike(String value) {
+            addCriterion("tissue not like", value, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueIn(List<String> values) {
+            addCriterion("tissue in", values, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueNotIn(List<String> values) {
+            addCriterion("tissue not in", values, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueBetween(String value1, String value2) {
+            addCriterion("tissue between", value1, value2, "tissue");
+            return (Criteria) this;
+        }
+
+        public Criteria andTissueNotBetween(String value1, String value2) {
+            addCriterion("tissue not between", value1, value2, "tissue");
+            return (Criteria) this;
+        }
+
         public Criteria andDateaccountIsNull() {
             addCriterion("dateAccount is null");
             return (Criteria) this;

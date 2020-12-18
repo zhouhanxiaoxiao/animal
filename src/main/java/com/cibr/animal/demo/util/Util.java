@@ -50,6 +50,7 @@ public class Util {
     public static final String USER_CREATE = "用户账号申请";
 
     public static final String EMAIL_PREFIX = "【北京脑科学与类脑研究中心-测序之家】\n\n\t";
+//    public static final String EMAIL_PREFIX = "【北京脑科学与类脑研究中心-果蝇家园】\n\n\t";
 
     public static final String EMAIL_SUFFIX = "\n\n\n感谢您使用测序之家平台(http://seq.cibr.ac.cn/)！";
 //    public static final String EMAIL_SUFFIX = "\n\n\n感谢您使用果蝇家园(http://119.90.33.35:3566/)！";
@@ -252,5 +253,15 @@ public class Util {
             default:
                 return null;
         }
+    }
+
+    public static String replaceSpecialChar(String name) {
+        if (name == null){
+            return "";
+        }
+        return name.replace("(","")
+                .replace(")","")
+                .replace("（","")
+                .replace("）","");
     }
 }
