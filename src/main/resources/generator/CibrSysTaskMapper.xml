@@ -107,6 +107,7 @@
             <result column="ctp_bioinformaticsAnalysis" property="bioinformaticsanalysis" jdbcType="VARCHAR"/>
             <result column="ctp_baupdateTime" property="baupdatetime" jdbcType="TIMESTAMP"/>
             <result column="ctp_remarks" property="remarks" jdbcType="VARCHAR"/>
+            <result column="ctp_isOnlyBio" property="isonlybio" jdbcType="VARCHAR"/>
         </association>
         <collection property="handler" ofType="com.cibr.animal.demo.entity.CibrSysUser">
             <id column="usr_ID" property="id" jdbcType="VARCHAR"/>
@@ -599,6 +600,7 @@
                ctp.bioinformaticsAnalysis as ctp_bioinformaticsAnalysis,
                ctp.baupdateTime           as ctp_baupdateTime,
                ctp.remarks                as ctp_remarks,
+               ctp.isOnlyBio              as ctp_isOnlyBio,
                usr.ID                     as usr_ID,
                usr.NAME                   as usr_NAME,
                usr.PASSWORD               as usr_PASSWORD,
@@ -632,6 +634,16 @@
                     )
                 or exists(
                         select 1
+                        from cibr_sys_user aduser
+                                 left join cibr_sys_user_role ur on aduser.id = ur.userid
+                                 left join cibr_sys_role subrole on ur.roleid = subrole.id
+                                 left join cibr_sys_user_group gp on gp.id = aduser.ROLEID
+                        where aduser.ID = '${userId}'
+                          and gp.groupname = '基因组学中心'
+                          and subrole.roleType = '40'
+                    )
+                or exists(
+                        select 1
                         from cibr_sys_user_group gro,
                              cibr_sys_user usr
                         where usr.ID = task.createuser
@@ -651,12 +663,43 @@
                           and userRole.roleid = role.id
                           and role.roleType = '40'
                     )
-              or exists(
-                  select 1
-                  from cibr_task_share share
-                  where share.taskid = task.id
-                  and share.shareUser = '${userId}'
+                or exists(
+                        select 1
+                        from cibr_task_share share
+                        where share.taskid = task.id
+                          and share.shareUser = '${userId}'
                     )
             );
+    </select>
+    <select id="findUserTaskCount" resultType="java.util.Map">
+        select A.name as name, count(A.taskId) as count
+        from (
+                 select user.name as name, task.id as taskId
+                 from cibr_sys_user user
+                          left join cibr_task_process proc
+                                    on (
+                                            proc.sampleInput = user.ID
+                                            or proc.samplePreparation = user.ID
+                                            or proc.libraryPreparation = user.ID
+                                            or proc.dismountData = user.ID
+                                            or proc.bioinformaticsAnalysis = user.ID
+                                            or proc.creater = user.ID)
+                          left join cibr_sys_task task
+                                    on proc.taskid = task.id and task.taskstatu = '01' and tasktype = '03'
+             ) A
+        group by A.name
+        order by count desc
+        limit 10;
+    </select>
+
+    <select id="findAnimalTaskCount" resultType="java.util.Map">
+        select user.NAME as name,count(task.id) as value
+        from cibr_sys_user user
+            left join cibr_sys_task task
+            on task.createuser=user.ID
+            and task.taskstatu in ('01','02','03')
+            and task.tasktype in ('02','04')
+        group by user.NAME
+        order by count(task.id)
     </select>
 </mapper>

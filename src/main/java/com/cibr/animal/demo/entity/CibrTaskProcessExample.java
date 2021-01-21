@@ -1604,6 +1604,66 @@ public class CibrTaskProcessExample {
             addCriterion("projectDesc not between", value1, value2, "projectdesc");
             return (Criteria) this;
         }
+
+        public Criteria andIsonlybioIsNull() {
+            addCriterion("isOnlyBio is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsonlybioIsNotNull() {
+            addCriterion("isOnlyBio is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsonlybioEqualTo(Boolean value) {
+            addCriterion("isOnlyBio =", value, "isonlybio");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsonlybioNotEqualTo(Boolean value) {
+            addCriterion("isOnlyBio <>", value, "isonlybio");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsonlybioGreaterThan(Boolean value) {
+            addCriterion("isOnlyBio >", value, "isonlybio");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsonlybioGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("isOnlyBio >=", value, "isonlybio");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsonlybioLessThan(Boolean value) {
+            addCriterion("isOnlyBio <", value, "isonlybio");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsonlybioLessThanOrEqualTo(Boolean value) {
+            addCriterion("isOnlyBio <=", value, "isonlybio");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsonlybioIn(List<Boolean> values) {
+            addCriterion("isOnlyBio in", values, "isonlybio");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsonlybioNotIn(List<Boolean> values) {
+            addCriterion("isOnlyBio not in", values, "isonlybio");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsonlybioBetween(Boolean value1, Boolean value2) {
+            addCriterion("isOnlyBio between", value1, value2, "isonlybio");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsonlybioNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("isOnlyBio not between", value1, value2, "isonlybio");
+            return (Criteria) this;
+        }
     }
 
     /**

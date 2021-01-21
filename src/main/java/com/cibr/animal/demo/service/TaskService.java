@@ -1341,6 +1341,17 @@ public class TaskService {
         }
         return retMap;
     }
+
+    public List<Map<String, String>> findUserTaskCount() {
+        List<Map<String, String>> userTaskCount = taskMapper.findUserTaskCount();
+        return userTaskCount;
+    }
+
+
+    public List<Map<String, String>>  findAnimalTaskCount() {
+        List<Map<String, String>> animalTaskCount = taskMapper.findAnimalTaskCount();
+        return animalTaskCount;
+    }
 }
 
 

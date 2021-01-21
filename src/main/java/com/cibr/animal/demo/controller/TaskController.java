@@ -505,11 +505,11 @@ public class TaskController {
             String bioinformaticsAnalysis = (String) requestBody.get("bioinformaticsAnalysis");
             String remarks = (String) requestBody.get("remarks");
             String projectDesc = (String) requestBody.get("projectDesc");
-
+            boolean isOnlyBio = (boolean) requestBody.get("isOnlyBio");
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
 
-            processTaskService.createProcessTask(user,projectName,dataType,principal,emails,sampleMsg,sampleInput,
+            processTaskService.createProcessTask(user,isOnlyBio,projectName,dataType,principal,emails,sampleMsg,sampleInput,
                     samplePreparation,libraryPreparation,dismountData,bioinformaticsAnalysis,remarks,projectDesc,request);
 
             ret.setCode("200");

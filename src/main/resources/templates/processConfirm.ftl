@@ -34,15 +34,15 @@
         </tr>
         <tr>
             <td>样品录入负责人:</td>
-            <td>${spip}</td>
+            <td>${spip!""}</td>
         </tr>
         <tr>
             <td>样品制备负责人:</td>
-            <td>${spmk}</td>
+            <td>${spmk!""}</td>
         </tr>
         <tr>
             <td>文库制备负责人:</td>
-            <td>${lib}</td>
+            <td>${lib!""}</td>
         </tr>
         <tr>
             <td>数据交付负责人:</td>

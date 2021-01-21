@@ -111,4 +111,8 @@ public interface CibrSysTaskMapper {
     List<CibrSysTask> selectProcessTask(@Param("userId")String userId);
 
     List<CibrSysTask> selectAllAccountTask(@Param("userId")String userId);
+
+    List<Map<String,String>> findUserTaskCount();
+
+    List<Map<String,String>> findAnimalTaskCount();
 }

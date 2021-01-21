@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -52,6 +53,8 @@ public class HomeController {
             int oneMonthStockNumber = animalService.getOneMonthStockNumber();
             int oneMonthStrainNumber = animalService.getOneMonthStrainNumber();
             int selfTaskNumber = taskService.findSelfTaskNumber(user.getId());
+            List<Map<String, String>> userTaskCount = taskService.findUserTaskCount();
+            List<Map<String, String>> animalTaskCount = taskService.findAnimalTaskCount();
             Map<String, Object> map = processTaskService.countTaskNum("all", user);
             Map<String,Object> retMap = new HashMap<>();
             retMap.putAll(map);
@@ -60,6 +63,8 @@ public class HomeController {
             retMap.put("oneMonthStockNumber",oneMonthStockNumber);
             retMap.put("oneMonthStrainNumber",oneMonthStrainNumber);
             retMap.put("selfTaskNumber",selfTaskNumber);
+            retMap.put("userTaskCount",userTaskCount);
+            retMap.put("animalTaskCount",animalTaskCount);
             ret.setRetMap(retMap);
             ret.setCode("200");
         }catch (Exception e) {

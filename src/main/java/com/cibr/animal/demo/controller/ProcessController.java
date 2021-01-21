@@ -66,10 +66,12 @@ public class ProcessController {
             String token = request.getHeader("token");
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
             Map<String, Object> map = processTaskService.countTaskNum(process.getId(), user);
+            Map<String, String> unCommitNext = processTaskService.findUnCommitNext(process.getId(), user);
             Map<String,Object> retMap = new HashMap<>();
             retMap.put("process",process);
             retMap.put("fail",error);
             retMap.put("group",group);
+            retMap.put("unCommitNext",unCommitNext);
             retMap.putAll(map);
             ret.setRetMap(retMap);
             ret.setCode("200");
@@ -884,6 +886,28 @@ public class ProcessController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
+    @RequestMapping("/task/process/initAllStatu")
+    public String initAllStatu(HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String processId = (String) requestBody.get("processId");
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            List<Map<String, String>> maps = processTaskService.initAllStatu(processId, user);
+            Map retMap = new HashMap();
+            retMap.put("list",maps);
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
     @RequestMapping("/task/process/baseInfo")
     public String processBaseInfo(HttpServletRequest request,
                               HttpServletResponse response,
@@ -1038,6 +1062,65 @@ public class ProcessController {
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
             Map<String, Object> stringObjectMap = processTaskService.allData(processId, flag, user);
             ret.setRetMap(stringObjectMap);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/task/process/diyStatuInit")
+    public String diyStatuInit(HttpServletRequest request,
+                          HttpServletResponse response,
+                          @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String processId = (String) requestBody.get("processId");
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            Map<String, Object> map = processTaskService.diyStatuInit(processId, user);
+            ret.setRetMap(map);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/task/process/saveDiyStatu")
+    public String saveDiyStatu(HttpServletRequest request,
+                               HttpServletResponse response,
+                               @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String diyStatuStr = (String) requestBody.get("diyStatu");
+            CibrTaskProcessDiystatu diyStatu = JSONObject.parseObject(diyStatuStr, CibrTaskProcessDiystatu.class);
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            processTaskService.saveDiyStatu(diyStatu, user);
+            ret.setCode("200");
+        }catch (Exception e) {
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/task/process/deleteDiyStatu")
+    public String deleteDiyStatu(HttpServletRequest request,
+                               HttpServletResponse response,
+                               @RequestBody Map requestBody){
+        ReturnData ret = new ReturnData();
+        try {
+            String id = (String) requestBody.get("id");
+            String token = request.getHeader("token");
+            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+            processTaskService.deleteDiyStatu(id, user);
             ret.setCode("200");
         }catch (Exception e) {
             ret.setCode("E500");

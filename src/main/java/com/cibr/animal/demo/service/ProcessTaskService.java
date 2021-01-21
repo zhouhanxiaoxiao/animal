@@ -83,8 +83,14 @@ public class ProcessTaskService {
     @Autowired
     private CibrTaskProcessConfirmMapper confirmMapper;
 
+    @Autowired
+    private CibrTaskProcessDiystatuMapper diystatuMapper;
+
+    @Autowired
+    private CibrTaskDiystatuMapper statuMapper;
+
     @Transactional(rollbackFor = Exception.class)
-    public void createProcessTask(CibrSysUser user, String projectName, String dataType, String principal,
+    public void createProcessTask(CibrSysUser user,boolean isOnlyBio, String projectName, String dataType, String principal,
                                   List<String> emails, String sampleMsg, String sampleInput, String samplePreparation,
                                   String libraryPreparation, String dismountData, String bioinformaticsAnalysis,
                                   String remarks, String projectDesc, HttpServletRequest request) throws IOException, TemplateException {
@@ -114,13 +120,16 @@ public class ProcessTaskService {
         process.setDatatype(dataType);
         process.setPrincipal(principal);
         process.setSampletype(sampleMsg);
-        process.setSampleinput(sampleInput);
-        process.setSamplepreparation(samplePreparation);
-        process.setLibrarypreparation(libraryPreparation);
+        if(!isOnlyBio){
+            process.setSampleinput(sampleInput);
+            process.setSamplepreparation(samplePreparation);
+            process.setLibrarypreparation(libraryPreparation);
+        }
         process.setDismountdata(dismountData);
         process.setBioinformaticsanalysis(bioinformaticsAnalysis);
         process.setRemarks(remarks);
         process.setProjectdesc(projectDesc);
+        process.setIsonlybio(isOnlyBio);
         if (user.getId().equals(userGroupAdmin.getId())){
             process.setTaskstatu(TaskUtil.PROCESS_TASK_STATU_PICONFIRM);
         }else if (user.getId().equals(groupAdmin.getId())){
@@ -728,7 +737,7 @@ public class ProcessTaskService {
         }else if ("02".equals(subId)){
             criteria.andCurrentstatuIn(Arrays.asList("02","07"));
         }else if ("03".equals(subId)){
-//            criteria.andCurrentstatuEqualTo("03");
+//            criteria.andCurrentstatuEqu alTo("03");
             return dismountdataMapper.selectWithCommitNumber(processId,"03");
         }else{
             criteria.andSubidEqualTo(subId);
@@ -746,7 +755,19 @@ public class ProcessTaskService {
         if ("divide".equals(type)){
             subTask = createSubTask(user, subProcessName, process, remarks, TaskUtil.PROCESS_TASK_STATU_DIS);
         }
+        List<CibrTaskProcessDismountdata> saveList = new ArrayList<>();
+        List<CibrTaskProcessDismountdata> updateList = new ArrayList<>();
         for (CibrTaskProcessDismountdata dismountdata : dismountdatas){
+            if ("00".equals(dismountdata.getCurrentstatu())){
+                dismountdata.setId(Util.getUUID());
+                dismountdata.setCreater(user.getId());
+                dismountdata.setCreatetime(new Date());
+                dismountdata.setCurrentstatu("01");
+                dismountdata.setProcessid(processId);
+                saveList.add(dismountdata);
+            }else {
+                updateList.add(dismountdata);
+            }
             dismountdata.setUpdatetime(new Date());
             dismountdata.setUpdateuser(user.getId());
             if ("divide".equals(type)){
@@ -763,7 +784,12 @@ public class ProcessTaskService {
                 analyses.add(createAnalyse(dismountdata,processId,user,process));
             }
         }
-        dismountdataMapper.batchUpdate(dismountdatas);
+        if (saveList.size()>0){
+            dismountdataMapper.batchInsert(saveList);
+        }
+        if (updateList.size()>0){
+            dismountdataMapper.batchUpdate(updateList);
+        }
         CibrSysUser creater = userMapper.selectByPrimaryKey(process.getCreater());
         List<List<String>> disDataLists = getDisDataLists(processId, dismountdatas);
         if ("complete".equals(type)){
@@ -774,14 +800,6 @@ public class ProcessTaskService {
             this.sendPassEmail(dismounter,disDataLists,"数据交付审核不通过，请及时查看原因！",user);
         }
         if ("real".equals(type)){
-//            CibrTaskProcessSubtask subtask = subtaskMapper.selectByPrimaryKey(subId);
-//            subtask.setCurrentstatu(TaskUtil.PROCESS_TASK_STATU_BA);
-//            subtaskMapper.updateByPrimaryKey(subtask);
-
-//            CibrTaskProcess process = processMapper.selectByPrimaryKey(processId);
-//            process.setDdupdatetime(new Date());
-//            process.setTaskstatu(TaskUtil.PROCESS_TASK_STATU_BA);
-//            processMapper.updateByPrimaryKey(process);
             analysisMapper.batchInsert(analyses);
             List<List<String>> bioLists = getBioLists(processId, analyses);
             CibrSysUser biouser = userMapper.selectByPrimaryKey(process.getBioinformaticsanalysis());
@@ -1932,7 +1950,6 @@ public class ProcessTaskService {
         if (TaskUtil.PROCESS_TASK_STATU_SPWAIT.equals(process.getTaskstatu())){
             sendProcessPriEmail(process, userMapper.selectByPrimaryKey(process.getCreater()));
         }
-
         StringBuilder sb = new StringBuilder(Util.EMAIL_PREFIX);
 //        List<CibrSysUser> users = userService.findUserByRole("40");
         List<CibrSysUser> users = userService.findUserByRoleAndGroup(Util.ROLE_TYPE_REVIEWER, "基因组学中心");
@@ -1946,23 +1963,25 @@ public class ProcessTaskService {
     }
 
     public void sendProcessPriEmail(CibrTaskProcess process, CibrSysUser user) {
+
         Map<String, CibrSysUser> uuid_user = userService.getuuid_userObject();
         String emailEnd = "\n如有疑问，请联系【" + user.getEmail() + "】" + Util.EMAIL_SUFFIX;
-        String inputEmail = Util.EMAIL_PREFIX + "您有一个【测序流程】任务，项目名称【" + process.getProjectname()
-                + "】，您被指定为【样本录入负责人】，请及时处理！" + emailEnd;
-        CibrSysUser sampleInput = uuid_user.get(process.getSampleinput());
-        emailService.simpleSendEmail(inputEmail,sampleInput.getEmail(),TaskUtil.TASK_PROCESS);
+        if (!process.getIsonlybio()){
+            String inputEmail = Util.EMAIL_PREFIX + "您有一个【测序流程】任务，项目名称【" + process.getProjectname()
+                    + "】，您被指定为【样本录入负责人】，请及时处理！" + emailEnd;
+            CibrSysUser sampleInput = uuid_user.get(process.getSampleinput());
+            emailService.simpleSendEmail(inputEmail,sampleInput.getEmail(),TaskUtil.TASK_PROCESS);
 
-        String makeEmail = Util.EMAIL_PREFIX + "您有一个【测序流程】任务，项目名称【" + process.getProjectname()
-                + "】，您被指定为【样本制备负责人】，请及时处理！" + emailEnd;
-        CibrSysUser make = uuid_user.get(process.getSamplepreparation());
-        emailService.simpleSendEmail(makeEmail,make.getEmail(),TaskUtil.TASK_PROCESS);
+            String makeEmail = Util.EMAIL_PREFIX + "您有一个【测序流程】任务，项目名称【" + process.getProjectname()
+                    + "】，您被指定为【样本制备负责人】，请及时处理！" + emailEnd;
+            CibrSysUser make = uuid_user.get(process.getSamplepreparation());
+            emailService.simpleSendEmail(makeEmail,make.getEmail(),TaskUtil.TASK_PROCESS);
 
-        String libEmail = Util.EMAIL_PREFIX + "您有一个【测序流程】任务，项目名称【" + process.getProjectname()
-                + "】，您被指定为【文库制备负责人】，请及时处理！" + emailEnd;
-        CibrSysUser lib = uuid_user.get(process.getLibrarypreparation());
-        emailService.simpleSendEmail(libEmail,lib.getEmail(),TaskUtil.TASK_PROCESS);
-
+            String libEmail = Util.EMAIL_PREFIX + "您有一个【测序流程】任务，项目名称【" + process.getProjectname()
+                    + "】，您被指定为【文库制备负责人】，请及时处理！" + emailEnd;
+            CibrSysUser lib = uuid_user.get(process.getLibrarypreparation());
+            emailService.simpleSendEmail(libEmail,lib.getEmail(),TaskUtil.TASK_PROCESS);
+        }
         String disEmail = Util.EMAIL_PREFIX + "您有一个【测序流程】任务，项目名称【" + process.getProjectname()
                 + "】，您被指定为【数据交付负责人】，请及时处理！" + emailEnd;
         CibrSysUser dis = uuid_user.get(process.getDismountdata());
@@ -2015,7 +2034,7 @@ public class ProcessTaskService {
 
         String pre = process.getTaskstatu();
         if (!TaskUtil.PROCESS_TASK_STATU_COMPLETE.equals(process.getTaskstatu())){
-            process.setTaskstatu(TaskUtil.PROCESS_TASK_STATU_COMPLETE);
+            process.setTaskstatu(TaskUtil.PROCESS_TASK_STATU_PIREFUSE);
         }
         CibrSysUser groupAdmin = userService.getGroupAdmin(process.getCreater());
         processMapper.updateByPrimaryKey(process);
@@ -2333,6 +2352,123 @@ public class ProcessTaskService {
         retMap.putAll(noPassMap);
         retMap.putAll(passMap);
         return retMap;
+    }
+
+    public List<Map<String, String>> initAllStatu(String processId, CibrSysUser user) {
+        List<Map<String, String>> maps = processMapper.selectAllSampleStatu(processId, user.getId());
+        if (maps != null && maps.size()>0){
+            for (Map<String, String> item : maps){
+                if (item != null){
+                    item.put("key",Util.getUUID());
+                }
+            }
+        }
+        return maps;
+    }
+
+    /**
+     * 统计已审核未提交至下一模块的数据
+     * */
+    public Map<String, String> findUnCommitNext(String id, CibrSysUser user) {
+        List<Map<String, String>> unCommitNext = processMapper.findUnCommitNext(id);
+        if (unCommitNext != null && unCommitNext.size() > 0){
+            return unCommitNext.get(0);
+        }
+        return null;
+    }
+
+    public Map<String,Object> diyStatuInit(String processId, CibrSysUser user) {
+        Map<String,Object> retMap = new HashMap<>();
+        CibrTaskProcessDiystatuExample diystatuExample = new CibrTaskProcessDiystatuExample();
+        diystatuExample.createCriteria().andProcessidEqualTo(processId).andCurstatuNotEqualTo("09");
+        List<CibrTaskProcessDiystatu> dbList = diystatuMapper.selectByExample(diystatuExample);
+
+        CibrTaskProcessSampleinputExample sampleinputExample = new CibrTaskProcessSampleinputExample();
+        sampleinputExample.createCriteria().andProcessidEqualTo(processId).andCurrentstatuIn(Arrays.asList("01","02","03"));
+        sampleinputExample.setOrderByClause("samplename");
+        List<CibrTaskProcessSampleinput> inputList = sampleinputMapper.selectByExample(sampleinputExample);
+
+        retMap.put("inputs",inputList);
+
+        if (dbList != null && dbList.size()>0){
+            for (CibrTaskProcessDiystatu diystatu : dbList){
+                List<String> inputs = new ArrayList<>();
+                if (!StringUtils.isEmpty(diystatu.getConnectsample())){
+                    String[] split = diystatu.getConnectsample().split("\\|\\|");
+                    for (String item : split){
+                        if (!StringUtils.isEmpty(item)){
+                            inputs.add(item);
+                        }
+                    }
+                }
+                diystatu.setInputs(inputs);
+            }
+        }
+        retMap.put("diys",dbList);
+
+        CibrTaskDiystatuExample statuExample = new CibrTaskDiystatuExample();
+        statuExample.createCriteria().andCreaterEqualTo(user.getId());
+        List<CibrTaskDiystatu> cibrTaskDiystatus = statuMapper.selectByExample(statuExample);
+        if (cibrTaskDiystatus == null){
+            cibrTaskDiystatus = new ArrayList<>();
+        }
+
+        retMap.put("userDiyStatus",cibrTaskDiystatus);
+        return retMap;
+    }
+
+    public void deleteDiyStatu(String id, CibrSysUser user) {
+        CibrTaskProcessDiystatu diystatu = diystatuMapper.selectByPrimaryKey(id);
+        diystatu.setUpdater(user.getId());
+        diystatu.setUpdatetime(new Date());
+        diystatu.setCurstatu("09");
+        diystatuMapper.updateByPrimaryKey(diystatu);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void saveDiyStatu(CibrTaskProcessDiystatu diyStatu, CibrSysUser user) {
+        checkDiyStatu(diyStatu ,user);
+        if (StringUtils.isEmpty(diyStatu.getId()) || diystatuMapper.selectByPrimaryKey(diyStatu.getId()) == null){
+            diyStatu.setId(Util.getUUID());
+            diyStatu.setCreater(user.getId());
+            diyStatu.setCreatetime(new Date());
+            diyStatu.setCurstatu("01");
+            if (!StringUtils.isEmpty(diyStatu.getInputs())){
+                String inputs = "";
+                for (String item : diyStatu.getInputs()){
+                    inputs += item + "||";
+                }
+                diyStatu.setConnectsample(inputs);
+            }
+            diystatuMapper.insert(diyStatu);
+        }else {
+            if (!StringUtils.isEmpty(diyStatu.getInputs())){
+                String inputs = "";
+                for (String item : diyStatu.getInputs()){
+                    inputs += item + "||";
+                }
+                diyStatu.setConnectsample(inputs);
+            }
+            diystatuMapper.updateByPrimaryKey(diyStatu);
+        }
+    }
+
+    private void checkDiyStatu(CibrTaskProcessDiystatu diyStatu, CibrSysUser user) {
+        if (StringUtils.isEmpty(diyStatu.getDiystatu())){
+            return;
+        }
+        CibrTaskDiystatu cibrTaskDiystatu = statuMapper.selectByPrimaryKey(diyStatu.getDiystatu());
+
+        if (cibrTaskDiystatu == null){
+            CibrTaskDiystatu taskDiystatu = new CibrTaskDiystatu();
+            taskDiystatu.setId(Util.getUUID());
+            taskDiystatu.setDiystatu("01");
+            taskDiystatu.setName(diyStatu.getDiystatu());
+            taskDiystatu.setCreater(user.getId());
+            taskDiystatu.setCreatetime(new Date());
+            statuMapper.insert(taskDiystatu);
+            diyStatu.setDiystatu(taskDiystatu.getId());
+        }
     }
 }
 

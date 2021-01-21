@@ -97,4 +97,8 @@ public interface CibrTaskProcessMapper {
     int updateByPrimaryKey(CibrTaskProcess record);
 
     List<CibrTaskProcess> queryAllProcess(@Param("condition") Map condition);
+
+    List<Map<String,String>> selectAllSampleStatu(@Param("processId") String processId,@Param("userId") String userId);
+
+    List<Map<String,String>> findUnCommitNext(@Param("processId") String processId);
 }

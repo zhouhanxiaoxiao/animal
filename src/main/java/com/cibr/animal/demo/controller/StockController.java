@@ -205,7 +205,7 @@ public class StockController {
         try {
             String strainId = (String) requestBody.get("strainId");
             String token = request.getHeader("token");
-            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
+//            CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
             CibrAnimalDrosophila strain = stockService.getStrainById(strainId);
             Map<String,Object> retMap = new HashMap<>();
             retMap.put("strain",strain);

@@ -126,9 +126,6 @@ public class FileUtil {
             for (int col = 0; col < cols; col++) {
                 String cell = null;
                 Cell excleCell = r.getCell(col);
-                if (excleCell == null){
-                    continue;
-                }
                 try {
                     cell = excleCell.getStringCellValue();
                 }catch (Exception e){
@@ -239,6 +236,8 @@ public class FileUtil {
             switch (zh){
                 case "10X单细胞转录组":
                     return "21";
+                case "10X VDJ":
+                    return "34";
                 case "10X空间转录组":
                     return "22";
                 case "10X ATAC":
@@ -263,6 +262,8 @@ public class FileUtil {
                     return "32";
                 case "LncRNA":
                     return "33";
+                case "WGS":
+                    return "35";
                 default:
                     return null;
             }
@@ -270,6 +271,8 @@ public class FileUtil {
             switch (zh){
                 case "10X单细胞转录组":
                     return "41";
+                case "10X VDJ":
+                    return "46";
                 case "10X ATAC":
                     return "42";
                 case "smart-seq":
@@ -472,6 +475,7 @@ public class FileUtil {
             case "06": return "真核链特异性";
             case "07": return "LncRNA";
             case "21": return "10X单细胞转录组";
+            case "34": return "10X VDJ";
             case "22": return "10X空间转录组";
             case "23": return "10X ATAC";
             case "24": return "smart-seq";
@@ -484,11 +488,13 @@ public class FileUtil {
             case "31": return "真核普通转录组";
             case "32": return "真核链特异性";
             case "33": return "LncRNA";
+            case "35": return "WGS";
             case "41": return "10X单细胞转录组";
             case "42": return "10X ATAC";
             case "43": return "smart-seq";
             case "44": return "ATAC";
             case "45": return "HI-C";
+            case "46": return "10X VDJ";
 
             default:return null;
         }
