@@ -29,6 +29,8 @@
         <result column="projectDesc" property="projectdesc" jdbcType="VARCHAR"/>
         <result column="isOnlyBio" property="isonlybio" jdbcType="BIT"/>
     </resultMap>
+
+
     <sql id="Example_Where_Clause">
         <!--
           WARNING - @mbggenerated
@@ -648,5 +650,38 @@
               where ana.id is null
                 and dis.currentStatu = '03'
                 and dis.processId = '${processId}') as subDis;
+    </select>
+
+    <select id="findAllUsefulTask" resultMap="BaseResultMap">
+        select proce.*
+        from cibr_task_process proce,
+             cibr_sys_task task
+        where proce.taskid = task.id
+          and task.taskstatu in ('01', '02')
+          and task.tasktype = '03';
+    </select>
+
+    <select id="findbillItems" resultMap="BaseResultMap">
+        select proce.*,make.*,lib.*,dis.*
+        from cibr_sys_task task
+                 left join cibr_task_process proce
+                           on task.id = proce.taskid
+                 left join cibr_task_process_samplemake make
+                           on proce.id = make.processId
+                               and make.createTime <![CDATA[ > ]]> '${firstDay}'
+                               and make.createTime <![CDATA[ < ]]> '${lastDay}'
+                               and make.currentStatu in ('03', '02')
+                 left join cibr_task_process_library lib
+                           on proce.id = lib.processId
+                               and lib.createTime <![CDATA[ > ]]> '${firstDay}'
+                               and lib.createTime <![CDATA[ < ]]> '${lastDay}'
+                               and lib.currentStatu in ('02', '03')
+                 left join cibr_task_process_dismountdata dis
+                           on proce.id = dis.processId
+                               and dis.createTime <![CDATA[ > ]]> '${firstDay}'
+                               and dis.createTime <![CDATA[ < ]]> '${lastDay}'
+        where task.taskstatu in ('01', '02')
+          and tasktype = '03'
+
     </select>
 </mapper>

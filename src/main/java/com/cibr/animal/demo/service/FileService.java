@@ -405,8 +405,11 @@ public class FileService {
     }
 
     public Map<String ,String> getFileCount(List<String> ids) {
-        List<Map<String, String>> maps = fileMapper.selectMapIdWithCount(ids);
         Map<String ,String > retMap = new HashMap<>();
+        if (ids == null || ids.size() == 0){
+            return retMap;
+        }
+        List<Map<String, String>> maps = fileMapper.selectMapIdWithCount(ids);
         if (maps != null){
             for (Map<String, String> tmp : maps){
                 retMap.put(tmp.get("detailId"),tmp.get("num"));

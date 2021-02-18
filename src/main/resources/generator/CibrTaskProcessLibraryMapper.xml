@@ -992,7 +992,7 @@
                initSample,
                concentrationunit,
                tissue,
-               (select count(1) from cibr_task_process_confirm conf where conf.libId = lib.id) as libNum
+               (select count(1) from cibr_task_process_confirm conf where conf.libId = lib.id and conf.currentstatu != '08') as libNum
         from cibr_task_process_library lib
         where lib.processId = '${processId}'
           and lib.currentStatu = '${currentStatu}'

@@ -182,6 +182,46 @@ public class CibrTaskProcess {
 
     private List<String> emails;
 
+    private List<CibrTaskProcessSamplemake> makes;
+
+    private List<CibrTaskProcessLibrary> libs;
+
+    private List<CibrTaskProcessConfirm> confirms;
+
+    private List<CibrTaskProcessDismountdata> dismountdataList;
+
+    public List<CibrTaskProcessSamplemake> getMakes() {
+        return makes;
+    }
+
+    public void setMakes(List<CibrTaskProcessSamplemake> makes) {
+        this.makes = makes;
+    }
+
+    public List<CibrTaskProcessLibrary> getLibs() {
+        return libs;
+    }
+
+    public void setLibs(List<CibrTaskProcessLibrary> libs) {
+        this.libs = libs;
+    }
+
+    public List<CibrTaskProcessConfirm> getConfirms() {
+        return confirms;
+    }
+
+    public void setConfirms(List<CibrTaskProcessConfirm> confirms) {
+        this.confirms = confirms;
+    }
+
+    public List<CibrTaskProcessDismountdata> getDismountdataList() {
+        return dismountdataList;
+    }
+
+    public void setDismountdataList(List<CibrTaskProcessDismountdata> dismountdataList) {
+        this.dismountdataList = dismountdataList;
+    }
+
     public List<String> getEmails() {
         return emails;
     }

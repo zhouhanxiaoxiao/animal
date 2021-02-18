@@ -746,7 +746,7 @@
                rowIndex,
                currentstatu,
                subId,
-               (select count(1) from cibr_task_process_dismountdata dis where dis.makeId = conf.id) as disNum
+               (select count(1) from cibr_task_process_dismountdata dis where dis.makeId = conf.id and dis.currentStatu != '08') as disNum
         from cibr_task_process_confirm conf
         where processId = '${processId}'
           and currentstatu = '${currentStatu}'

@@ -666,7 +666,7 @@
                superPwd,
                superPath,
                lastTime,
-               (select count(1) from cibr_task_process_analysis bio where bio.dismountId = dis.id) as bioNum
+               (select count(1) from cibr_task_process_analysis bio where bio.dismountId = dis.id and bio.currentStatu != '08') as bioNum
         from cibr_task_process_dismountdata dis
         where processId = '${processId}'
           and currentStatu = '${currentStatu}'

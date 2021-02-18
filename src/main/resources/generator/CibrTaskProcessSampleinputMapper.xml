@@ -734,7 +734,7 @@
                initSample,
                subId,
                concentrationunit,
-               (select count(1) from cibr_task_process_samplemake make where inputId = input.id) as makeNum
+               (select count(1) from cibr_task_process_samplemake make where make.inputId = input.id and make.currentStatu != '08') as makeNum
         from cibr_task_process_sampleinput input
         where processId = '${processId}'
           and currentStatu = '${currentStatu}'

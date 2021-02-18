@@ -24,4 +24,16 @@ public class TimeUtil {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         return sdf.format(date);
     }
+
+    public static Date getFirstDayOfMonth(Date now) throws ParseException {
+        now = TimeUtil.str2date(TimeUtil.date2str(now,"yyyy-MM-01"),"yyyy-MM-dd");
+        return now;
+    }
+
+    public static Date getLastDayOfMonth(Date now) throws ParseException {
+        Date firstDayOfMonth = TimeUtil.getFirstDayOfMonth(now);
+        Date date = dateAdd(firstDayOfMonth, Calendar.MONTH, 1);
+        return dateAdd(date,Calendar.DATE,-1);
+    }
+
 }

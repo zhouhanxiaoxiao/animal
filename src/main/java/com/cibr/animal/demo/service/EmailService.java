@@ -29,7 +29,6 @@ public class EmailService{
     @Value("${spring.mail.username}")
     private String from;
 
-
     @Async
     public CibrSysEmail sendMail(CibrSysEmail mailVo) {
         try {

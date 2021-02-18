@@ -4,6 +4,7 @@ import com.cibr.animal.demo.entity.CibrTaskProcess;
 import com.cibr.animal.demo.entity.CibrTaskProcessExample;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -101,4 +102,8 @@ public interface CibrTaskProcessMapper {
     List<Map<String,String>> selectAllSampleStatu(@Param("processId") String processId,@Param("userId") String userId);
 
     List<Map<String,String>> findUnCommitNext(@Param("processId") String processId);
+
+    List<CibrTaskProcess> findAllUsefulTask();
+
+    List<CibrTaskProcess> findbillItems(@Param("firstDay") Date firstDay, @Param("lastDay") Date lastDay);
 }

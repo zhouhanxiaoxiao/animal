@@ -3,10 +3,8 @@ package com.cibr.animal.demo.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.cibr.animal.demo.entity.CibrAnimalDrosophila;
-import com.cibr.animal.demo.entity.CibrSysEnvironment;
-import com.cibr.animal.demo.entity.CibrSysUser;
-import com.cibr.animal.demo.entity.CibrSysUserGroup;
+import com.cibr.animal.demo.entity.*;
+import com.cibr.animal.demo.service.BillService;
 import com.cibr.animal.demo.service.EnviromentService;
 import com.cibr.animal.demo.service.PersonalService;
 import com.cibr.animal.demo.service.UserService;
@@ -37,6 +35,9 @@ public class PersonalController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private BillService billService;
 
     @RequestMapping("/personal/environment")
     public String getEnviroment(){
@@ -167,6 +168,72 @@ public class PersonalController {
             String list = (String) requestBody.get("list");
             List<CibrSysUserGroup> groups = JSONObject.parseArray(list, CibrSysUserGroup.class);
             personalService.updateDepartment(groups);
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        }catch (Exception e){
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/personal/bill/setInit")
+    public String setInit(HttpServletRequest request,
+                                   HttpServletResponse response,
+                                   @RequestBody Map requestBody
+    ){
+        ReturnData ret = new ReturnData();
+        try {
+            Map retMap = new HashMap();
+            List<CibrTaskProcessPrice> priceUnits = billService.getPriceUnit();
+            retMap.put("prices",priceUnits);
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        }catch (Exception e){
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/personal/bill/updatePrice")
+    public String updatePrice(HttpServletRequest request,
+                          HttpServletResponse response,
+                          @RequestBody Map requestBody
+    ){
+        ReturnData ret = new ReturnData();
+        try {
+            Map retMap = new HashMap();
+            String token = request.getHeader("token");
+            CibrSysUser user =  JSON.parseObject(String.valueOf(redisUtil.get(token)),CibrSysUser.class) ;
+            String priceStr = (String) requestBody.get("price");
+            CibrTaskProcessPrice price = JSONObject.parseObject(priceStr, CibrTaskProcessPrice.class);
+            billService.updatePrice(price,user);
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        }catch (Exception e){
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/personal/bill/getCurrentBill")
+    public String getCurrentBill(HttpServletRequest request,
+                              HttpServletResponse response,
+                              @RequestBody Map requestBody
+    ){
+        ReturnData ret = new ReturnData();
+        try {
+            Map retMap = new HashMap();
+            String token = request.getHeader("token");
+            CibrSysUser user =  JSON.parseObject(String.valueOf(redisUtil.get(token)),CibrSysUser.class) ;
+            String currentMonth = (String) requestBody.get("currentMonth");
+            List<CibrBillMonth> bills = billService.getCurrentMonthBills(currentMonth);
+            retMap.put("bills",bills);
             ret.setRetMap(retMap);
             ret.setCode("200");
         }catch (Exception e){

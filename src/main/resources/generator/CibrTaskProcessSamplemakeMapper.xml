@@ -978,7 +978,7 @@
                m260230,
                rqn,
                concentrationunit,
-               (select count(1) from cibr_task_process_library lib where lib.makeId = make.id) as libNum
+               (select count(1) from cibr_task_process_library lib where lib.makeId = make.id and lib.currentStatu != '08') as libNum
         from cibr_task_process_samplemake make
         where processId = '${processId}'
           and currentStatu = '${currentStatu}'

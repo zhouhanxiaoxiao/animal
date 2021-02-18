@@ -3,19 +3,24 @@ package com.cibr.animal.demo.scheduled;
 import com.cibr.animal.demo.dao.*;
 import com.cibr.animal.demo.entity.*;
 import com.cibr.animal.demo.service.EmailService;
+import com.cibr.animal.demo.service.ProcessTaskService;
 import com.cibr.animal.demo.service.UserService;
 import com.cibr.animal.demo.util.TaskUtil;
 import com.cibr.animal.demo.util.TimeUtil;
 import com.cibr.animal.demo.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.util.*;
 
 @Component
 public class ScheduleHandle {
 
+    private Logger logger = LoggerFactory.getLogger(ScheduleHandle.class);
 
     @Autowired
     private CibrTaskPartnerMapper partnerMapper;
@@ -40,6 +45,15 @@ public class ScheduleHandle {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CibrBillMonthMapper billMonthMapper;
+
+    @Autowired
+    private CibrTaskProcessPriceMapper priceMapper;
+
+    @Autowired
+    private ProcessTaskService processTaskService;
 
     /**
      * 查看协助申请，是否有超过一个小时未确定的。
@@ -186,4 +200,41 @@ public class ScheduleHandle {
             }
         }
     }
+
+    public void makeBill(String currMonth) throws Exception {
+        Date firstDay = TimeUtil.str2date(currMonth, "yyyy-MM-01 00:00:00");
+        Date lastDay = TimeUtil.dateAdd(firstDay,Calendar.MONTH,1);
+
+        logger.info("开始时间：" + TimeUtil.date2str(firstDay,"yyyy-MM-dd hh:mm:ss"));
+        logger.info("结束时间：" + TimeUtil.date2str(lastDay,"yyyy-MM-dd hh:mm:ss"));
+
+        processTaskService.findbillItems(firstDay,lastDay);
+
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
