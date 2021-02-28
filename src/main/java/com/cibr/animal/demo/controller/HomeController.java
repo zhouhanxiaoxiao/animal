@@ -9,9 +9,12 @@ import com.cibr.animal.demo.service.ProcessTaskService;
 import com.cibr.animal.demo.service.TaskService;
 import com.cibr.animal.demo.util.RedisUtil;
 import com.cibr.animal.demo.util.ReturnData;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Api(tags = "主页展示类")
 @RestController
 public class HomeController {
 
@@ -41,7 +45,8 @@ public class HomeController {
     @Autowired
     private FileService fileService;
 
-    @RequestMapping("/home/preview")
+    @RequestMapping(value = "/home/preview", method = RequestMethod.POST)
+    @ApiOperation(value = "首页统计项目数据")
     public String getProcess(HttpServletRequest request,
                              HttpServletResponse response){
         ReturnData ret = new ReturnData();
@@ -75,6 +80,7 @@ public class HomeController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
+    @ApiIgnore
     @RequestMapping("/home/menus")
     public String getMenus(HttpServletRequest request,
                              HttpServletResponse response){
@@ -94,7 +100,8 @@ public class HomeController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/img/talk")
+    @ApiOperation(value = "获取微信群二维码")
+    @RequestMapping(value = "/img/talk",method = RequestMethod.GET)
     public void getTalkImg(HttpServletResponse response) throws Exception {
         File img = fileService.getTalk();
         FileInputStream fileInputStream = new FileInputStream(img);

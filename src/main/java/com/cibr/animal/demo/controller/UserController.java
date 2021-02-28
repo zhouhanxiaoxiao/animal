@@ -12,11 +12,12 @@ import com.cibr.animal.demo.service.RegisterService;
 import com.cibr.animal.demo.service.UserService;
 import com.cibr.animal.demo.util.RedisUtil;
 import com.cibr.animal.demo.util.ReturnData;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Api(tags = "个人中心controller")
 @RestController
 public class UserController {
 
@@ -46,7 +48,8 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @RequestMapping("/user/getAllUsers")
+    @ApiOperation(value = "获取所有用户信息")
+    @RequestMapping(value = "/user/getAllUsers", method = RequestMethod.POST)
     public String refuseAllow(HttpServletRequest request,
                               HttpServletResponse response
     ) {
@@ -66,7 +69,9 @@ public class UserController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/user/userHead/{userId}")
+    @ApiOperation("获取用户头像")
+    @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "path")
+    @RequestMapping(value = "/user/userHead/{userId}", method = RequestMethod.GET)
     public void userHead(HttpServletRequest request,
                          HttpServletResponse response,
                          @PathVariable String userId) throws IOException {
@@ -87,7 +92,9 @@ public class UserController {
         fileInputStream.close();
     }
 
-    @RequestMapping("/personal/editPwd/sendVid")
+    @ApiOperation(value = "获取验证码")
+    @ApiImplicitParam(name = "token",value = "登录令牌", required = true, paramType = "header")
+    @RequestMapping(value = "/personal/editPwd/sendVid",method = RequestMethod.POST)
     public String sendVid(HttpServletRequest request,
                           HttpServletResponse response) {
         ReturnData ret = new ReturnData();
@@ -104,7 +111,12 @@ public class UserController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/personal/editPassword/confirm")
+    @ApiOperation("修改密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "password", value = "新密码", required = true),
+            @ApiImplicitParam(name = "vid", value = "验证码", required = true),
+    })
+    @RequestMapping(value = "/personal/editPassword/confirm", method = RequestMethod.POST)
     public String editPasswordConfirm(HttpServletRequest request,
                                       HttpServletResponse response,
                                       @RequestBody Map requestBody) {
@@ -129,8 +141,8 @@ public class UserController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue);
     }
 
-
-    @RequestMapping("/user/manager/init")
+    @ApiOperation(value = "初始化个人信息页面")
+    @RequestMapping(value = "/user/manager/init", method = RequestMethod.POST)
     public String userManagerInit(HttpServletRequest request,
                           HttpServletResponse response) {
         ReturnData ret = new ReturnData();
@@ -152,7 +164,17 @@ public class UserController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/user/manager/addNewDepartment")
+
+    @ApiOperation(value = "新增部门")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "name", value = "部门名称", required = true),
+            @ApiImplicitParam(name = "groupAdmin", value = "部门负责人", required = false),
+            @ApiImplicitParam(name = "userName", value = "部门负责人用户名", required = false),
+            @ApiImplicitParam(name = "userEmail", value = "部门负责人邮箱", required = false),
+            @ApiImplicitParam(name = "userPwd", value = "部门负责人密码", required = false),
+            @ApiImplicitParam(name = "realPwd", value = "部门负责人密码", required = false),
+    })
+    @RequestMapping(value = "/user/manager/addNewDepartment", method = RequestMethod.POST)
     public String addNewDepartment(HttpServletRequest request,
                                       HttpServletResponse response,
                                       @RequestBody Map requestBody) {
@@ -176,7 +198,9 @@ public class UserController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/user/manager/updateUsers")
+    @ApiOperation(value = "批量更新用户角色")
+    @ApiImplicitParam(name = "users", value = "用户详情集合字符串", required = true, paramType = "String")
+    @RequestMapping(value = "/user/manager/updateUsers", method = RequestMethod.POST)
     public String updateUsers(HttpServletRequest request,
                                    HttpServletResponse response,
                                    @RequestBody Map requestBody) {
@@ -185,7 +209,6 @@ public class UserController {
             String usersStr = (String) requestBody.get("users");
             List<CibrSysUser> users = JSONObject.parseArray(usersStr, CibrSysUser.class);
             userService.updateusers(users);
-
             ret.setCode("200");
         } catch (Exception e) {
             ret.setCode("E500");
@@ -195,7 +218,12 @@ public class UserController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/user/manager/addNewRole")
+    @ApiOperation(value = "新增角色")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "name", value = "角色名称", required = true),
+            @ApiImplicitParam(name = "index", value = "角色编号", required = true)
+    })
+    @RequestMapping(value = "/user/manager/addNewRole", method = RequestMethod.POST)
     public String addNewRole(HttpServletRequest request,
                                    HttpServletResponse response,
                                    @RequestBody Map requestBody) {

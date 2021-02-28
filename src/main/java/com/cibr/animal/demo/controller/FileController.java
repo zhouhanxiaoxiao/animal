@@ -14,17 +14,20 @@ import com.cibr.animal.demo.util.FileUtil;
 import com.cibr.animal.demo.util.RedisUtil;
 import com.cibr.animal.demo.util.ReturnData;
 import com.cibr.animal.demo.util.exception.CommonException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.annotations.Param;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Api(tags = "文件的上传与下载，解析文件")
 @RestController
 public class FileController {
 
@@ -50,7 +54,12 @@ public class FileController {
     @Autowired
     private StockService stockService;
 
-    @RequestMapping("/file/import/sampleInput")
+    @ApiOperation(value = "导入样本录入Excel",notes = "根据导入的Excel内容，更新样本录入信息。")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "processId",value = "测序项目Id", required = true),
+            @ApiImplicitParam(name = "file",value = "需要上传的Excel文件", required = true)
+    })
+    @RequestMapping(value = "/file/import/sampleInput",method = RequestMethod.POST)
     public String uploadProcessFile(HttpServletRequest request,
                                 HttpServletResponse response) {
         ReturnData ret = new ReturnData();
@@ -84,7 +93,11 @@ public class FileController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/file/import/initDrop")
+    @ApiOperation(value = "上传并解析现有果蝇品系Excel")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "file",value = "果蝇品系文件",required = true)
+    })
+    @RequestMapping(value = "/file/import/initDrop",method = RequestMethod.POST)
     public  String uploadDrop(HttpServletRequest request,
                               HttpServletResponse response){
         ReturnData ret = new ReturnData();
@@ -111,7 +124,11 @@ public class FileController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/file/import/userImage")
+    @ApiOperation(value = "用户头像上传")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "file",value = "用户头像图片",required = true)
+    })
+    @RequestMapping(value = "/file/import/userImage",method = RequestMethod.POST)
     public String uploadUserImage(HttpServletRequest request,
                                   HttpServletResponse response){
         ReturnData ret = new ReturnData();
@@ -131,7 +148,8 @@ public class FileController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/file/import/makeUpload")
+    @ApiIgnore
+    @RequestMapping(value = "/file/import/makeUpload",method = RequestMethod.POST)
     public String uploadFile(HttpServletRequest request,
                              HttpServletResponse response){
         ReturnData ret = new ReturnData();
@@ -151,7 +169,12 @@ public class FileController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/file/import/uploadFile")
+    @ApiOperation(value = "通用附件上传方法")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "file",value = "需要上传的附件文件",required = true),
+            @ApiImplicitParam(name = "detailId",value = "关联项目的Id", required = true, paramType = "header")
+    })
+    @RequestMapping(value = "/file/import/uploadFile",method = RequestMethod.POST)
     public String commonUploadFile(HttpServletRequest request,
                              HttpServletResponse response){
         ReturnData ret = new ReturnData();
@@ -171,7 +194,11 @@ public class FileController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/file/showFileList")
+    @ApiOperation(value = "获取附件列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "detailId", value = "关联项目的Id",required = true)
+    })
+    @RequestMapping(value = "/file/showFileList",method = RequestMethod.POST)
     public String showFileList(HttpServletRequest request,
                              HttpServletResponse response,
                                @RequestBody Map requestBody){
@@ -192,7 +219,11 @@ public class FileController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/file/delete")
+    @ApiOperation(value = "删除现有附件")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "fileId",value = "文件Id", required = true)
+    })
+    @RequestMapping(value = "/file/delete",method = RequestMethod.POST)
     public String deleteFile(HttpServletRequest request,
                                HttpServletResponse response,
                                @RequestBody Map requestBody){
@@ -210,7 +241,11 @@ public class FileController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/file/getFileCount")
+    @ApiOperation(value = "获取附件数量")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "idsStr",value = "关联项目Id集合字符串",required = true,dataType = "String")
+    })
+    @RequestMapping(value = "/file/getFileCount", method = RequestMethod.POST)
     public String getFileCount(HttpServletRequest request,
                              HttpServletResponse response,
                              @RequestBody Map requestBody){
@@ -232,7 +267,11 @@ public class FileController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/file/download")
+    @ApiOperation(value = "下载附件")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "fileId",value = "附件Id", required = true)
+    })
+    @RequestMapping(value = "/file/download",method = RequestMethod.POST)
     public void downloadSampleInput(HttpServletRequest request,
                                     HttpServletResponse response,
                                     @RequestBody Map requestBody) throws IOException {
@@ -254,9 +293,12 @@ public class FileController {
         input.close();
     }
 
-
-
-    @RequestMapping("/file/import/makeInput")
+    @ApiOperation(value = "样本制备Excel上传，解析，更新")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "file",value = "样本制备Excel",required = true),
+            @ApiImplicitParam(name = "processId", value = "测序项目Id", required = true, paramType = "header")
+    })
+    @RequestMapping(value = "/file/import/makeInput", method = RequestMethod.POST)
     public String makeInput(HttpServletRequest request,
                                     HttpServletResponse response) {
         ReturnData ret = new ReturnData();
@@ -285,7 +327,12 @@ public class FileController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/file/import/libImport")
+    @ApiOperation(value = "文库制备Excel导入，解析，更新")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "processId",value = "测序项目Id",required = true, paramType = "header"),
+            @ApiImplicitParam(name = "file", value = "文库制备Excel", required = true)
+    })
+    @RequestMapping(value = "/file/import/libImport", method = RequestMethod.POST)
     public String libImport(HttpServletRequest request,
                                  HttpServletResponse response) {
         ReturnData ret = new ReturnData();
@@ -314,7 +361,12 @@ public class FileController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/file/import/dismountImport")
+    @ApiOperation(value = "数据交付Excel导入，解析，更新")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "processId",value = "测序项目Id",required = true, paramType = "header"),
+            @ApiImplicitParam(name = "file", value = "数据交付Excel", required = true)
+    })
+    @RequestMapping(value = "/file/import/dismountImport",method = RequestMethod.POST)
     public String dismountImport(HttpServletRequest request,
                             HttpServletResponse response) {
         ReturnData ret = new ReturnData();
@@ -343,7 +395,12 @@ public class FileController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/file/import/confirmsImport")
+    @ApiOperation(value = "上机确认Excel导入，解析，更新")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "processId",value = "测序项目Id",required = true, paramType = "header"),
+            @ApiImplicitParam(name = "file", value = "上机确认Excel", required = true)
+    })
+    @RequestMapping(value = "/file/import/confirmsImport",method = RequestMethod.POST)
     public String confirmsImport(HttpServletRequest request,
                                  HttpServletResponse response) {
         ReturnData ret = new ReturnData();
@@ -372,7 +429,12 @@ public class FileController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/file/import/analysisImport")
+    @ApiOperation(value = "生信分析Excel导入，解析，更新")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "processId",value = "测序项目Id",required = true, paramType = "header"),
+            @ApiImplicitParam(name = "file", value = "生信分析Excel", required = true)
+    })
+    @RequestMapping(value = "/file/import/analysisImport",method = RequestMethod.POST)
     public String analysisImport(HttpServletRequest request,
                                  HttpServletResponse response) {
         ReturnData ret = new ReturnData();
@@ -401,7 +463,11 @@ public class FileController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/file/import/stockImport")
+    @ApiOperation(value = "果蝇现有库存Excel导入，解析，更新")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "file", value = "生信分析Excel", required = true)
+    })
+    @RequestMapping(value = "/file/import/stockImport", method = RequestMethod.POST)
     public String stockImport(HttpServletRequest request,
                                  HttpServletResponse response) {
         ReturnData ret = new ReturnData();
@@ -429,6 +495,7 @@ public class FileController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
+    @ApiIgnore
     @RequestMapping("/fileTmp/{fileId}")
     public void fileTmpDown(@PathVariable String fileId,HttpServletResponse response) throws IOException {
         File file = fileService.getFileById(fileId);
@@ -448,6 +515,7 @@ public class FileController {
         input.close();
     }
 
+    @ApiIgnore
     @RequestMapping("/file/import/uploadAll")
     public String uploadAll(HttpServletRequest request,
                               HttpServletResponse response) {

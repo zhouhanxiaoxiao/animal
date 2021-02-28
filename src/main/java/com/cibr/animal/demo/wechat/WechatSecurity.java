@@ -1,5 +1,6 @@
 package com.cibr.animal.demo.wechat;
 
+import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 
+@Api(tags = "微信保留接口")
 @Controller
 @RequestMapping("/wechat")
 public class WechatSecurity {

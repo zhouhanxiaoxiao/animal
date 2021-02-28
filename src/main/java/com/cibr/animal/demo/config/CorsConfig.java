@@ -4,10 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
@@ -26,12 +23,24 @@ public class CorsConfig implements WebMvcConfigurer {
     }
 
     @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("doc.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+    }
+
+    @Override
     public void addInterceptors(InterceptorRegistry registry) {
         logger.info("初始化filter");
         registry.addInterceptor(initAuthInterceptor())
                 .addPathPatterns("/**")
                 .excludePathPatterns("/")
                 .excludePathPatterns("/wechat/**")
+                .excludePathPatterns("/webjars/**")
+                .excludePathPatterns("/swagger-resources/**")
+                .excludePathPatterns("/swagger-resources")
                 .excludePathPatterns("/static/**")
                 .excludePathPatterns("/emailTmp/**")
                 .excludePathPatterns("/fileTmp/**")

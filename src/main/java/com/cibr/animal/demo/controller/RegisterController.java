@@ -10,14 +10,20 @@ import com.cibr.animal.demo.service.EmailService;
 import com.cibr.animal.demo.service.RegisterService;
 import com.cibr.animal.demo.util.ReturnData;
 import com.cibr.animal.demo.util.TimeUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
+@Api(tags = "注册页面controller")
 @RestController
 @RequestMapping("/register")
 public class RegisterController {
@@ -31,7 +37,9 @@ public class RegisterController {
     @Autowired
     CibrSysUserService userService;
 
-    @RequestMapping("/getVerification")
+    @ApiOperation(value = "获取验证码")
+    @ApiImplicitParam(name = "registerEmail", value = "注册邮箱", required = true)
+    @RequestMapping(value = "/getVerification", method = RequestMethod.POST)
     public String getVerification(HttpServletRequest request,
                                   HttpServletResponse response) {
         ReturnData returnData = new ReturnData();
@@ -70,7 +78,15 @@ public class RegisterController {
         return JSON.toJSONString(returnData, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/submit")
+    @ApiOperation(value = "提交注册信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "registerName", value = "用户名", required = true),
+            @ApiImplicitParam(name = "registerEmail", value = "邮箱", required = true),
+            @ApiImplicitParam(name = "registerPwd", value = "密码", required = true),
+            @ApiImplicitParam(name = "verificationCode", value = "验证码", required = true),
+            @ApiImplicitParam(name = "usergroup", value = "组别ID", required = true)
+    })
+    @RequestMapping(value = "/submit", method = RequestMethod.POST)
     public String initUser(HttpServletRequest request,
                            HttpServletResponse response){
         ReturnData returnData = new ReturnData();
@@ -117,7 +133,8 @@ public class RegisterController {
         return JSON.toJSONString(returnData, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/getGroups")
+    @ApiOperation(value = "获取所有部门")
+    @RequestMapping(value = "/getGroups", method = RequestMethod.POST)
     public String getGroup(){
         ReturnData returnData = new ReturnData();
         try {

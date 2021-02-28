@@ -1,7 +1,11 @@
 package com.cibr.animal.demo.util;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Map;
 
+@ApiModel(value = "返回值实体", description = "返回值格式")
 public class ReturnData {
     /**
      *   200-处理成功
@@ -18,8 +22,13 @@ public class ReturnData {
      *
      *
      */
+    @ApiModelProperty(value = "返回值状态码")
     String code;
+
+    @ApiModelProperty(value = "具体返回值数据")
     Map retMap;
+
+    @ApiModelProperty(value = "错误信息！")
     String errMsg;
 
     public String getErrMsg() {

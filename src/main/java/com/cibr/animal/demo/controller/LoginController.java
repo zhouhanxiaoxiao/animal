@@ -13,9 +13,14 @@ import com.cibr.animal.demo.util.RedisUtil;
 import com.cibr.animal.demo.util.ReturnData;
 import com.cibr.animal.demo.util.Util;
 import io.lettuce.core.dynamic.annotation.Param;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Api(tags = "登录页面Controller")
 @RestController
 public class LoginController {
 
@@ -38,7 +44,14 @@ public class LoginController {
     @Autowired
     private RegisterService registerService;
 
-    @RequestMapping("/login")
+    @ApiOperation(value = "登录接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "loginEmail", value = "登录邮箱", required = true),
+            @ApiImplicitParam(name = "password", value = "密码", required = true),
+            @ApiImplicitParam(name = "verification", value = "验证码", required = true),
+            @ApiImplicitParam(name = "loginFlag", value = "登录方式", required = true)
+    })
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String login(@Param("loginEmail") String loginEmail,
                         @Param("password") String password,
                         @Param("verification") String verification,
@@ -95,7 +108,9 @@ public class LoginController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/system/exit")
+    @ApiOperation(value = "系统退出")
+    @ApiImplicitParam(name = "token",value = "登录令牌", required = true, paramType = "header")
+    @RequestMapping(value = "/system/exit", method = RequestMethod.POST)
     public String exitSystem(HttpServletRequest request){
         ReturnData ret = new ReturnData();
         try {
@@ -110,7 +125,9 @@ public class LoginController {
         return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
     }
 
-    @RequestMapping("/login/getVerification")
+    @ApiOperation(value = "获取验证码")
+    @ApiImplicitParam(name = "loginEmail", value = "登录邮箱", required = true)
+    @RequestMapping(value = "/login/getVerification", method = RequestMethod.POST)
     public String getVerification(@Param("loginEmail") String loginEmail){
         ReturnData ret = new ReturnData();
         try {
