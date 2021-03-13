@@ -94,4 +94,6 @@ public interface CibrBillMonthMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(CibrBillMonth record);
+
+    void batchInsert(@Param("months") List<CibrBillMonth> months);
 }

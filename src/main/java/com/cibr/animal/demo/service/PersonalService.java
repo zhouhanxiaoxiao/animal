@@ -32,6 +32,9 @@ public class PersonalService {
     @Autowired
     CibrSysUserMapper userMapper;
 
+    @Autowired
+    CibrConfigSelectMapper selectMapper;
+
     public Map<String, Object> stockTable(int currentPage,int pageSize){
         Map<String, Object> retMap = new HashMap<String, Object>();
         List<Map<String ,Object>> retList = new ArrayList<>();
@@ -168,4 +171,36 @@ public class PersonalService {
         }
         userMapper.batchUpdate(list);
     }
+
+    public List<CibrConfigSelect> findallSelects() {
+        CibrConfigSelectExample selectExample = new CibrConfigSelectExample();
+        selectExample.setOrderByClause("selecttype, parentId,name");
+        List<CibrConfigSelect> selects = selectMapper.selectByExample(selectExample);
+        if (selects == null){
+            return new ArrayList<>();
+        }
+        return selects;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public String addNewSelect(CibrConfigSelect select, CibrSysUser user) {
+        CibrConfigSelectExample selectExample = new CibrConfigSelectExample();
+        selectExample.createCriteria().andSelecttypeEqualTo(select.getSelecttype())
+                .andNameEqualTo(select.getName()).andParentidEqualTo(select.getParentid());
+        List<CibrConfigSelect> selects = selectMapper.selectByExample(selectExample);
+        if (selects != null && selects.size() > 0){
+            return "select.exist";
+        }
+        select.setId(Util.getUUID());
+        select.setCreater(user.getId());
+        select.setUseflag(true);
+        selectMapper.insert(select);
+        return "success";
+    }
+
+    public String updateSel(CibrConfigSelect select, CibrSysUser user) {
+        selectMapper.updateByPrimaryKey(select);
+        return "success";
+    }
+
 }

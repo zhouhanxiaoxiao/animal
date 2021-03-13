@@ -594,19 +594,26 @@
                dis.currentStatu     as disStatu,
                ana.currentStatu     as anaStatu
         from cibr_task_process proce
-                 left join cibr_task_process_sampleinput input on input.processId = proce.id
-                 left join cibr_task_process_samplemake make on make.inputId = input.id
-                 left join cibr_task_process_library lib on lib.makeId = make.id
-                 left join cibr_task_process_confirm confirm on confirm.libId = lib.id
-                 left join cibr_task_process_dismountdata dis on dis.makeId = confirm.id
-                 left join cibr_task_process_analysis ana on ana.dismountId = dis.id
+                 left join cibr_task_process_sampleinput input
+        on input.processId = proce.id
+            left join cibr_task_process_samplemake make on make.inputId = input.id
+            left join cibr_task_process_library lib on lib.makeId = make.id
+            left join cibr_task_process_confirm confirm on confirm.libId = lib.id
+            left join cibr_task_process_dismountdata dis on dis.makeId = confirm.id
+            left join cibr_task_process_analysis ana on ana.dismountId = dis.id
         where proce.id = '${processId}'
-          and (input.currentStatu != '09' or input.currentStatu is null)
-          and (make.currentStatu != '08' or make.currentStatu is null)
-          and (lib.currentStatu != '08' or lib.currentStatu is null)
-          and (confirm.currentStatu != '08' or confirm.currentStatu is null)
-          and (dis.currentStatu != '08' or dis.currentStatu is null)
-          and (ana.currentStatu != '08' or ana.currentStatu is null)
+          and (input.currentStatu != '09'
+           or input.currentStatu is null)
+          and (make.currentStatu != '08'
+           or make.currentStatu is null)
+          and (lib.currentStatu != '08'
+           or lib.currentStatu is null)
+          and (confirm.currentStatu != '08'
+           or confirm.currentStatu is null)
+          and (dis.currentStatu != '08'
+           or dis.currentStatu is null)
+          and (ana.currentStatu != '08'
+           or ana.currentStatu is null)
         order by sampleName;
     </select>
 
@@ -618,7 +625,8 @@
                subDis.disNum         as disNum
         from (select count(1) as inputNum
               from cibr_task_process_sampleinput input
-                       left join cibr_task_process_samplemake make on make.inputId = input.id
+                       left join cibr_task_process_samplemake make
+              on make.inputId = input.id
               where make.id is null
                 and input.currentStatu = '03'
                 and input.processId = '${processId}') as subInput,
@@ -662,7 +670,7 @@
     </select>
 
     <select id="findbillItems" resultMap="BaseResultMap">
-        select proce.*,make.*,lib.*,dis.*
+        select proce.*, make.*, lib.*, dis.*
         from cibr_sys_task task
                  left join cibr_task_process proce
                            on task.id = proce.taskid
@@ -682,6 +690,55 @@
                                and dis.createTime <![CDATA[ < ]]> '${lastDay}'
         where task.taskstatu in ('01', '02')
           and tasktype = '03'
+    </select>
 
+    <select id="findlibDbBill" resultType="java.util.HashMap">
+        select res.dbnum        as dbnum,
+               usr.NAME         as userName,
+               gro.groupname    as groupName,
+               gro.id           as groupId,
+               sel.name         as dbtype,
+               sel.id           as dbId,
+               proc.projectName as projectName,
+               proc.id          as processId,
+               usr.id           as userId,
+               gro.id           as groupId
+        from (select tmp.processId as processId, tmp.databaseType as dbtype, count(1) as dbnum
+              from (
+                       select processId, databaseType
+                       from cibr_task_process_library lib
+                       where updateTime <![CDATA[ > ]]> '${firstDay}'
+                         and updateTime <![CDATA[ < ]]> '${lastDay}') as tmp
+              group by tmp.processId, tmp.databaseType) as res
+                 left join cibr_task_process proc on proc.id = res.processId
+                 left join cibr_sys_user usr on proc.creater = usr.id
+                 left join cibr_sys_user_group gro on usr.roleid = gro.id
+                 left join cibr_config_select sel on sel.id = res.dbtype
+    </select>
+
+    <select id="findseqBill" resultType="java.util.HashMap">
+        select pro.projectName as projectName,
+               usr.NAME        as userName,
+               gro.groupname   as groupName,
+               res.dataNum     as uploadSize,
+               res.count       as rowNum,
+               pro.id          as processId,
+               usr.id          as userId,
+               gro.id          as groupId
+        from (select tmp.processId as processId, sum(tmp.datanum) as dataNum, count(processId) as count
+              from
+                  (select dis.processId as processId, confirm.uploadSize as datanum
+                  from cibr_task_process proce left join
+                  cibr_task_process_dismountdata dis on proce.id = dis.processId
+                  left join cibr_task_process_confirm confirm
+                  on dis.makeId = confirm.id
+                  where dis.createTime <![CDATA[ > ]]> '${firstDay}'
+                  and dis.createTime <![CDATA[ < ]]> '${lastDay}'
+                  and dis.currentStatu != '08' and proce.isOnlyBio= false) as tmp
+              group by tmp.processId) as res
+                 left join cibr_task_process pro on pro.id = res.processId
+                 left join cibr_sys_user usr on pro.creater = usr.id
+                 left join cibr_sys_user_group gro on usr.roleid = gro.id
+        order by pro.projectName, usr.NAME
     </select>
 </mapper>

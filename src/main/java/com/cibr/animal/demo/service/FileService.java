@@ -2,6 +2,7 @@ package com.cibr.animal.demo.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cibr.animal.demo.dao.CibrConfigSelectMapper;
 import com.cibr.animal.demo.dao.CibrSysFileMapper;
 import com.cibr.animal.demo.dao.CibrSysSampleindexMapper;
 import com.cibr.animal.demo.entity.*;
@@ -57,6 +58,9 @@ public class FileService {
 
     @Autowired
     private CibrSysSampleindexMapper sampleindexMapper;
+
+    @Autowired
+    private CibrConfigSelectMapper selectMapper;
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -161,8 +165,12 @@ public class FileService {
 //        }
         Map<String, CibrSysSampleindex> currentIndexs = processTaskService.getCurrentIndex();
         int rowIndex = 0;
-        for (List<String> row : rows){
 
+        Map<String, Map<String, String>> selectConfig = getSelectConfig();
+        Map<String, String> select_uuid_name = selectConfig.get("uuid_name");
+        Map<String, String> select_name_uuid = selectConfig.get("name_uuid");
+
+        for (List<String> row : rows){
             CibrTaskProcessSampleinput input = new CibrTaskProcessSampleinput();
             input.setId(Util.getUUID());
             input.setProcessid(processId);
@@ -172,7 +180,7 @@ public class FileService {
             //上传文件为临时状态，等待用户确认之后再修改状态
             input.setCurrentstatu("00");
             String initSample = row.get(0);
-            input.setInitsample(FileUtil.getInitSampleType(initSample));
+            input.setInitsample(select_name_uuid.get("initSample_" + initSample));
             input.setArrindex(row.get(1));
             input.setSamplename(row.get(2));
             input.setSpecies(row.get(3));
@@ -180,22 +188,28 @@ public class FileService {
             String sampleMsg = "";
             if (row.get(5) != null){
                 if (initSample.contains(FileUtil.NUCLEIC_ACID_FILENAME)){
-                    sampleMsg = FileUtil.getSampleMsgCode(row.get(5),FileUtil.NUCLEIC_ACID_FILENAME);
+//                    sampleMsg = FileUtil.getSampleMsgCode(row.get(5),FileUtil.NUCLEIC_ACID_FILENAME, select_name_uuid);
+                    sampleMsg = Util.nullToStr(select_name_uuid.get(FileUtil.NUCLEIC_ACID_FILENAME + "_" + row.get(5)));
                 }else if (initSample.contains(FileUtil.TISSUE_FILENAME)){
-                    sampleMsg = FileUtil.getSampleMsgCode(row.get(5),FileUtil.TISSUE_FILENAME);
+//                    sampleMsg = FileUtil.getSampleMsgCode(row.get(5),FileUtil.TISSUE_FILENAME);
+                    sampleMsg = Util.nullToStr(select_name_uuid.get(FileUtil.TISSUE_FILENAME + "_" + row.get(5)));
                 }else if (initSample.contains(FileUtil.CELL_FILENAME)){
-                    sampleMsg = FileUtil.getSampleMsgCode(row.get(5),FileUtil.CELL_FILENAME);
+//                    sampleMsg = FileUtil.getSampleMsgCode(row.get(5),FileUtil.CELL_FILENAME);
+                    sampleMsg = Util.nullToStr(select_name_uuid.get(FileUtil.CELL_FILENAME + "_" + row.get(5)));
                 }
             }
             input.setSamplemsg(sampleMsg);
             String sampleStatu = "";
             if (row.get(6) != null){
                 if (initSample.contains(FileUtil.NUCLEIC_ACID_FILENAME)){
-                    sampleStatu = FileUtil.getSampleStatuCode(row.get(6),FileUtil.NUCLEIC_ACID_FILENAME);
+//                    sampleStatu = FileUtil.getSampleStatuCode(row.get(6),FileUtil.NUCLEIC_ACID_FILENAME);
+                    sampleStatu = Util.nullToStr(select_name_uuid.get(FileUtil.NUCLEIC_ACID_FILENAME + "_" + row.get(6)));
                 }else if (initSample.contains(FileUtil.TISSUE_FILENAME)){
-                    sampleStatu = FileUtil.getSampleStatuCode(row.get(6),FileUtil.TISSUE_FILENAME);
+//                    sampleStatu = FileUtil.getSampleStatuCode(row.get(6),FileUtil.TISSUE_FILENAME);
+                    sampleStatu = Util.nullToStr(select_name_uuid.get(FileUtil.TISSUE_FILENAME + "_" + row.get(6)));
                 }else if (initSample.contains(FileUtil.CELL_FILENAME)){
-                    sampleStatu = FileUtil.getSampleStatuCode(row.get(6),FileUtil.CELL_FILENAME);
+//                    sampleStatu = FileUtil.getSampleStatuCode(row.get(6),FileUtil.CELL_FILENAME);
+                    sampleStatu = Util.nullToStr(select_name_uuid.get(FileUtil.CELL_FILENAME + "_" + row.get(6)));
                 }
             }
             input.setSamplestatu(sampleStatu);
@@ -211,20 +225,23 @@ public class FileService {
             if (initSample != null && initSample.contains(FileUtil.CELL_FILENAME)){
                 input.setCelllife(row.get(12));
                 String cellSort = "";
-                cellSort = FileUtil.getCellSortCode(row.get(13));
+                cellSort = select_name_uuid.get("cellSort_" + row.get(13));
                 input.setCellsort(cellSort);
             }
             String databaseType = "";
             if (initSample != null && initSample.contains(FileUtil.NUCLEIC_ACID_FILENAME)){
-                databaseType = FileUtil.getDatabaseType(row.get(14),FileUtil.NUCLEIC_ACID_FILENAME);
+//                databaseType = FileUtil.getDatabaseType(row.get(14),FileUtil.NUCLEIC_ACID_FILENAME);
+                databaseType = Util.nullToStr(select_name_uuid.get(FileUtil.NUCLEIC_ACID_FILENAME + "_" + row.get(14)));
             }else if (initSample != null && initSample.contains(FileUtil.TISSUE_FILENAME)){
-                databaseType = FileUtil.getDatabaseType(row.get(14),FileUtil.TISSUE_FILENAME);
+//                databaseType = FileUtil.getDatabaseType(row.get(14),FileUtil.TISSUE_FILENAME);
+                databaseType = Util.nullToStr(select_name_uuid.get(FileUtil.TISSUE_FILENAME + "_" + row.get(14)));
             }else if (initSample != null && initSample.contains(FileUtil.CELL_FILENAME)){
-                databaseType = FileUtil.getDatabaseType(row.get(14),FileUtil.CELL_FILENAME);
+//                databaseType = FileUtil.getDatabaseType(row.get(14),FileUtil.CELL_FILENAME);
+                databaseType = Util.nullToStr(select_name_uuid.get(FileUtil.CELL_FILENAME + "_" + row.get(14)));
             }
             input.setDatabasetype(databaseType);
             String seq = "";
-            seq = FileUtil.getSeqCode(row.get(15));
+            seq = select_name_uuid.get("seqPlant_" + row.get(15));
             logger.info(JSON.toJSONString(input));
             String selfNum = Util.getSelfNum(input.getInitsample(), sampleMsg, databaseType);
             CibrSysSampleindex sampleindex = currentIndexs.get(selfNum);
@@ -417,4 +434,69 @@ public class FileService {
         }
         return  retMap;
     }
+
+    public Map<String,Map<String, String>> getSelectConfig(){
+        Map<String,Map<String, String>> retMap =new HashMap<>();
+
+        List<CibrConfigSelect> selects = selectMapper.selectByExample(new CibrConfigSelectExample());
+        Map<String, String> uuid_name = new HashMap<>();
+        for (CibrConfigSelect select : selects){
+            uuid_name.put(select.getId(),select.getName());
+        }
+
+        CibrConfigSelectExample parent = new CibrConfigSelectExample();
+        parent.createCriteria().andNameIn(Arrays.asList(FileUtil.CELL_FILENAME,FileUtil.TISSUE_FILENAME,FileUtil.NUCLEIC_ACID_FILENAME));
+        List<CibrConfigSelect> parents = selectMapper.selectByExample(parent);
+        Map<String,String> parentId_name = new HashMap<>();
+        for (CibrConfigSelect item : parents){
+            parentId_name.put(item.getId(),item.getName());
+        }
+
+        Map<String, String> name_uuid = new HashMap<>();
+        for (CibrConfigSelect select : selects){
+            if (StringUtils.isEmpty(select.getParentid())){
+                name_uuid.put(select.getSelecttype() + "_" + select.getName(),select.getId());
+            }else {
+                name_uuid.put(parentId_name.get(select.getParentid()) + "_" + select.getName(),select.getId());
+            }
+        }
+        retMap.put("uuid_name", uuid_name);
+        retMap.put("name_uuid", name_uuid);
+        return retMap;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

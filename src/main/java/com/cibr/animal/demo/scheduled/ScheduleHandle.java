@@ -3,6 +3,7 @@ package com.cibr.animal.demo.scheduled;
 import com.cibr.animal.demo.dao.*;
 import com.cibr.animal.demo.entity.*;
 import com.cibr.animal.demo.service.EmailService;
+import com.cibr.animal.demo.service.FileService;
 import com.cibr.animal.demo.service.ProcessTaskService;
 import com.cibr.animal.demo.service.UserService;
 import com.cibr.animal.demo.util.TaskUtil;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
 
@@ -50,10 +52,13 @@ public class ScheduleHandle {
     private CibrBillMonthMapper billMonthMapper;
 
     @Autowired
-    private CibrTaskProcessPriceMapper priceMapper;
+    private ProcessTaskService processTaskService;
 
     @Autowired
-    private ProcessTaskService processTaskService;
+    private CibrConfigPriceMapper priceMapper;
+
+    @Autowired
+    private FileService fileService;
 
     /**
      * 查看协助申请，是否有超过一个小时未确定的。
@@ -201,15 +206,91 @@ public class ScheduleHandle {
         }
     }
 
-    public void makeBill(String currMonth) throws Exception {
-        Date firstDay = TimeUtil.str2date(currMonth, "yyyy-MM-01 00:00:00");
+    public void makeBill(String currMonth, String userId) throws Exception {
+        Date firstDay = TimeUtil.str2date(currMonth, "yyyy-MM");
+        firstDay = TimeUtil.str2date(TimeUtil.date2str(firstDay,"yyyy-MM-01 00:00:00"),"yyyy-MM-01 00:00:00");
         Date lastDay = TimeUtil.dateAdd(firstDay,Calendar.MONTH,1);
+        logger.info("开始时间：" + TimeUtil.date2str(firstDay,"yyyy-MM-dd HH:mm:ss"));
+        logger.info("结束时间：" + TimeUtil.date2str(lastDay,"yyyy-MM-dd HH:mm:ss"));
+//        processTaskService.findbillItems(firstDay,lastDay);
 
-        logger.info("开始时间：" + TimeUtil.date2str(firstDay,"yyyy-MM-dd hh:mm:ss"));
-        logger.info("结束时间：" + TimeUtil.date2str(lastDay,"yyyy-MM-dd hh:mm:ss"));
+        // 建库总结
+        Map<String, List<Map<String, Object>>> retMap = processTaskService.findlibDbBill(firstDay, lastDay);
 
-        processTaskService.findbillItems(firstDay,lastDay);
+        List<Map<String, Object>> dbBill = retMap.get("dbBill");
+        List<Map<String, Object>> seqBill = retMap.get("seqBill");
 
+        // 获取建库测序的价格
+        CibrConfigPriceExample dbPriceEx = new CibrConfigPriceExample();
+        dbPriceEx.createCriteria().andPricetypeEqualTo("JKCX");
+        List<CibrConfigPrice> dbPrices = priceMapper.selectByExample(dbPriceEx);
+        Map<String, CibrConfigPrice> dbid_price = new HashMap<>();
+        for (CibrConfigPrice price : dbPrices){
+            dbid_price.put(price.getLibtype(), price);
+        }
+        // 获取测序、检测 价格
+        CibrConfigPriceExample cxPriceEx = new CibrConfigPriceExample();
+        cxPriceEx.createCriteria().andPricetypeEqualTo("CX");
+        List<CibrConfigPrice> cxPrices = priceMapper.selectByExample(cxPriceEx);
+        CibrConfigPrice cxPrice = cxPrices.get(0);
+
+        CibrConfigPriceExample kjPriceEx = new CibrConfigPriceExample();
+        kjPriceEx.createCriteria().andPricetypeEqualTo("KJ");
+        List<CibrConfigPrice> kjPrices = priceMapper.selectByExample(kjPriceEx);
+        CibrConfigPrice kjPrice = kjPrices.get(0);
+
+        List<CibrBillMonth> months = new ArrayList<>();
+        for (Map<String, Object> dbItem : dbBill){
+            CibrBillMonth month = new CibrBillMonth();
+            month.setId(Util.getUUID());
+            month.setCreater("system");
+            month.setCreatetime(new Date());
+            month.setUpdateuser(userId);
+            month.setUpdatetime(new Date());
+            month.setBillstatu("00");
+            month.setBelongmon(currMonth);
+            month.setDbtype((String) dbItem.get("dbId"));
+            month.setDbname((String) dbItem.get("dbtype"));
+            month.setDbnum(new BigDecimal((long)dbItem.get("dbnum")));
+            month.setDbprice(dbid_price.get((String) dbItem.get("dbId")).getPrice());
+            month.setDbtotalprice(month.getDbprice().multiply(month.getDbnum()).setScale(2,BigDecimal.ROUND_HALF_UP));
+            month.setProcessid((String) dbItem.get("processId"));
+            month.setProjectname((String) dbItem.get("projectName"));
+            month.setGroupid((String) dbItem.get("groupId"));
+            month.setGroupname((String) dbItem.get("groupName"));
+            month.setUserid((String) dbItem.get("userId"));
+            month.setUsername((String) dbItem.get("userName"));
+            months.add(month);
+        }
+
+        for (Map<String, Object> seqItem : seqBill){
+            CibrBillMonth month = new CibrBillMonth();
+            month.setId(Util.getUUID());
+            month.setCreater("system");
+            month.setCreatetime(new Date());
+            month.setUpdateuser(userId);
+            month.setUpdatetime(new Date());
+            month.setBillstatu("00");
+            month.setBelongmon(currMonth);
+            month.setProcessid((String) seqItem.get("processId"));
+            month.setProjectname((String) seqItem.get("projectName"));
+            month.setGroupid((String) seqItem.get("groupId"));
+            month.setGroupname((String) seqItem.get("groupName"));
+            month.setUserid((String) seqItem.get("userId"));
+            month.setUsername((String) seqItem.get("userName"));
+
+            month.setSeqprice(cxPrice.getPrice());
+            month.setSeqnum(new BigDecimal((double) seqItem.get("uploadSize")));
+            month.setSeqtotalprice(month.getSeqnum().multiply(month.getSeqprice()).setScale(2,BigDecimal.ROUND_HALF_UP));
+
+            month.setChecknum(new BigDecimal((long)seqItem.get("rowNum")));
+            month.setCheckpirce(kjPrice.getPrice());
+            month.setChecktotal(month.getCheckpirce().multiply(month.getChecknum()).setScale(2,BigDecimal.ROUND_HALF_UP));
+            months.add(month);
+        }
+        if (months.size() > 0){
+            billMonthMapper.batchInsert(months);
+        }
     }
 }
 

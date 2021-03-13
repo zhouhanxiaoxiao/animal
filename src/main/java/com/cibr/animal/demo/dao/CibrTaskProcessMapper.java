@@ -106,4 +106,8 @@ public interface CibrTaskProcessMapper {
     List<CibrTaskProcess> findAllUsefulTask();
 
     List<CibrTaskProcess> findbillItems(@Param("firstDay") Date firstDay, @Param("lastDay") Date lastDay);
+
+    List<Map<String,Object>> findlibDbBill(@Param("firstDay") String firstDay, @Param("lastDay") String lastDay);
+
+    List<Map<String, Object>> findseqBill(@Param("firstDay") String firstDay, @Param("lastDay") String lastDay);
 }

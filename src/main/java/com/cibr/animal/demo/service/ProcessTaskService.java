@@ -89,6 +89,9 @@ public class ProcessTaskService {
     @Autowired
     private CibrTaskDiystatuMapper statuMapper;
 
+    @Autowired
+    private CibrConfigSelectMapper selectMapper;
+
     @Transactional(rollbackFor = Exception.class)
     public void createProcessTask(CibrSysUser user, boolean isOnlyBio, String projectName, String dataType, String principal,
                                   List<String> emails, String sampleMsg, String sampleInput, String samplePreparation,
@@ -207,10 +210,15 @@ public class ProcessTaskService {
         map.put("dateType", process.getDatatype());
         map.put("preMan", id_name.get(process.getPrincipal()));
         map.put("emails", process.getEmails());
+
+        Map<String, Map<String, String>> selectConfig = fileService.getSelectConfig();
+        Map<String, String> select_name_uuid = selectConfig.get("name_uuid");
+        Map<String, String> select_uuid_name = selectConfig.get("uuid_name");
+
         String[] types = process.getSampletype().split("##");
         String allType = "";
         for (String type : types) {
-            allType += FileUtil.getInitSampleFlag(type) + ",";
+            allType += select_uuid_name.get(type) + ",";
         }
         map.put("sampleTypes", allType);
         map.put("projectDesc", process.getProjectdesc());
@@ -1064,6 +1072,9 @@ public class ProcessTaskService {
 
     public List<List<String>> getInputList(String processId, List<CibrTaskProcessSampleinput> list) {
         Map<String, String> uuid_subname = getSubTaskUuidName(processId);
+        Map<String, Map<String, String>> selectConfig = fileService.getSelectConfig();
+        Map<String, String> select_name_uuid = selectConfig.get("name_uuid");
+        Map<String, String> select_uuid_name = selectConfig.get("uuid_name");
 
         List<List<String>> excleRows = new ArrayList<>();
         List<String> heads = new ArrayList<>();
@@ -1093,13 +1104,13 @@ public class ProcessTaskService {
         for (CibrTaskProcessSampleinput input : list) {
             List<String> row = new ArrayList<>();
 //            row.add(Util.nullToStr(input.getArrindex()));
-            row.add(Util.nullToStr(FileUtil.getInitSampleFlag(input.getInitsample())));
+            row.add(Util.nullToStr(select_uuid_name.get(input.getInitsample())));
             row.add(Util.nullToStr(input.getSamplename()));
             row.add(Util.nullToStr(input.getSampleindex()));
             row.add(Util.nullToStr(input.getSpecies()));
             row.add(Util.nullToStr(input.getTissue()));
-            row.add(Util.nullToStr(FileUtil.getSampleTypeFlag(input.getSamplemsg())));
-            row.add(Util.nullToStr(FileUtil.getSampleStatuFlag(input.getSamplestatu())));
+            row.add(Util.nullToStr(select_uuid_name.get(input.getSamplemsg())));
+            row.add(Util.nullToStr(select_uuid_name.get(input.getSamplestatu())));
             row.add(Util.nullToStr(input.getTissuenumber()));
             row.add(Util.nullToStr(input.getBloodvolume()));
             row.add(Util.nullToStr(input.getConcentration()));
@@ -1107,9 +1118,9 @@ public class ProcessTaskService {
             row.add(Util.nullToStr(input.getSamplevolume()));
             row.add(Util.nullToStr(input.getTotalnumber()));
             row.add(Util.nullToStr(input.getCelllife()));
-            row.add(Util.nullToStr(FileUtil.getCellsortFlag(input.getCellsort())));
-            row.add(Util.nullToStr(FileUtil.getDatabaseFlag(input.getDatabasetype())));
-            row.add(Util.nullToStr(FileUtil.getSeqFlag(input.getSequencingplatform())));
+            row.add(Util.nullToStr(select_uuid_name.get(input.getCellsort())));
+            row.add(Util.nullToStr(select_uuid_name.get(input.getDatabasetype())));
+            row.add(Util.nullToStr(select_uuid_name.get(input.getSequencingplatform())));
             row.add(Util.nullToStr(input.getRemarks()));
             row.add(Util.nullToStr(input.getId()));
 //            row.add(Util.nullToStr(uuid_subname.get(input.getSubid())));
@@ -1188,6 +1199,11 @@ public class ProcessTaskService {
 
     public List<List<String>> getMakeLists(String processId, List<CibrTaskProcessSamplemake> samplemakes) {
         Map<String, String> uuid_subName = getSubTaskUuidName(processId);
+
+        Map<String, Map<String, String>> selectConfig = fileService.getSelectConfig();
+        Map<String, String> select_name_uuid = selectConfig.get("name_uuid");
+        Map<String, String> select_uuid_name = selectConfig.get("uuid_name");
+
         Map<String, String> uuid_user = userService.getid_user();
         List<List<String>> excleRows = new ArrayList<>();
         List<String> heads = new ArrayList<>();
@@ -1223,8 +1239,8 @@ public class ProcessTaskService {
         excleRows.add(heads);
         for (CibrTaskProcessSamplemake make : samplemakes) {
             List<String> row = new ArrayList<>();
-            row.add(Util.nullToStr(FileUtil.getInitSampleFlag(make.getInitsample())));
-            row.add(Util.nullToStr(FileUtil.getInitSampleFlag(make.getTransform())));
+            row.add(Util.nullToStr(select_uuid_name.get(make.getInitsample())));
+            row.add(Util.nullToStr(select_uuid_name.get(make.getTransform())));
             row.add(Util.nullToStr(make.getSamplename()));
             row.add(Util.nullToStr(make.getSelfnumber()));
             row.add(Util.nullToStr(make.getDerivativeindex()));
@@ -1239,14 +1255,14 @@ public class ProcessTaskService {
             row.add(Util.nullToStr(make.getM260230()));
             row.add(Util.nullToStr(make.getRqn()));
             row.add(Util.nullToStr(make.getCelllife()));
-            row.add(Util.nullToStr(FileUtil.getCellsortFlag(make.getCellsort())));
-            row.add(Util.nullToStr(FileUtil.getExtractFlag(make.getExtractmethod())));
-            row.add(Util.nullToStr(FileUtil.getCheckResultFlag(make.getCheckresult())));
+            row.add(Util.nullToStr(select_uuid_name.get(make.getCellsort())));
+            row.add(Util.nullToStr(select_uuid_name.get(make.getExtractmethod())));
+            row.add(Util.nullToStr(select_uuid_name.get(make.getCheckresult())));
             row.add(Util.nullToStr(make.getCheckremarks()));
             row.add(Util.nullToStr(uuid_user.get(make.getCheckuser())));
             row.add(Util.nullToStr(uuid_user.get(make.getReviewer())));
-            row.add(Util.nullToStr(FileUtil.getDatabaseFlag(make.getDatabasetype())));
-            row.add(Util.nullToStr(FileUtil.getSeqFlag(make.getSequencingplatform())));
+            row.add(Util.nullToStr(select_uuid_name.get(make.getDatabasetype())));
+            row.add(Util.nullToStr(select_uuid_name.get(make.getSequencingplatform())));
             row.add(Util.nullToStr(make.getRemaining()));
             row.add(Util.nullToStr(make.getRemarks()));
             row.add(Util.nullToStr(make.getId()));
@@ -1274,6 +1290,10 @@ public class ProcessTaskService {
         Map<String, String> name_id = userService.getname_id();
         Map<String, CibrSysSampleindex> currentIndexs = getCurrentIndex();
 
+        Map<String, Map<String, String>> selectConfig = fileService.getSelectConfig();
+        Map<String, String> select_name_uuid = selectConfig.get("name_uuid");
+        Map<String, String> select_uuid_name = selectConfig.get("uuid_name");
+
         for (List<String> row : rows) {
             CibrTaskProcessSamplemake importMake = index_make.get(row.get(row.size() - 1));
             if (importMake == null) {
@@ -1286,9 +1306,9 @@ public class ProcessTaskService {
             int rowIndex = 0;
             rowIndex++;
 //            importMake.setInitsample(Util.nullToStr(FileUtil.getInitSampleType(row.get(rowIndex++))));
-            if ("02".equals(importMake.getInitsample())
+            if (select_name_uuid.get("initSample_" + FileUtil.TISSUE_FILENAME).equals(importMake.getInitsample())
                     && StringUtils.isEmpty(importMake.getTransform())) {
-                importMake.setTransform(Util.nullToStr(FileUtil.getInitSampleType(row.get(rowIndex++))));
+                importMake.setTransform(Util.nullToStr(select_name_uuid.get("initSample_" + row.get(rowIndex++))));
             } else {
                 rowIndex++;
             }
@@ -1307,19 +1327,22 @@ public class ProcessTaskService {
             importMake.setM260230(Util.nullToStr(row.get(rowIndex++)));
             importMake.setRqn(Util.nullToStr(row.get(rowIndex++)));
             importMake.setCelllife(Util.nullToStr(row.get(rowIndex++)));
-            importMake.setCellsort(FileUtil.getCellSortCode(row.get(rowIndex++)));
-            importMake.setExtractmethod(FileUtil.getExtractCode(row.get(rowIndex++)));
-            importMake.setCheckresult(FileUtil.getCheckResultCode(row.get(rowIndex++)));
+            importMake.setCellsort(select_name_uuid.get("cellSort_" + row.get(rowIndex++)));
+            importMake.setExtractmethod(select_name_uuid.get("extract_" + row.get(rowIndex++)));
+            importMake.setCheckresult(select_name_uuid.get("checkResult_" + row.get(rowIndex++)));
             importMake.setCheckremarks(Util.nullToStr(row.get(rowIndex++)));
             importMake.setCheckuser(Util.nullToStr(name_id.get(row.get(rowIndex++))));
             importMake.setReviewer(Util.nullToStr(name_id.get(row.get(rowIndex++))));
             String database = row.get(rowIndex++);
             if (StringUtils.isEmpty(importMake.getTransform())) {
-                importMake.setDatabasetype(FileUtil.getDatabaseType(database, row.get(0)));
+//                importMake.setDatabasetype(FileUtil.getDatabaseType(database, row.get(0)));
+                importMake.setDatabasetype(select_name_uuid.get(row.get(0) + "_" + database));
+
             } else {
-                importMake.setDatabasetype(FileUtil.getDatabaseType(database, row.get(1)));
+//                importMake.setDatabasetype(FileUtil.getDatabaseType(database, row.get(1)));
+                importMake.setDatabasetype(select_name_uuid.get(row.get(1) + "_" + database));
             }
-            importMake.setSequencingplatform(FileUtil.getSeqCode(row.get(rowIndex++)));
+            importMake.setSequencingplatform(select_name_uuid.get("seqPlant_" + row.get(rowIndex++)));
             importMake.setRemaining(Util.nullToStr(row.get(rowIndex++)));
             importMake.setRemarks(Util.nullToStr(row.get(rowIndex++)));
             importMake.setUpdatetime(new Date());
@@ -1373,6 +1396,11 @@ public class ProcessTaskService {
     public List<List<String>> getLibLists(String processId, List<CibrTaskProcessLibrary> libs) {
         Map<String, String> uuid_user = userService.getid_user();
         Map<String, String> uuid_subName = getSubTaskUuidName(processId);
+
+        Map<String, Map<String, String>> selectConfig = fileService.getSelectConfig();
+        Map<String, String> select_name_uuid = selectConfig.get("name_uuid");
+        Map<String, String> select_uuid_name = selectConfig.get("uuid_name");
+
         List<List<String>> excleRows = new ArrayList<>();
         List<String> heads = new ArrayList<>();
         heads.add("建库时间");
@@ -1425,13 +1453,13 @@ public class ProcessTaskService {
             row.add(Util.nullToStr(lib.getLibindex()));
             row.add(Util.nullToStr(lib.getLibbarcode()));
             row.add(Util.nullToStr(lib.getCyclenumber()));
-            row.add(Util.nullToStr(FileUtil.getDatabaseFlag(lib.getDatabasetype())));
+            row.add(Util.nullToStr(select_uuid_name.get(lib.getDatabasetype())));
             row.add(Util.nullToStr(lib.getDatabaseindex()));
             row.add(Util.nullToStr(uuid_user.get(lib.getCreatedbuser())));
             row.add(Util.nullToStr(uuid_user.get(lib.getReviewer())));
             row.add(Util.nullToStr(lib.getQbit()));
             row.add(Util.nullToStr(lib.getLibsize()));
-            row.add(Util.nullToStr(FileUtil.getSeqFlag(lib.getSeqmethods())));
+            row.add(Util.nullToStr(select_uuid_name.get(lib.getSeqmethods())));
             row.add(Util.nullToStr(lib.getUploadsize()));
             row.add(Util.nullToStr(lib.getDatabaseunit()));
             row.add(Util.nullToStr(lib.getLibremark()));
@@ -1464,6 +1492,10 @@ public class ProcessTaskService {
 
         Map<String, String> uuid_subName = getSubTaskUuidName(processId);
 
+        Map<String, Map<String, String>> selectConfig = fileService.getSelectConfig();
+        Map<String, String> select_name_uuid = selectConfig.get("name_uuid");
+        Map<String, String> select_uuid_name = selectConfig.get("uuid_name");
+
         heads.add("样本编号");
         heads.add("样本名称");
         heads.add("数据账号");
@@ -1482,7 +1514,7 @@ public class ProcessTaskService {
             row.add(Util.nullToStr(dismountdata.getDateaccount()));
             row.add(Util.nullToStr(dismountdata.getDatepassword()));
             row.add(Util.nullToStr(dismountdata.getDatepath()));
-            row.add(Util.nullToStr(FileUtil.getSeqFlag(dismountdata.getSequencingplatform())));
+            row.add(Util.nullToStr(select_uuid_name.get(dismountdata.getSequencingplatform())));
             row.add(Util.nullToStr(dismountdata.getRemarks()));
             row.add(Util.nullToStr(dismountdata.getId()));
 //            row.add(Util.nullToStr(uuid_subName.get(dismountdata.getSubid())));
@@ -1502,6 +1534,11 @@ public class ProcessTaskService {
             index_dis.put(dismountdata.getId(), dismountdata);
         }
 
+        Map<String, Map<String, String>> selectConfig = fileService.getSelectConfig();
+        Map<String, String> select_name_uuid = selectConfig.get("name_uuid");
+        Map<String, String> select_uuid_name = selectConfig.get("uuid_name");
+
+
         for (List<String> row : rows) {
             int index = 2;
             CibrTaskProcessDismountdata dismountdata = index_dis.get(Util.nullToStr(row.get(row.size() - 1)));
@@ -1515,7 +1552,7 @@ public class ProcessTaskService {
             dismountdata.setDateaccount(Util.nullToStr(row.get(index++)));
             dismountdata.setDatepassword(Util.nullToStr(row.get(index++)));
             dismountdata.setDatepath(Util.nullToStr(row.get(index++)));
-            dismountdata.setSequencingplatform(FileUtil.getSeqCode(Util.nullToStr(row.get(index++))));
+            dismountdata.setSequencingplatform(select_name_uuid.get("seqPlant_" + Util.nullToStr(row.get(index++))));
             dismountdata.setRemarks(Util.nullToStr(row.get(index++)));
         }
         dismountdataMapper.batchUpdate(list);
@@ -1644,6 +1681,11 @@ public class ProcessTaskService {
 //            throw new RuntimeException("导入的文件类型与任务类型不相符");
 //        }
         Map<String, CibrSysSampleindex> currentIndexs = getCurrentIndex();
+
+        Map<String, Map<String, String>> selectConfig = fileService.getSelectConfig();
+        Map<String, String> select_name_uuid = selectConfig.get("name_uuid");
+        Map<String, String> select_uuid_name = selectConfig.get("uuid_name");
+
         int rowIndex = 0;
         for (List<String> row : rows) {
             boolean hasAlreadyExist = false;
@@ -1668,7 +1710,7 @@ public class ProcessTaskService {
             int index = 0;
 //            input.setArrindex(row.get(index++));
             String initSample = row.get(index++);
-            input.setInitsample(FileUtil.getInitSampleType(initSample));
+            input.setInitsample(select_name_uuid.get("initSample_" + initSample));
             input.setSamplename(row.get(index++));
             index++;//跳过样本编号填写，在末尾判断。
             input.setSpecies(row.get(index++));
@@ -1677,11 +1719,14 @@ public class ProcessTaskService {
             String sampleMsgText = row.get(index++);
             if (sampleMsgText != null) {
                 if (initSample.contains(FileUtil.NUCLEIC_ACID_FILENAME)) {
-                    sampleMsg = FileUtil.getSampleMsgCode(sampleMsgText, FileUtil.NUCLEIC_ACID_FILENAME);
+//                    sampleMsg = FileUtil.getSampleMsgCode(sampleMsgText, FileUtil.NUCLEIC_ACID_FILENAME);
+                    sampleMsg = Util.nullToStr(select_name_uuid.get(FileUtil.NUCLEIC_ACID_FILENAME + "_" + sampleMsgText));
                 } else if (initSample.contains(FileUtil.TISSUE_FILENAME)) {
-                    sampleMsg = FileUtil.getSampleMsgCode(sampleMsgText, FileUtil.TISSUE_FILENAME);
+//                    sampleMsg = FileUtil.getSampleMsgCode(sampleMsgText, FileUtil.TISSUE_FILENAME);
+                    sampleMsg = Util.nullToStr(select_name_uuid.get(FileUtil.TISSUE_FILENAME + "_" + sampleMsgText));
                 } else if (initSample.contains(FileUtil.CELL_FILENAME)) {
-                    sampleMsg = FileUtil.getSampleMsgCode(sampleMsgText, FileUtil.CELL_FILENAME);
+//                    sampleMsg = FileUtil.getSampleMsgCode(sampleMsgText, FileUtil.CELL_FILENAME);
+                    sampleMsg = Util.nullToStr(select_name_uuid.get(FileUtil.CELL_FILENAME + "_" + sampleMsgText));
                 }
             }
             input.setSamplemsg(sampleMsg);
@@ -1689,11 +1734,14 @@ public class ProcessTaskService {
             String sampleStatuText = row.get(index++);
             if (sampleStatuText != null) {
                 if (initSample.contains(FileUtil.NUCLEIC_ACID_FILENAME)) {
-                    sampleStatu = FileUtil.getSampleStatuCode(sampleStatuText, FileUtil.NUCLEIC_ACID_FILENAME);
+//                    sampleStatu = FileUtil.getSampleStatuCode(sampleStatuText, FileUtil.NUCLEIC_ACID_FILENAME);
+                    sampleStatu = Util.nullToStr(select_name_uuid.get(FileUtil.NUCLEIC_ACID_FILENAME + "_" + sampleStatuText));
                 } else if (initSample.contains(FileUtil.TISSUE_FILENAME)) {
-                    sampleStatu = FileUtil.getSampleStatuCode(sampleStatuText, FileUtil.TISSUE_FILENAME);
+//                    sampleStatu = FileUtil.getSampleStatuCode(sampleStatuText, FileUtil.TISSUE_FILENAME);
+                    sampleStatu = Util.nullToStr(select_name_uuid.get(FileUtil.TISSUE_FILENAME + "_" + sampleStatuText));
                 } else if (initSample.contains(FileUtil.CELL_FILENAME)) {
-                    sampleStatu = FileUtil.getSampleStatuCode(sampleStatuText, FileUtil.CELL_FILENAME);
+//                    sampleStatu = FileUtil.getSampleStatuCode(sampleStatuText, FileUtil.CELL_FILENAME);
+                    sampleStatu = Util.nullToStr(select_name_uuid.get(FileUtil.CELL_FILENAME + "_" + sampleStatuText));
                 }
             }
             input.setSamplestatu(sampleStatu);
@@ -1718,21 +1766,24 @@ public class ProcessTaskService {
             if (initSample != null && initSample.contains(FileUtil.CELL_FILENAME)) {
                 input.setCelllife(celllife);
                 String cellSort = "";
-                cellSort = FileUtil.getCellSortCode(cellsort);
+                cellSort = select_name_uuid.get("cellSort_" + cellsort);
                 input.setCellsort(cellSort);
             }
             String databaseType = "";
             String databaseTypeText = row.get(index++);
             if (initSample != null && initSample.contains(FileUtil.NUCLEIC_ACID_FILENAME)) {
-                databaseType = FileUtil.getDatabaseType(databaseTypeText, FileUtil.NUCLEIC_ACID_FILENAME);
+//                databaseType = FileUtil.getDatabaseType(databaseTypeText, FileUtil.NUCLEIC_ACID_FILENAME);
+                databaseType = Util.nullToStr(select_name_uuid.get(FileUtil.NUCLEIC_ACID_FILENAME + "_" + databaseTypeText));
             } else if (initSample != null && initSample.contains(FileUtil.TISSUE_FILENAME)) {
-                databaseType = FileUtil.getDatabaseType(databaseTypeText, FileUtil.TISSUE_FILENAME);
+//                databaseType = FileUtil.getDatabaseType(databaseTypeText, FileUtil.TISSUE_FILENAME);
+                databaseType = Util.nullToStr(select_name_uuid.get(FileUtil.TISSUE_FILENAME + "_" + databaseTypeText));
             } else if (initSample != null && initSample.contains(FileUtil.CELL_FILENAME)) {
-                databaseType = FileUtil.getDatabaseType(databaseTypeText, FileUtil.CELL_FILENAME);
+//                databaseType = FileUtil.getDatabaseType(databaseTypeText, FileUtil.CELL_FILENAME);
+                databaseType = Util.nullToStr(select_name_uuid.get(FileUtil.CELL_FILENAME + "_" + databaseTypeText));
             }
             input.setDatabasetype(databaseType);
             String seq = "";
-            seq = FileUtil.getSeqCode(row.get(index++));
+            seq = select_name_uuid.get("seqPlant_" + row.get(index++));
             input.setSequencingplatform(seq);
             input.setRemarks(row.get(index++));
             if (hasAlreadyExist) {
@@ -1777,6 +1828,11 @@ public class ProcessTaskService {
         for (CibrTaskProcessLibrary lib : dblibs) {
             index_lib.put(lib.getId(), lib);
         }
+
+        Map<String, Map<String, String>> selectConfig = fileService.getSelectConfig();
+        Map<String, String> select_name_uuid = selectConfig.get("name_uuid");
+        Map<String, String> select_uuid_name = selectConfig.get("uuid_name");
+
         Map<String, String> name_id = userService.getname_id();
         for (List<String> row : rows) {
             int index = 0;
@@ -1802,13 +1858,13 @@ public class ProcessTaskService {
             dblib.setLibindex(Util.nullToStr(row.get(index++)));
             dblib.setLibbarcode(Util.nullToStr(row.get(index++)));
             dblib.setCyclenumber(Util.nullToStr(row.get(index++)));
-            dblib.setDatabasetype(FileUtil.getDatabaseType(row.get(index++), FileUtil.getInitSampleFlag(dblib.getInitsample())));
+            dblib.setDatabasetype(select_name_uuid.get(select_uuid_name.get(dblib.getInitsample()) + "_" + row.get(index++)));
             dblib.setDatabaseindex(row.get(index++));
             dblib.setCreatedbuser(Util.nullToStr(name_id.get(row.get(index++))));
             dblib.setReviewer(Util.nullToStr(name_id.get(row.get(index++))));
             dblib.setQbit(Util.nullToStr(row.get(index++)));
             dblib.setLibsize(Util.nullToStr(row.get(index++)));
-            dblib.setSeqmethods(FileUtil.getSeqCode(row.get(index++)));
+            dblib.setSeqmethods(select_name_uuid.get("seqPlant_" + row.get(index++)));
             dblib.setUploadsize(Util.nullToStr(row.get(index++)));
             dblib.setDatabaseunit(Util.nullToStr(row.get(index++)));
             dblib.setLibremark(Util.nullToStr(row.get(index++)));
@@ -2171,6 +2227,11 @@ public class ProcessTaskService {
     private List<List<String>> getConfirms(String processId, List<CibrTaskProcessConfirm> confirms) {
         List<List<String>> excleRows = new ArrayList<>();
         List<String> heads = new ArrayList<>();
+
+        Map<String, Map<String, String>> selectConfig = fileService.getSelectConfig();
+        Map<String, String> select_name_uuid = selectConfig.get("name_uuid");
+        Map<String, String> select_uuid_name = selectConfig.get("uuid_name");
+
         heads.add("建库时间");
         heads.add("样本编号");
         heads.add("文库编号");
@@ -2195,7 +2256,7 @@ public class ProcessTaskService {
             }
             row.add(Util.nullToStr(confirm.getSampleindex()));
             row.add(Util.nullToStr(confirm.getLibindex()));
-            row.add(Util.nullToStr(FileUtil.getDatabaseFlag(confirm.getLibtype())));
+            row.add(Util.nullToStr(select_uuid_name.get(confirm.getLibtype())));
             row.add(Util.nullToStr(confirm.getConfirmindex()));
             row.add(Util.nullToStr(confirm.getPeaksize()));
             row.add(Util.nullToStr(confirm.getQpcr()));
@@ -2499,6 +2560,95 @@ public class ProcessTaskService {
 
     public void findbillItems(Date firstDay, Date lastDay) {
         processMapper.findbillItems(firstDay,lastDay);
+    }
+
+
+    public  Map<String,List<CibrConfigSelect>> findAllSelect() {
+        Map<String,List<CibrConfigSelect>> map = new HashMap<>();
+
+        // 初始样本
+        CibrConfigSelectExample initSelectEx = new CibrConfigSelectExample();
+        initSelectEx.createCriteria().andSelecttypeEqualTo("initSample");
+        List<CibrConfigSelect> initSamples = selectMapper.selectByExample(initSelectEx);
+        if (initSamples == null){
+            initSamples = new ArrayList<>();
+        }
+        map.put("initSamples", initSamples);
+
+        // 样本类型
+        CibrConfigSelectExample sampleTypeEx = new CibrConfigSelectExample();
+        sampleTypeEx.createCriteria().andSelecttypeEqualTo("sampleType");
+        List<CibrConfigSelect> sampleTypes = selectMapper.selectByExample(sampleTypeEx);
+        if (sampleTypes == null){
+            sampleTypes = new ArrayList<>();
+        }
+        map.put("sampleTypes",sampleTypes);
+
+        // 样本状态
+        CibrConfigSelectExample sampleStatuEx = new CibrConfigSelectExample();
+        sampleStatuEx.createCriteria().andSelecttypeEqualTo("sampleStatu");
+        List<CibrConfigSelect> sampleStatus = selectMapper.selectByExample(sampleStatuEx);
+        if (sampleStatus == null){
+            sampleStatus = new ArrayList<>();
+        }
+        map.put("sampleStatus",sampleStatus);
+
+        // 细胞分选法
+        CibrConfigSelectExample cellSortEx = new CibrConfigSelectExample();
+        cellSortEx.createCriteria().andSelecttypeEqualTo("cellSort");
+        List<CibrConfigSelect> cellSorts = selectMapper.selectByExample(cellSortEx);
+        if (cellSorts == null){
+            cellSorts = new ArrayList<>();
+        }
+        map.put("cellSorts",cellSorts);
+
+        // 文库类型
+        CibrConfigSelectExample databaseEx = new CibrConfigSelectExample();
+        databaseEx.createCriteria().andSelecttypeEqualTo("database");
+        List<CibrConfigSelect> database = selectMapper.selectByExample(databaseEx);
+        if (database == null){
+            database = new ArrayList<>();
+        }
+        map.put("database",database);
+
+        // 测序平台
+        CibrConfigSelectExample seqPlantEx = new CibrConfigSelectExample();
+        seqPlantEx.createCriteria().andSelecttypeEqualTo("seqPlant");
+        List<CibrConfigSelect> seqPlants = selectMapper.selectByExample(seqPlantEx);
+        if (seqPlants == null){
+            seqPlants = new ArrayList<>();
+        }
+        map.put("seqPlants",seqPlants);
+
+        // 提取方法
+        CibrConfigSelectExample extractEx = new CibrConfigSelectExample();
+        extractEx.createCriteria().andSelecttypeEqualTo("extract");
+        List<CibrConfigSelect> extracts = selectMapper.selectByExample(extractEx);
+        if (extracts == null){
+            extracts = new ArrayList<>();
+        }
+        map.put("extracts",extracts);
+
+        // 提取方法
+        CibrConfigSelectExample checkResultEx = new CibrConfigSelectExample();
+        checkResultEx.createCriteria().andSelecttypeEqualTo("checkResult");
+        List<CibrConfigSelect> checkResults = selectMapper.selectByExample(checkResultEx);
+        if (checkResults == null){
+            checkResults = new ArrayList<>();
+        }
+        map.put("checkResults",checkResults);
+        return map;
+    }
+
+    public Map<String, List<Map<String, Object>>> findlibDbBill(Date firstDay, Date lastDay) {
+        Map<String, List<Map<String, Object>>> retMap = new HashMap<>();
+        String startStr = TimeUtil.date2str(firstDay, "yyyy-MM-dd HH:mm:ss");
+        String endStr = TimeUtil.date2str(lastDay,"yyyy-MM-dd HH:mm:ss");
+        List<Map<String, Object>> maps = processMapper.findlibDbBill(startStr, endStr);
+        List<Map<String, Object>> maps2 = processMapper.findseqBill(startStr,endStr);
+        retMap.put("dbBill", maps);
+        retMap.put("seqBill", maps2);
+        return retMap;
     }
 }
 

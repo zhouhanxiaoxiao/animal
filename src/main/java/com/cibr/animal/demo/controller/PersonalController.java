@@ -186,8 +186,33 @@ public class PersonalController {
         ReturnData ret = new ReturnData();
         try {
             Map retMap = new HashMap();
-            List<CibrTaskProcessPrice> priceUnits = billService.getPriceUnit();
-            retMap.put("prices",priceUnits);
+            List<CibrConfigPrice> priceUnit = billService.getPriceUnit();
+            List<Map<String, String>> libtypes = billService.findLibtypes();
+            retMap.put("prices",priceUnit);
+            retMap.put("libtypes",libtypes);
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        }catch (Exception e){
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/personal/bill/addNewPrice")
+    public String addNewPrice(HttpServletRequest request,
+                          HttpServletResponse response,
+                          @RequestBody Map requestBody
+    ){
+        ReturnData ret = new ReturnData();
+        try {
+            Map retMap = new HashMap();
+            String priceStr = (String) requestBody.get("price");
+            CibrConfigPrice price = JSONObject.parseObject(priceStr, CibrConfigPrice.class);
+            String token = request.getHeader("token");
+            CibrSysUser user =  JSON.parseObject(String.valueOf(redisUtil.get(token)),CibrSysUser.class) ;
+            billService.addNewPrice(price, user);
             ret.setRetMap(retMap);
             ret.setCode("200");
         }catch (Exception e){
@@ -209,7 +234,7 @@ public class PersonalController {
             String token = request.getHeader("token");
             CibrSysUser user =  JSON.parseObject(String.valueOf(redisUtil.get(token)),CibrSysUser.class) ;
             String priceStr = (String) requestBody.get("price");
-            CibrTaskProcessPrice price = JSONObject.parseObject(priceStr, CibrTaskProcessPrice.class);
+            CibrConfigPrice price = JSONObject.parseObject(priceStr, CibrConfigPrice.class);
             billService.updatePrice(price,user);
             ret.setRetMap(retMap);
             ret.setCode("200");
@@ -236,6 +261,101 @@ public class PersonalController {
             retMap.put("bills",bills);
             ret.setRetMap(retMap);
             ret.setCode("200");
+        }catch (Exception e){
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/personal/getSelects")
+    public String getSelects(HttpServletRequest request,
+                                 HttpServletResponse response
+    ){
+        ReturnData ret = new ReturnData();
+        try {
+            Map retMap = new HashMap();
+            String token = request.getHeader("token");
+            CibrSysUser user =  JSON.parseObject(String.valueOf(redisUtil.get(token)),CibrSysUser.class) ;
+            List<CibrConfigSelect> selects = personalService.findallSelects();
+            retMap.put("selects",selects);
+            ret.setRetMap(retMap);
+            ret.setCode("200");
+        }catch (Exception e){
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/personal/addNewSelect")
+    public String addNewSelect(HttpServletRequest request,
+                             HttpServletResponse response,
+                               @RequestBody Map requestBody
+    ){
+        ReturnData ret = new ReturnData();
+        try {
+            String token = request.getHeader("token");
+            CibrSysUser user =  JSON.parseObject(String.valueOf(redisUtil.get(token)),CibrSysUser.class) ;
+            String selStr = (String) requestBody.get("selStr");
+            CibrConfigSelect select = JSONObject.parseObject(selStr, CibrConfigSelect.class);
+            String result = personalService.addNewSelect(select, user);
+            if ("success".equals(result)){
+                ret.setCode("200");
+            }else {
+                ret.setCode(result);
+            }
+        }catch (Exception e){
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/personal/updateSel")
+    public String updateSel(HttpServletRequest request,
+                               HttpServletResponse response,
+                               @RequestBody Map requestBody
+    ){
+        ReturnData ret = new ReturnData();
+        try {
+            String token = request.getHeader("token");
+            CibrSysUser user =  JSON.parseObject(String.valueOf(redisUtil.get(token)),CibrSysUser.class) ;
+            String selStr = (String) requestBody.get("selStr");
+            CibrConfigSelect select = JSONObject.parseObject(selStr, CibrConfigSelect.class);
+            String result = personalService.updateSel(select, user);
+            if ("success".equals(result)){
+                ret.setCode("200");
+            }else {
+                ret.setCode(result);
+            }
+        }catch (Exception e){
+            ret.setCode("E500");
+            ret.setErrMsg("系统异常！");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(ret, SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
+    }
+
+    @RequestMapping("/personal/bill/regenerateBill")
+    public String regenerateBill(HttpServletRequest request,
+                            HttpServletResponse response,
+                            @RequestBody Map requestBody
+    ){
+        ReturnData ret = new ReturnData();
+        try {
+            String token = request.getHeader("token");
+            CibrSysUser user =  JSON.parseObject(String.valueOf(redisUtil.get(token)),CibrSysUser.class) ;
+            String currentMonth = (String) requestBody.get("currentMonth");
+            String result = billService.regenerateBill(currentMonth, user);
+            if ("success".equals(result)){
+                ret.setCode("200");
+            }else {
+                ret.setCode(result);
+            }
         }catch (Exception e){
             ret.setCode("E500");
             ret.setErrMsg("系统异常！");

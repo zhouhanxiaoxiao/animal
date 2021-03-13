@@ -67,8 +67,11 @@ public class ProcessController {
             CibrSysUser user = JSON.parseObject(String.valueOf(redisUtil.get(token)), CibrSysUser.class);
             Map<String, Object> map = processTaskService.countTaskNum(process.getId(), user);
             Map<String, String> unCommitNext = processTaskService.findUnCommitNext(process.getId(), user);
+            Map<String, List<CibrConfigSelect>> selectMap = processTaskService.findAllSelect();
+
             Map<String,Object> retMap = new HashMap<>();
             retMap.put("process",process);
+            retMap.put("selectMap",selectMap);
             retMap.put("fail",error);
             retMap.put("group",group);
             retMap.put("unCommitNext",unCommitNext);

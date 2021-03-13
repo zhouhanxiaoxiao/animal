@@ -48,6 +48,6 @@ public class ScheduledTask {
         Date now = new Date();
         Date date = TimeUtil.dateAdd(now, Calendar.DATE, -1);
         String currMonth = TimeUtil.date2str(date,"yyyy-MM");
-        handle.makeBill(currMonth);
+        handle.makeBill(currMonth, "system");
     }
 }
